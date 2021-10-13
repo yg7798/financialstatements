@@ -1,0 +1,5 @@
+rootProject.name = 'fiancialstatements'
+include 'service'
+include 'businesslogic'
+include 'client'
+
