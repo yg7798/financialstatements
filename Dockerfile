@@ -1,10 +1,10 @@
 FROM kshivaprasad/java:latest
 
-RUN   mkdir -p /etc/dms/financialstatments
+RUN   mkdir -p /etc/dms/financialstatements
 
-WORKDIR /etc/dms/financialstatments
+WORKDIR /etc/dms/financialstatements
 
-ADD financialstatmentse/build/libs/*.jar .
+ADD financialstatements/build/libs/*.jar .
 
 CMD java $JAVA_OPTS  -jar *.jar
 
