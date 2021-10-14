@@ -1,10 +1,8 @@
-package com.tekion.as.configurations.Launcher;
+package com.tekion.accounting.fs.configurations.Launcher;
 
-import com.tekion.as.configurations.ApiConfig;
+import com.tekion.accounting.fs.configurations.ApiConfig;
 import com.tekion.core.service.TekionServiceApplication;
 import com.tekion.core.service.api.DefaultServiceApiWebConfig;
-import com.tekion.core.utils.async.DynamicScalingExecutorService;
-import com.tekion.core.utils.async.ScalingThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
