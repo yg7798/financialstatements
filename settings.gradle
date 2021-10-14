@@ -1,4 +1,4 @@
-rootProject.name = 'fiancialstatements'
+rootProject.name = 'financialstatements'
 include 'service'
 include 'fs-manager'
 include 'client'
