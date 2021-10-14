@@ -1,8 +1,0 @@
-com/tekion/as/configurations/Launcher/Hello.java
- com.tekion.as.configurations.Launcher.Hello
-com/tekion/as/configurations/RestrictedApiConfig.java
- com.tekion.as.configurations.RestrictedApiConfig
-com/tekion/as/configurations/ApiConfig.java
- com.tekion.as.configurations.ApiConfig
-com/tekion/as/configurations/Launcher/Launcher.java
- com.tekion.as.configurations.Launcher.Launcher
