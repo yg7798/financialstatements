@@ -1,5 +1,6 @@
-rootProject.name = 'fiancialstatements'
+rootProject.name = 'financialstatements'
 include 'service'
-include 'businesslogic'
+include 'fs-manager'
 include 'client'
+include 'fs-entities'
 
