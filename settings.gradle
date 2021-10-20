@@ -3,4 +3,6 @@ include 'service'
 include 'fs-manager'
 include 'client'
 include 'fs-entities'
+include 'fs-repos'
+include 'common'
 

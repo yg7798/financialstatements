@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebMvc
-//@ComponentScan(basePackageClasses = {LookupController.class,ExcelReportApi.class, ExcelReportApiV2.class, AccountingCacheApi.class}, basePackages="com.tekion.as.api")
+@ComponentScan(basePackageClasses = {}, basePackages="com.tekion.accounting.fs.api")
 @EnableAspectJAutoProxy
 public class ApiConfig implements WebMvcConfigurer {
 

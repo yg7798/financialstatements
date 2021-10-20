@@ -1,15 +1,5 @@
 plugins {
     id 'java'
-    id "io.spring.dependency-management" version("1.0.5.RELEASE")
-}
-
-apply plugin: 'idea'
-
-idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
-    }
 }
 
 group 'com.tekion.accounting.fs'
@@ -28,6 +18,6 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile project(':fs-entities')
-    compile project(':fs-repos')
     compile project(':common')
+    compile('com.tekion.sdk:mongosupport:2.0.11-SNAPSHOT')
 }
