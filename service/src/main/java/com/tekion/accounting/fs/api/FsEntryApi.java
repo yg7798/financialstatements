@@ -20,11 +20,10 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/fsEntry")
 public class FsEntryApi {
 	private final FsEntryService fsEntryService;
-	private final AccountingClient accountingClient;
 	private final TValidator validator;
 
 	@GetMapping("/{id}")
 	public ResponseEntity fsMappingInfo(@PathVariable @NotNull String id) {
-		return TResponseEntityBuilder.okResponseEntity(accountingClient.getAccountingInfo());
+		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntryById(id));
 	}
 }
