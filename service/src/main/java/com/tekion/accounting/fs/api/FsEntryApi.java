@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.api;
 
 import com.tekion.accounting.fs.service.FsEntryService;
+import com.tekion.as.client.AccountingClient;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import com.tekion.core.validation.TValidator;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,11 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/fsEntry")
 public class FsEntryApi {
 	private final FsEntryService fsEntryService;
+	private final AccountingClient accountingClient;
 	private final TValidator validator;
 
 	@GetMapping("/{id}")
 	public ResponseEntity fsMappingInfo(@PathVariable @NotNull String id) {
-		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntryById(id));
+		return TResponseEntityBuilder.okResponseEntity(accountingClient.getAccountingInfo());
 	}
 }
