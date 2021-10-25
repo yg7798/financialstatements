@@ -48,6 +48,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     compile('com.tekion.sdk:servicecommons:3.0.31-SNAPSHOT')
     compile project(':fs-manager')
-    implementation('com.tekion.accounting:accounting-client:1.0.40b-SNAPSHOT')
+    implementation('com.tekion.accounting:accounting-client:1.0.40c-SNAPSHOT')
 
 }
