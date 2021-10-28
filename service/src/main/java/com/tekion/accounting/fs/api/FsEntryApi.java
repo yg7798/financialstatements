@@ -1,7 +1,6 @@
 package com.tekion.accounting.fs.api;
 
 import com.tekion.accounting.fs.service.FsEntryService;
-import com.tekion.as.client.AccountingClient;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import com.tekion.core.validation.TValidator;
 import lombok.RequiredArgsConstructor;

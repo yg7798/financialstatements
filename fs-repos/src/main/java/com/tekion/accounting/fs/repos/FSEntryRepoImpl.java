@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.repos;
 
 import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.master.beans.FSEntry;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
