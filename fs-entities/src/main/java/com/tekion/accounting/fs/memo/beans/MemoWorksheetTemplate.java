@@ -1,0 +1,41 @@
+package com.tekion.accounting.fs.memo.beans;
+
+import com.tekion.as.service.oemMapping.enums.OemCellDurationType;
+import com.tekion.core.beans.TBaseMongoBean;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Map;
+import java.util.Set;
+
+@Document
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@CompoundIndexes({
+        @CompoundIndex(
+                name = "idx_country_oemId_year_key",
+                def = "{'country':1, 'oemId':1, 'year':1, 'key':1 }", unique = true
+        )
+})
+public class MemoWorksheetTemplate extends TBaseMongoBean {
+    private String oemId;
+    private String key;
+    private String name;
+    private Set<OemCellDurationType> durationTypes;
+    private int year;
+    private int version;
+    private String country;
+    private String lineNumber;
+    private String pageNumber;
+    private Map<String,String> additionalInfo;
+    private String createdByUserId;
+    private String modifiedByUserId;
+    private FieldType fieldType;
+}

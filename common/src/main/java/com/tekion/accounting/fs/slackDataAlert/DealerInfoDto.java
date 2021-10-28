@@ -1,0 +1,13 @@
+package com.tekion.accounting.fs.slackDataAlert;
+
+import com.tekion.accounting.fs.pod.DealerInfo;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class DealerInfoDto {
+	private List<DealerInfo> dealerInfoList;
+	private boolean includeQaDealers;
+	private boolean includeDecommissionedDealers;
+}
