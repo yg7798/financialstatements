@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.repos;
 
 import com.mongodb.bulk.BulkWriteUpsert;
-import com.tekion.accounting.fs.master.beans.AccountingOemFsCellCode;
+import com.tekion.accounting.fs.beans.AccountingOemFsCellCode;
 
 import java.util.List;
 

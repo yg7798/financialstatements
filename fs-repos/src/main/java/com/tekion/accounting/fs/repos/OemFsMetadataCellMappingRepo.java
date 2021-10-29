@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.repos;
 
-import com.tekion.accounting.fs.master.beans.OemFSMetadataCellsInfo;
+import com.tekion.accounting.fs.beans.OemFSMetadataCellsInfo;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
 import com.mongodb.bulk.BulkWriteUpsert;
 import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.master.beans.OemTemplate;
+import com.tekion.accounting.fs.beans.OemTemplate;
 import com.tekion.accounting.fs.utils.TMongoUtils;
 import com.tekion.core.mongo.BaseGlobalMongoRepository;
 import com.tekion.core.serverconfig.beans.ModuleName;

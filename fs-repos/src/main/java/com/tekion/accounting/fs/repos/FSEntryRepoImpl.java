@@ -4,9 +4,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
 import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.master.beans.FSEntry;
-import com.tekion.accounting.fs.master.enums.AccountingError;
-import com.tekion.accounting.fs.master.enums.FSType;
+import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.enums.AccountingError;
+import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.utils.TMongoUtils;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.tekion.accounting.fs.TConstants.*;
-import static com.tekion.accounting.fs.master.beans.FSEntry.FS_TYPE;
+import static com.tekion.accounting.fs.beans.FSEntry.FS_TYPE;
 import static com.tekion.accounting.fs.utils.UserContextUtils.getDefaultSiteId;
 
 @Component

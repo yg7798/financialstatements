@@ -3,10 +3,10 @@ package com.tekion.accounting.fs.repos;
 import com.google.common.collect.Lists;
 import com.mongodb.bulk.BulkWriteUpsert;
 import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.master.beans.FSEntry;
-import com.tekion.accounting.fs.master.beans.OEMFinancialMapping;
-import com.tekion.accounting.fs.master.beans.OemFsMapping;
-import com.tekion.accounting.fs.master.beans.OemFsMappingSnapshot;
+import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
+import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
+import com.tekion.accounting.fs.beans.mappings.OemFsMappingSnapshot;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.tekion.accounting.fs.TConstants.*;
-import static com.tekion.accounting.fs.master.beans.FSEntry.FS_ID;
-import static com.tekion.accounting.fs.master.beans.OemTemplate.OEM_ID;
+import static com.tekion.accounting.fs.beans.FSEntry.FS_ID;
+import static com.tekion.accounting.fs.beans.OemTemplate.OEM_ID;
 import static com.tekion.accounting.fs.utils.UserContextUtils.getDefaultSiteId;
 
 

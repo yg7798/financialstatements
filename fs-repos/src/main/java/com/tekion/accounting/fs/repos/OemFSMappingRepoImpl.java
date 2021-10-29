@@ -6,8 +6,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.bulk.BulkWriteUpsert;
 import com.mongodb.client.result.UpdateResult;
 import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.master.beans.FSEntry;
-import com.tekion.accounting.fs.master.beans.OemFsMapping;
+import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.utils.JsonUtil;
 import com.tekion.accounting.fs.utils.TMongoUtils;
 import com.tekion.core.beans.TBaseMongoBean;
@@ -31,8 +31,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.tekion.accounting.fs.TConstants.*;
-import static com.tekion.accounting.fs.master.beans.FSEntry.FS_ID;
-import static com.tekion.accounting.fs.master.beans.OemFSMetadataCellsInfo.OEM_ID;
+import static com.tekion.accounting.fs.beans.FSEntry.FS_ID;
+import static com.tekion.accounting.fs.beans.OemFSMetadataCellsInfo.OEM_ID;
 import static com.tekion.accounting.fs.utils.UserContextUtils.getDefaultSiteId;
 
 @Slf4j

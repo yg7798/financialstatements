@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.repos;
 
 import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.master.beans.OEMFinancialMapping;
-import com.tekion.accounting.fs.master.beans.OEMFinancialMappingMedia;
+import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
+import com.tekion.accounting.fs.beans.mappings.OEMFinancialMappingMedia;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

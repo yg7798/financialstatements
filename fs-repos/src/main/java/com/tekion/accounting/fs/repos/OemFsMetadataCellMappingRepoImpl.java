@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.repos;
 
 import com.mongodb.client.result.UpdateResult;
-import com.tekion.accounting.fs.master.beans.OemFSMetadataCellsInfo;
+import com.tekion.accounting.fs.beans.OemFSMetadataCellsInfo;
 import com.tekion.accounting.fs.utils.JsonUtil;
 import com.tekion.core.mongo.BaseGlobalMongoRepository;
 import com.tekion.core.serverconfig.beans.ModuleName;

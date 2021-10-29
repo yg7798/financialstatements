@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.repos;
 
 import com.mongodb.bulk.BulkWriteResult;
-import com.tekion.accounting.fs.master.beans.OEMFinancialMapping;
-import com.tekion.accounting.fs.master.beans.OemFsMapping;
+import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
+import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 
 import java.util.List;
 

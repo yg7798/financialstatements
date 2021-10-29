@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.repos;
 
-import com.tekion.accounting.fs.master.beans.OemConfig;
+import com.tekion.accounting.fs.beans.OemConfig;
 
 public interface OemConfigRepo {
 
