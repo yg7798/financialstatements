@@ -152,4 +152,12 @@ public class UserContextUtils {
 		List<String> dealerIdsBelongsToTenant = allDealersForATenant.stream().map(DealerInfoWithOEMDetails :: getDealerId).collect(Collectors.toList());
 		return dealerIdsBelongsToTenant.containsAll(TCollectionUtils.nullSafeList(dealerIds));
 	}
+
+	public static UserContext buildUserContext(String dealerId){
+		UserContext userContext=new UserContext();
+		userContext.setTenantId(UserContextProvider.getCurrentTenantId());
+		userContext.setDealerId(dealerId);
+		userContext.setUserId(UserContextProvider.getCurrentUserId());
+		return  userContext;
+	}
 }

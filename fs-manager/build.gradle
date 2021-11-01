@@ -31,4 +31,5 @@ dependencies {
     compile project(':fs-repos')
     compile project(':common')
     implementation('com.tekion.accounting:accounting-client:1.0.41-SNAPSHOT')
+    compile("com.tekion.sdk:printClient:1.0.102-hotfix3.1-SNAPSHOT")
 }

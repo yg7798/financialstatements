@@ -25,4 +25,5 @@ dependencies {
     compile('com.tekion.sdk:preferenceclient:1.0.149-SNAPSHOT')
     compile('com.tekion.sdk:accountingpreferenceclient:0.0.2-SNAPSHOT')
     implementation( group: 'com.tekion.sdk', name: 'dealerpropertyclient', version: '1.0.36-SNAPSHOT')
+    compile("com.tekion.sdk:printClient:1.0.102-hotfix3.1-SNAPSHOT")
 }
