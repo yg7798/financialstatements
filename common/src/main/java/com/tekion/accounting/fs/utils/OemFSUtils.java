@@ -5,8 +5,12 @@ import com.google.common.collect.Lists;
 import com.tekion.accounting.fs.TConstants;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TStringUtils;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
+import parsii.eval.Parser;
+import parsii.tokenizer.ParseException;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +53,34 @@ public class OemFSUtils {
 		return groupCode;
 	}
 
+	public static String getExpressionReplacedByValues(String str, Map<String, BigDecimal> map){
+		StringSubstitutor sub = new StringSubstitutor(map);
+		return sub.replace(str);
+	}
+	public static BigDecimal getCalculatedAmount(String expression) {
+		if(TStringUtils.isBlank(expression)){
+			return BigDecimal.ZERO;
+		}
 
+//        log.info("expression : {} " , expression );
+		try {
+			return BigDecimal.valueOf(Parser.parse(expression).evaluate()).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+		} catch (NumberFormatException e){
+//            log.warn("Exception while calculation {} {}",expression, e.getMessage());
+			return BigDecimal.ZERO;
+		} catch (ParseException e) {
+			log.error("ParseException while calculation {} {}",expression, e.getMessage());
+		}
+		return BigDecimal.ZERO;
+	}
 
+	public static String createFsCellCode(String groupCode, String valueType, String durationType) {
+		return groupCode + "_" + valueType + "_" + durationType;
+	}
+
+	public static String getExpressionReplacedByExpression(String expression, Map<String, String> codeVsExpressionMap) {
+		StringSubstitutor sub = new StringSubstitutor(codeVsExpressionMap);
+		return sub.replace(expression);
+	}
 }
 

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @NoArgsConstructor
 @Data
@@ -43,4 +44,12 @@ public class FsReportContext {
 	private OemConfig oemConfig;
 	private AccountingInfo accountingInfo;
 	private String mmddyyyy;
+	private Set<String> glIdsRelatedToMonthlyPL;
+
+	public com.tekion.as.models.beans.fs.FsReportContext toAccountingFSRContext(){
+		com.tekion.as.models.beans.fs.FsReportContext fsrContext = new com.tekion.as.models.beans.fs.FsReportContext();
+		fsrContext.setGlIdsRelatedToMonthlyPL(glIdsRelatedToMonthlyPL);
+		return fsrContext;
+	}
+
 }

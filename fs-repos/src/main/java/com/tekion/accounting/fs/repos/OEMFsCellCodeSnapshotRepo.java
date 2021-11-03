@@ -31,4 +31,7 @@ public interface OEMFsCellCodeSnapshotRepo {
 
     void updateFsTypeInFsCellCodeSnapshots(FSEntry fsEntry);
     List<OEMFsCellCodeSnapshot> findSnapshotByCodes(String fsId, Set<String> codes, String dealerId);
+
+    List<OEMFsCellCodeSnapshot> getFsCellCodeByTimestamp(long fromTimestamp, long toTimestamp, Set<String> codes,
+                                                         String oemId, String dealerId, String siteId);
 }

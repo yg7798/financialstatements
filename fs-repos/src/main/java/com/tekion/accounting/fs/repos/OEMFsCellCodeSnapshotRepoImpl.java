@@ -3,9 +3,10 @@ package com.tekion.accounting.fs.repos;
 import com.mongodb.bulk.BulkWriteUpsert;
 import com.tekion.accounting.fs.TConstants;
 import com.tekion.accounting.fs.beans.FSEntry;
-import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
 import com.tekion.accounting.fs.beans.OEMFsCellCodeSnapshot;
+import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
+import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
@@ -28,6 +29,7 @@ import static com.tekion.accounting.fs.utils.UserContextUtils.getDefaultSiteId;
 @Component
 public class OEMFsCellCodeSnapshotRepoImpl extends BaseDealerLevelMongoRepository<OEMFsCellCodeSnapshot> implements OEMFsCellCodeSnapshotRepo {
 
+    private final String TIMESTAMP = "timestamp";
     public OEMFsCellCodeSnapshotRepoImpl() {
         super(TENANT_DEFAULT , OEMFsCellCodeSnapshot.class);
     }
@@ -196,5 +198,22 @@ public class OEMFsCellCodeSnapshotRepoImpl extends BaseDealerLevelMongoRepositor
         update.set(TConstants.MODIFIED_TIME,System.currentTimeMillis());
         update.set(TConstants.MODIFIED_BY_USER_ID, UserContextProvider.getCurrentUserId());
         getMongoTemplate().updateMulti(Query.query(criteria), update, OEMFsCellCodeSnapshot.class);
+    }
+
+    @Override
+    public List<OEMFsCellCodeSnapshot> getFsCellCodeByTimestamp(long fromTimestamp, long toTimestamp, Set<String> codes,
+                                                                String oemId, String dealerId, String siteId) {
+
+        Criteria criteria = Criteria
+                .where(TIMESTAMP).gte(fromTimestamp)
+                .lte(toTimestamp)
+                .and(OEMFinancialMapping.OEM_ID).is(oemId)
+                .and(DEALER_ID_KEY).is(dealerId)
+                .and(SITE_ID).is(siteId)
+                .and(TConstants.DELETED).is(false)
+                .and(CODE).in(codes)
+                .and(FS_TYPE).is(FSType.OEM.name());
+
+        return this.getMongoTemplate().find(Query.query(criteria), OEMFsCellCodeSnapshot.class);
     }
 }

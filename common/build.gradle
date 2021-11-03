@@ -26,4 +26,11 @@ dependencies {
     compile('com.tekion.sdk:accountingpreferenceclient:0.0.2-SNAPSHOT')
     implementation( group: 'com.tekion.sdk', name: 'dealerpropertyclient', version: '1.0.36-SNAPSHOT')
     compile("com.tekion.sdk:printClient:1.0.102-hotfix3.1-SNAPSHOT")
+    compile('org.apache.commons:commons-text:1.9')
+    compile("com.scireum:parsii:4.0")
+    implementation ('org.springframework.data:spring-data-redis:2.1.5.RELEASE')
+    compile("com.tekion.sdk:cachesupport:1.0.6-SNAPSHOT"){
+        exclude  group: 'com.tekion.sdk', module: 'sdkcore'
+        exclude  group: 'com.tekion.sdk', module: 'configclient'
+    }
 }

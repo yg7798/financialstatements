@@ -1,6 +1,8 @@
 package com.tekion.accounting.fs.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tekion.accounting.fs.cache.dtos.OptionMinimal;
+import com.tekion.accounting.fs.enums.CustomFieldType;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalanceRow;
 import lombok.Data;
@@ -10,6 +12,10 @@ import org.assertj.core.util.Lists;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
+import static com.tekion.accounting.fs.enums.CustomFieldType.DEPARTMENT;
+import static com.tekion.core.utils.TStringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -53,11 +59,21 @@ public class OemFsMappingSimilarToUI {
 		}
 	}
 
-//	public void resolveDepartmentFromId(GLAccount glAccount, Map<CustomFieldType, Map<String, OptionMinimal>> keyToIdToOptionMap){
-//		if(isNotBlank(glAccount.getDepartmentId())){
-//			String optionDisplayLabel = getOptionDisplayLabelWithoutCode(DEPARTMENT, glAccount.getDepartmentId(), "", keyToIdToOptionMap);
-//			this.setDepartment(isBlank(optionDisplayLabel)? "" : optionDisplayLabel);
-//		}
-//	}
+	public void resolveDepartmentFromId(GLAccount glAccount, Map<CustomFieldType, Map<String, OptionMinimal>> keyToIdToOptionMap){
+		if(isNotBlank(glAccount.getDepartmentId())){
+			String optionDisplayLabel = getOptionDisplayLabelWithoutCode(DEPARTMENT, glAccount.getDepartmentId(), "", keyToIdToOptionMap);
+			this.setDepartment(isBlank(optionDisplayLabel)? "" : optionDisplayLabel);
+		}
+	}
+
+
+	public static String getOptionDisplayLabelWithoutCode(CustomFieldType key, String id, String placeHolder,Map<CustomFieldType, Map<String, OptionMinimal>> keyToIdToOptionMap){
+		if (keyToIdToOptionMap.containsKey(key)) {
+			if (keyToIdToOptionMap.get(key).containsKey(id)) {
+				return keyToIdToOptionMap.get(key).get(id).getName();
+			}
+		}
+		return placeHolder;
+	}
 }
 

@@ -25,6 +25,10 @@ public class UserContextUtils {
 
 	private static final boolean isStage = System.getenv("CLUSTER_TYPE").contains("stage");
 
+	public static UserContext buildUserContext(String dealerId,String tenantId,String userId){
+		return new UserContext(userId,tenantId,dealerId);
+	}
+
 	public static List<UserContext> createUserContextForAllDealers(Map<String, String> dealerIdToNameMapping, GlobalService globalService) {
 		List<TenantInfo> tenantInfos = globalService.fetchActiveTenants();
 		return getUCsForTenants(dealerIdToNameMapping, tenantInfos, globalService);
