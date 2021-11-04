@@ -64,6 +64,7 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
     protected DealerConfig dealerConfig;
     protected IntegrationClient integrationClient;
     protected FsXMLServiceImpl fsXMLService;
+    @Autowired
     protected DPClient dpClient;
     protected AccountingInfoService infoService;
     protected PreferenceClient preferenceClient;

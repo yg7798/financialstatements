@@ -11,11 +11,13 @@ import com.tekion.clients.dealerproperty.DealerPropertyService;
 import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.clients.preference.client.PreferenceClientFactory;
 import com.tekion.core.feign.ClientBuilder;
+import com.tekion.core.serverconfig.service.ServerConfigService;
 import com.tekion.core.service.internalauth.AbstractServiceClientFactory;
 import com.tekion.core.service.internalauth.TokenGenerator;
 import com.tekion.core.utils.async.DynamicScalingExecutorService;
 import com.tekion.core.utils.async.ScalingThreadPoolExecutor;
 import com.tekion.core.utils.springasync.DelegatingUserContextExecutorServiceToAsyncTaskWrapper;
+import com.tekion.sdk.storage.s3.S3ObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -108,5 +110,10 @@ public class BeanFactory {
 	@Bean
 	public DefaultUriBuilderFactory uriBuilderFactory() {
 		return new DefaultUriBuilderFactory(System.getenv("config_host"));
+	}
+
+	@Bean
+	public S3ObjectStorageService getS3ObjectStorageService(ServerConfigService serverConfigService) {
+		return new S3ObjectStorageService(serverConfigService);
 	}
 }
