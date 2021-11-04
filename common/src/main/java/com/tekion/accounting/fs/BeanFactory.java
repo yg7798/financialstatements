@@ -12,6 +12,7 @@ import com.tekion.clients.dealerproperty.DealerPropertyService;
 import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.clients.preference.client.PreferenceClientFactory;
 import com.tekion.core.feign.ClientBuilder;
+import com.tekion.core.feign.FeignBuilderFactory;
 import com.tekion.core.serverconfig.service.ServerConfigService;
 import com.tekion.core.service.internalauth.AbstractServiceClientFactory;
 import com.tekion.core.service.internalauth.TokenGenerator;
@@ -19,7 +20,10 @@ import com.tekion.core.utils.TGlobalConstants;
 import com.tekion.core.utils.async.DynamicScalingExecutorService;
 import com.tekion.core.utils.async.ScalingThreadPoolExecutor;
 import com.tekion.core.utils.springasync.DelegatingUserContextExecutorServiceToAsyncTaskWrapper;
+import com.tekion.printerclient.PrinterClient;
+import com.tekion.printerclientv2.PrinterClientV2;
 import com.tekion.sdk.storage.s3.S3ObjectStorageService;
+import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,6 +48,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static com.tekion.core.utils.TGlobalConstants.SERVICE_NAME;
+import static feign.Logger.Level.FULL;
 
 @Configuration
 @Slf4j
@@ -126,5 +131,16 @@ public class BeanFactory {
 	@ConditionalOnMissingBean
 	public RedisTemplate<String, Object> getGlobalRedisTemplate(@Autowired RedisCacheFactory redisCacheFactory) {
 		return redisCacheFactory.getRedisTemplateForTenant(TGlobalConstants.NO_TENANT_ID);
+	}
+
+	@Bean
+	public PrinterClientV2 printerClientV2(ClientBuilder clientBuilder) {
+		return PrinterClientV2.createClient(clientBuilder);
+	}
+
+	@Bean
+	public PrinterClient printerClient(FeignBuilderFactory feignBuilderFactory) {
+		return feignBuilderFactory.buildFeignClientInstance(
+				FeignBuilderFactory.buildInstanceUrl("pms"), PrinterClient.class, FULL, new ErrorDecoder.Default(), null);
 	}
 }

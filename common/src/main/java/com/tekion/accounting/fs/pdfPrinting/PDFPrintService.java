@@ -1,174 +1,187 @@
-//package com.tekion.accounting.fs.pdfPrinting;
-//
-//import com.google.common.collect.Lists;
-//import com.google.common.collect.Sets;
-//import com.netflix.hystrix.exception.HystrixRuntimeException;
-//import com.tekion.admin.beans.Department;
-//import com.tekion.admin.beans.beansdto.printerDto.Options;
-//import com.tekion.admin.beans.printer.ModuleMapping;
-//import com.tekion.admin.beans.printer.PrinterMapping;
-//import com.tekion.clients.preference.client.PreferenceClient;
-//import com.tekion.clients.preference.client.TekionResponse;
-//import com.tekion.core.exceptions.TBaseRuntimeException;
-//import com.tekion.core.serverconfig.beans.ServerType;
-//import com.tekion.core.serverconfig.service.ServerConfigServiceImpl;
-//import com.tekion.core.utils.*;
-//import com.tekion.cs.beans.ServerConfigFlat;
-//import com.tekion.printerclient.PrinterClient;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.http.HttpEntity;
-//import org.springframework.http.HttpHeaders;
-//import org.springframework.http.HttpMethod;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.stereotype.Service;
-//import org.springframework.web.client.HttpStatusCodeException;
-//import org.springframework.web.client.RestClientException;
-//import org.springframework.web.client.RestTemplate;
-//
-//import java.util.*;
-//import java.util.regex.Matcher;
-//import java.util.regex.Pattern;
-//import java.util.stream.Collectors;
-//
-//import static com.tekion.core.utils.TGlobalConstants.NO_DEALER_ID;
-//import static com.tekion.core.utils.TGlobalConstants.NO_TENANT_ID;
-//import static com.tekion.tekionconstant.permission.Department.ACCOUNTING;
-//
-//@Service
-//@Slf4j
-//@RequiredArgsConstructor
-//public class PDFPrintService {
-//    private final RestTemplate restTemplate;
-//    private final PreferenceClient preferenceClient;
-//    private final PrinterClient printerClient;
-//    private final APSetupService apSetupService;
-//    private final PrinterClientV2 printerClientV2;
-//
-//    private final int BATCH_SIZE_FOR_FETCHING_MEDIA_URL = 500;
-//    private final int INVALID_PAGE_START = -1;
-//    private final int INVALID_PAGE_END = -1;
-//    private final int DEFAULT_CHECK_PAGE_NO = 1;
-//    private final int NO_OF_PERFORATED_PAGES = 1;
-//    private final String PAGE_RANGE_PRINT = "page_range_print";
-//    private final String DEFAULT_PAPER_SIZE_LETTER = "Letter";
-//    private final String AR_STMT_PRINT_RESPONSE_LOG_LINE = "AR Statement Print";
-//
-//    //todo retry count =3 and check what is wrong with content type
-//    public boolean exportPdf(PdfRequest pdfRequest, UserContext context){
-//        String logMsg=  " callbackUrl: " + pdfRequest.getCallbackUrl () + " targetUrl : " +pdfRequest.getTargetUrl ();
-//        try{
-//            HttpEntity<PdfRequest> httpEntity = new HttpEntity <> ( pdfRequest, buildHeaders () );
-//            log.info("{} : requestId : {} , pdf request {}", TConstants.PDF_PRINT_SERVICE, pdfRequest.getId(), pdfRequest);
-//            ResponseEntity<ExportPdfResponseEntity> responseEntity = restTemplate
-//                    .exchange ( exportPdfUrl(), HttpMethod.POST, httpEntity, ExportPdfResponseEntity.class );
-//            log.info("{} : requestId : {} , pdf response {}",TConstants.PDF_PRINT_SERVICE, pdfRequest.getId(), responseEntity);
-//            return responseEntity.getStatusCodeValue () == 200;
-//        } catch (Exception e){
-//            log.error ("{} : unable to export pdf for url: {} {} {}" ,TConstants.PDF_PRINT_SERVICE, exportPdfUrl(), logMsg ,e );
-//            return false;
-//        }
-//    }
-//
-//    public boolean exportBulkPdf(BulkPdfRequest pdfRequest, UserContext context){
-//        String logMsg=  " requestId : " +pdfRequest.getId () + " callbackUrl: " + pdfRequest.getCallbackUrl ();
-//        try{
-//            HttpHeaders headers = buildHeaders();
-//            headers.set(TGlobalConstants.TENANT_NAME_KEY, UserContextUtils.getTenantId(context.getDseUserContext ().getTenantName ()));
-//            String exportUrl = exportBulkPdfUrl();
-//
-//            HttpEntity<BulkPdfRequest> httpEntity = new HttpEntity <> ( pdfRequest, headers );
-//            log.info("{} : pdf request  {} export url {}",TConstants.PDF_PRINT_SERVICE,pdfRequest, exportUrl);
-//
-//            ResponseEntity<ExportPdfResponseEntity> responseEntity = restTemplate
-//                    .exchange ( exportUrl, HttpMethod.POST, httpEntity, ExportPdfResponseEntity.class );
-//
-//            log.info("{} : pdf response {}",TConstants.PDF_PRINT_SERVICE, responseEntity);
-//            log.info ( "{} : export pdf request successful , {}",TConstants.PDF_PRINT_SERVICE, logMsg );
-//            return responseEntity.getStatusCodeValue () == 200;
-//        } catch (HttpStatusCodeException e){
-//            log.error ( "{} : unable to export pdf for url: {}, {}, {}" ,TConstants.PDF_PRINT_SERVICE, exportBulkPdfUrl(),logMsg , e );
-//            return false;
-//        } catch (Exception e){
-//            log.error ( "{} : unable to export pdf for url: {}, {}, {}" ,TConstants.PDF_PRINT_SERVICE , exportBulkPdfUrl(),logMsg , e );
-//            return false;
-//        }
-//    }
-//
-//
-//    public Object exportBulkPdfWithResponse(BulkPdfRequest pdfRequest, UserContext context){
-//        String logMsg=  " requestId : " +pdfRequest.getId () + " callbackUrl: " + pdfRequest.getCallbackUrl ();
-//        try{
-//            HttpHeaders headers = buildHeaders();
-//            String exportUrl = exportBulkPdfUrl();
-//
-//            HttpEntity<BulkPdfRequest> httpEntity = new HttpEntity <> ( pdfRequest, headers );
-//            log.info("{} : pdf request  {} export url {}",TConstants.PDF_PRINT_SERVICE,pdfRequest, exportUrl);
-//
-//            ResponseEntity<Object> responseEntity = restTemplate
-//                    .exchange ( exportUrl, HttpMethod.POST, httpEntity, Object.class );
-//
-//            log.info("{} : pdf response {}",TConstants.PDF_PRINT_SERVICE, responseEntity);
-//            return responseEntity.getBody();
-//        } catch (Exception e){
-//            log.error ( "{} : unable to export pdf for url: {}, {}, {}" ,TConstants.PDF_PRINT_SERVICE , exportBulkPdfUrl(),logMsg , e );
-//            return null;
-//        }
-//    }
-//
-//    public List<MediaResponse> requestMediaServiceForSignedUrl(List <MediaItem> mediaItems) {
-//        return requestMediaServiceForSignedUrl(mediaItems, UserContextProvider.getContext());
-//    }
-//
-//    public List<MediaResponse> requestMediaServiceForSignedUrl(List <MediaItem> mediaItems, UserContext context) {
-//        List<String> mediaIds = TCollectionUtils.transformToList ( mediaItems,MediaItem::getId );
-//        HttpEntity<List<String>> httpEntity = new HttpEntity <> ( mediaIds, buildHeaders () );
-//        try{
-//            ResponseEntity<MediaResponseEntity> responseEntity = restTemplate
-//                .exchange ( fetchMediaUrl(), HttpMethod.POST, httpEntity, MediaResponseEntity.class );
-//            if(responseEntity.getStatusCodeValue () == 200 && responseEntity.getBody ()!= null ){
-//                List <MediaResponse> medias = responseEntity.getBody ().getData ();
-//                log.debug ("{} : media request successful for mediaId: {}",TConstants.PDF_PRINT_SERVICE, mediaIds);
-//                return medias;
-//            }
-//        } catch (Exception e){
-//            log.error("{} : media service request failed for mediaIds:{} ",TConstants.PDF_PRINT_SERVICE, mediaIds, e);
-//            throw new TBaseRuntimeException(AccountingError.mediaServiceRequestFailed);
-//        }
-//        return null;
-//    }
-//
-//    public List<MediaResponse> requestMediaServiceForBulkSignedUrl(List <BulkMediaItem> mediaItems) {
-//        List<String> mediaIds = TCollectionUtils.transformToList ( mediaItems,BulkMediaItem::getMediaId );
-//        if(TCollectionUtils.isEmpty(mediaIds)) {
-//            return Lists.newArrayList();
-//        }
-//        List<List<String>> partitionedMediaId = Lists.partition(mediaIds, BATCH_SIZE_FOR_FETCHING_MEDIA_URL);
-//        List<MediaResponse> combinedResponse = Lists.newArrayList();
-//        for(List<String> mediaIdsList : partitionedMediaId) {
-//            HttpEntity<List<String>> httpEntity = new HttpEntity <> ( mediaIdsList, buildHeaders () );
-//            try{
-//                log.info ("{} : presigned URLs requested: {}",TConstants.PDF_PRINT_SERVICE, mediaIdsList);
-//                ResponseEntity<MediaResponseEntity> responseEntity = restTemplate
-//                        .exchange ( fetchMediaUrl(), HttpMethod.POST, httpEntity, MediaResponseEntity.class );
-//                if(responseEntity.getStatusCodeValue () == 200 && responseEntity.getBody ()!= null ){
-//                    List <MediaResponse> medias = responseEntity.getBody ().getData ();
-//                    log.debug ( "{} : media request successful for mediaId: {}",TConstants.PDF_PRINT_SERVICE, mediaIdsList);
-//                    combinedResponse.addAll(TCollectionUtils.nullSafeCollection(medias));
-//                }
-//            } catch (Exception e){
-//                log.error("{} : media service request failed for mediaIds : {}",TConstants.PDF_PRINT_SERVICE, mediaIdsList);
-//                throw new RestClientException ("media service request failed",e);
-//            }
-//        }
-//        return combinedResponse;
-//    }
-//
-//
+package com.tekion.accounting.fs.pdfPrinting;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.tekion.accounting.fs.TConstants;
+import com.tekion.accounting.fs.exceptions.FSError;
+import com.tekion.accounting.fs.pdfPrinting.dto.*;
+import com.tekion.accounting.fs.utils.JsonUtil;
+import com.tekion.accounting.fs.utils.UserContextUtils;
+import com.tekion.admin.beans.Department;
+import com.tekion.admin.beans.beansdto.printerDto.Options;
+import com.tekion.admin.beans.printer.ModuleMapping;
+import com.tekion.admin.beans.printer.PrinterMapping;
+import com.tekion.clients.preference.client.PreferenceClient;
+import com.tekion.clients.preference.client.TekionResponse;
+import com.tekion.core.beans.TResponse;
+import com.tekion.core.exceptions.TBaseRuntimeException;
+import com.tekion.core.serverconfig.beans.ServerType;
+import com.tekion.core.serverconfig.service.ServerConfigServiceImpl;
+import com.tekion.core.utils.*;
+import com.tekion.cs.beans.ServerConfigFlat;
+import com.tekion.printer.beans.dto.BulkPrinterDetailsResponseDTO;
+import com.tekion.printer.beans.dto.PrintRequestV2;
+import com.tekion.printer.beans.dto.bulk.BulkPrintResponse;
+import com.tekion.printer.beans.dto.mappings.PrinterMappingRequestDTO;
+import com.tekion.printer.beans.enums.FormModule;
+import com.tekion.printer.beans.tcp.PrintDetails;
+import com.tekion.printer.beans.tcp.TCPPrintResponse;
+import com.tekion.printerclient.PrinterClient;
+import com.tekion.printerclientv2.PrinterClientV2;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.tekion.core.utils.TGlobalConstants.NO_DEALER_ID;
+import static com.tekion.core.utils.TGlobalConstants.NO_TENANT_ID;
+import static com.tekion.tekionconstant.permission.Department.ACCOUNTING;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class PDFPrintService {
+    private final RestTemplate restTemplate;
+    private final PreferenceClient preferenceClient;
+    private final PrinterClient printerClient;
+    //private final APSetupService apSetupService;
+    private final PrinterClientV2 printerClientV2;
+
+    private final int BATCH_SIZE_FOR_FETCHING_MEDIA_URL = 500;
+    private final int INVALID_PAGE_START = -1;
+    private final int INVALID_PAGE_END = -1;
+    private final int DEFAULT_CHECK_PAGE_NO = 1;
+    private final int NO_OF_PERFORATED_PAGES = 1;
+    private final String PAGE_RANGE_PRINT = "page_range_print";
+    private final String DEFAULT_PAPER_SIZE_LETTER = "Letter";
+    private final String AR_STMT_PRINT_RESPONSE_LOG_LINE = "AR Statement Print";
+
+    //todo retry count =3 and check what is wrong with content type
+    public boolean exportPdf(PdfRequest pdfRequest, UserContext context){
+        String logMsg=  " callbackUrl: " + pdfRequest.getCallbackUrl () + " targetUrl : " +pdfRequest.getTargetUrl ();
+        try{
+            HttpEntity<PdfRequest> httpEntity = new HttpEntity <> ( pdfRequest, buildHeaders() );
+            log.info("{} : requestId : {} , pdf request {}", TConstants.PDF_PRINT_SERVICE, pdfRequest.getId(), pdfRequest);
+            ResponseEntity<ExportPdfResponseEntity> responseEntity = restTemplate
+                    .exchange ( exportPdfUrl(), HttpMethod.POST, httpEntity, ExportPdfResponseEntity.class );
+            log.info("{} : requestId : {} , pdf response {}",TConstants.PDF_PRINT_SERVICE, pdfRequest.getId(), responseEntity);
+            return responseEntity.getStatusCodeValue () == 200;
+        } catch (Exception e){
+            log.error ("{} : unable to export pdf for url: {} {} {}" ,TConstants.PDF_PRINT_SERVICE, exportPdfUrl(), logMsg ,e );
+            return false;
+        }
+    }
+
+    public boolean exportBulkPdf(BulkPdfRequest pdfRequest, UserContext context){
+        String logMsg=  " requestId : " +pdfRequest.getId () + " callbackUrl: " + pdfRequest.getCallbackUrl ();
+        try{
+            HttpHeaders headers = buildHeaders();
+            headers.set(TGlobalConstants.TENANT_NAME_KEY, UserContextUtils.getTenantId(context.getDseUserContext ().getTenantName ()));
+            String exportUrl = exportBulkPdfUrl();
+
+            HttpEntity<BulkPdfRequest> httpEntity = new HttpEntity <> ( pdfRequest, headers );
+            log.info("{} : pdf request  {} export url {}",TConstants.PDF_PRINT_SERVICE,pdfRequest, exportUrl);
+
+            ResponseEntity<ExportPdfResponseEntity> responseEntity = restTemplate
+                    .exchange ( exportUrl, HttpMethod.POST, httpEntity, ExportPdfResponseEntity.class );
+
+            log.info("{} : pdf response {}",TConstants.PDF_PRINT_SERVICE, responseEntity);
+            log.info ( "{} : export pdf request successful , {}",TConstants.PDF_PRINT_SERVICE, logMsg );
+            return responseEntity.getStatusCodeValue () == 200;
+        } catch (HttpStatusCodeException e){
+            log.error ( "{} : unable to export pdf for url: {}, {}, {}" ,TConstants.PDF_PRINT_SERVICE, exportBulkPdfUrl(),logMsg , e );
+            return false;
+        } catch (Exception e){
+            log.error ( "{} : unable to export pdf for url: {}, {}, {}" ,TConstants.PDF_PRINT_SERVICE , exportBulkPdfUrl(),logMsg , e );
+            return false;
+        }
+    }
+
+
+    public Object exportBulkPdfWithResponse(BulkPdfRequest pdfRequest, UserContext context){
+        String logMsg=  " requestId : " +pdfRequest.getId () + " callbackUrl: " + pdfRequest.getCallbackUrl ();
+        try{
+            HttpHeaders headers = buildHeaders();
+            String exportUrl = exportBulkPdfUrl();
+
+            HttpEntity<BulkPdfRequest> httpEntity = new HttpEntity <> ( pdfRequest, headers );
+            log.info("{} : pdf request  {} export url {}",TConstants.PDF_PRINT_SERVICE,pdfRequest, exportUrl);
+
+            ResponseEntity<Object> responseEntity = restTemplate
+                    .exchange ( exportUrl, HttpMethod.POST, httpEntity, Object.class );
+
+            log.info("{} : pdf response {}",TConstants.PDF_PRINT_SERVICE, responseEntity);
+            return responseEntity.getBody();
+        } catch (Exception e){
+            log.error ( "{} : unable to export pdf for url: {}, {}, {}" ,TConstants.PDF_PRINT_SERVICE , exportBulkPdfUrl(),logMsg , e );
+            return null;
+        }
+    }
+
+    public List<MediaResponse> requestMediaServiceForSignedUrl(List <MediaItem> mediaItems) {
+        return requestMediaServiceForSignedUrl(mediaItems, UserContextProvider.getContext());
+    }
+
+    public List<MediaResponse> requestMediaServiceForSignedUrl(List <MediaItem> mediaItems, UserContext context) {
+        List<String> mediaIds = TCollectionUtils.transformToList ( mediaItems,MediaItem::getId );
+        HttpEntity<List<String>> httpEntity = new HttpEntity <> ( mediaIds, buildHeaders () );
+        try{
+            ResponseEntity<MediaResponseEntity> responseEntity = restTemplate
+                .exchange ( fetchMediaUrl(), HttpMethod.POST, httpEntity, MediaResponseEntity.class );
+            if(responseEntity.getStatusCodeValue () == 200 && responseEntity.getBody ()!= null ){
+                List <MediaResponse> medias = responseEntity.getBody ().getData ();
+                log.debug ("{} : media request successful for mediaId: {}",TConstants.PDF_PRINT_SERVICE, mediaIds);
+                return medias;
+            }
+        } catch (Exception e){
+            log.error("{} : media service request failed for mediaIds:{} ",TConstants.PDF_PRINT_SERVICE, mediaIds, e);
+            throw new TBaseRuntimeException(FSError.mediaServiceRequestFailed);
+        }
+        return null;
+    }
+
+    public List<MediaResponse> requestMediaServiceForBulkSignedUrl(List <BulkMediaItem> mediaItems) {
+        List<String> mediaIds = TCollectionUtils.transformToList ( mediaItems,BulkMediaItem::getMediaId );
+        if(TCollectionUtils.isEmpty(mediaIds)) {
+            return Lists.newArrayList();
+        }
+        List<List<String>> partitionedMediaId = Lists.partition(mediaIds, BATCH_SIZE_FOR_FETCHING_MEDIA_URL);
+        List<MediaResponse> combinedResponse = Lists.newArrayList();
+        for(List<String> mediaIdsList : partitionedMediaId) {
+            HttpEntity<List<String>> httpEntity = new HttpEntity <> ( mediaIdsList, buildHeaders () );
+            try{
+                log.info ("{} : presigned URLs requested: {}",TConstants.PDF_PRINT_SERVICE, mediaIdsList);
+                ResponseEntity<MediaResponseEntity> responseEntity = restTemplate
+                        .exchange ( fetchMediaUrl(), HttpMethod.POST, httpEntity, MediaResponseEntity.class );
+                if(responseEntity.getStatusCodeValue () == 200 && responseEntity.getBody ()!= null ){
+                    List <MediaResponse> medias = responseEntity.getBody ().getData ();
+                    log.debug ( "{} : media request successful for mediaId: {}",TConstants.PDF_PRINT_SERVICE, mediaIdsList);
+                    combinedResponse.addAll(TCollectionUtils.nullSafeCollection(medias));
+                }
+            } catch (Exception e){
+                log.error("{} : media service request failed for mediaIds : {}",TConstants.PDF_PRINT_SERVICE, mediaIdsList);
+                throw new RestClientException ("media service request failed",e);
+            }
+        }
+        return combinedResponse;
+    }
+
+
 //    public boolean printPdf(Department department, FormModule module, String url, UserContext context){
 //        return printPdfWithPageRange(department, module, url, context, -1,TConstants.DEFAULT_COPY_NUM);
 //    }
-//
+
 //    public boolean printPdfWithPageRange(Department department, FormModule module, String url, UserContext context, int pageCount, int noOfCopies){
 //        log.info("{} : formModule:{} {} 1 pageCount:{} NoOfCopies: {} {}",TConstants.PDF_PRINT_SERVICE, module.name(), PAGE_RANGE_PRINT, pageCount,noOfCopies, UserContextProvider.getDSETenantName());
 //        try{
@@ -279,7 +292,7 @@
 //            return false;
 //        }
 //    }
-//
+
 //    public boolean printPdfSingle(Department department, FormModule module, String url, UserContext context){
 //        try{
 //            boolean printed;
@@ -321,7 +334,7 @@
 //            return false;
 //        }
 //    }
-//
+
 //    public boolean printArStatementV2(com.tekion.tekionconstant.permission.Department department, Map<String, Integer> urlsToPageNumberMapping, UserContext context, int noOfCopies) {
 //        Set<BulkPrinterDetailsResponseDTO> printerMappings = getPrinterMappingInfo(context, Sets.newHashSet(AR_CASH_RECEIPT, CASH_RECEIPT));
 //        boolean differentPrinterMapping = checkForMultiplePrinterMapping(printerMappings);
@@ -338,7 +351,7 @@
 //        log.info("Ar statement printing status {}", isPrintSuccess);
 //        return isPrintSuccess;
 //    }
-//
+
 //    private boolean printArStatementOnSinglePrinter(com.tekion.tekionconstant.permission.Department department, FormModule formModule, Map<String, Integer> urlsToPageNumberMapping, UserContext context, int i, int noOfCopies) {
 //        log.info("Ar statement printing with same printer mappings");
 //        try {
@@ -390,18 +403,18 @@
 //            return false;
 //        }
 //    }
-//
-//    private boolean getPrintStatusFromBulkPrintResponse(Map<String, BulkPrintResponse> printResponse, String logMessage) {
-//        log.info("{} PrintResponse from printerClient :- {}", logMessage, JsonUtil.toJson(printResponse));
-//        for(String printResKey : printResponse.keySet()) {
-//            if(Objects.nonNull(printResponse.get(printResKey)) &&
-//                    TCollectionUtils.isNotEmpty(printResponse.get(printResKey).getFailedJobs())) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//
+
+    private boolean getPrintStatusFromBulkPrintResponse(Map<String, BulkPrintResponse> printResponse, String logMessage) {
+        log.info("{} PrintResponse from printerClient :- {}", logMessage, JsonUtil.toJson(printResponse));
+        for(String printResKey : printResponse.keySet()) {
+            if(Objects.nonNull(printResponse.get(printResKey)) &&
+                    TCollectionUtils.isNotEmpty(printResponse.get(printResKey).getFailedJobs())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 //    //return true if mapped to different printer
 //    public boolean checkForMultiplePrinterMapping(Set<BulkPrinterDetailsResponseDTO> printerDetailsResponse) {
 //        if(TCollectionUtils.isEmpty(printerDetailsResponse)) {
@@ -433,29 +446,29 @@
 //        }
 //        return true;
 //    }
-//
-//    /**
-//     * Returns printer mapping for given formModules and department for that user
-//     * If no mapping found for that user it will return the printer mapped under default for given formModules and department
-//     * @param context
-//     * @param formModules
-//     * @return
-//     */
-//    private Set<BulkPrinterDetailsResponseDTO> getPrinterMappingInfo(UserContext context, Set<FormModule> formModules) {
-//        Set<PrinterMappingRequestDTO> printerInfoRequest = Sets.newHashSet();
-//        for(FormModule formModule : formModules) {
-//            PrinterMappingRequestDTO printerMappingRequestDto = new PrinterMappingRequestDTO(ACCOUNTING, formModule, context.getUserId());
-//            printerInfoRequest.add(printerMappingRequestDto);
-//        }
-//        log.info("ACCOUNTING: PrinterMapping info Request payload {}", JsonUtil.toJson(printerInfoRequest));
-//        TResponse<Set<BulkPrinterDetailsResponseDTO>> printerDetailsResponse = printerClientV2.fetchPrinterDetailsBulk(TRequestUtils.userCallHeaderMap(), printerInfoRequest);
-//        log.info("ACCOUNTING: PrinterMapping info Response {}", JsonUtil.toJson(printerDetailsResponse));
-//        if(TCollectionUtils.isEmpty(printerDetailsResponse.getData())) {
-//            throw new TBaseRuntimeException("No printerFound!");
-//        }
-//        return printerDetailsResponse.getData();
-//    }
-//
+
+    /**
+     * Returns printer mapping for given formModules and department for that user
+     * If no mapping found for that user it will return the printer mapped under default for given formModules and department
+     * @param context
+     * @param formModules
+     * @return
+     */
+    private Set<BulkPrinterDetailsResponseDTO> getPrinterMappingInfo(UserContext context, Set<FormModule> formModules) {
+        Set<PrinterMappingRequestDTO> printerInfoRequest = Sets.newHashSet();
+        for(FormModule formModule : formModules) {
+            PrinterMappingRequestDTO printerMappingRequestDto = new PrinterMappingRequestDTO(ACCOUNTING, formModule, context.getUserId());
+            printerInfoRequest.add(printerMappingRequestDto);
+        }
+        log.info("ACCOUNTING: PrinterMapping info Request payload {}", JsonUtil.toJson(printerInfoRequest));
+        TResponse<Set<BulkPrinterDetailsResponseDTO>> printerDetailsResponse = printerClientV2.fetchPrinterDetailsBulk(TRequestUtils.userCallHeaderMap(), printerInfoRequest);
+        log.info("ACCOUNTING: PrinterMapping info Response {}", JsonUtil.toJson(printerDetailsResponse));
+        if(TCollectionUtils.isEmpty(printerDetailsResponse.getData())) {
+            throw new TBaseRuntimeException("No printerFound!");
+        }
+        return printerDetailsResponse.getData();
+    }
+
 //    public boolean printArStatementOnDiffPrinter(com.tekion.tekionconstant.permission.Department department, Map<String, Integer> urlsToPageNumberMapping, UserContext context, int noOfCopies) {
 //        log.info("Ar statement printing with different printer mappings");
 //        try {
@@ -545,162 +558,162 @@
 //            return false;
 //        }
 //    }
-//
-//    public boolean printBulkPdf(Department department, FormModule module, List<String> urls, UserContext context, int noOfCopies) {
-//        try {
-//            boolean printed;
-//            log.info("{} : formModule: {} NoOfCopies: {}",TConstants.PDF_PRINT_SERVICE, module, noOfCopies);
-//
-//            List<PrintDetails> printDetailsList = new ArrayList<>();
-//            for (String url : urls) {
-//                PrintDetails printDetail = PrintDetails.builder()
-//                        .copies(noOfCopies)
-//                        .url(url)
-//                        .pageStart(INVALID_PAGE_START)
-//                        .pageEnd(INVALID_PAGE_END)
-//                        .build();
-//                printDetailsList.add(printDetail);
-//            }
-//
-//            PrintRequestV2 printRequest = PrintRequestV2.builder()
-//                    .department(com.tekion.tekionconstant.permission.Department.ACCOUNTING)
-//                    .formModule(com.tekion.printer.beans.enums.FormModule.fromValue(module.toString()))
-//                    .userId(UserContextProvider.getCurrentUserId())
-//                    .options(getOptions(module))
-//                    .printDetails(printDetailsList)
-//                    .build();
-//
-//            log.info("{} : print request : {}",TConstants.PDF_PRINT_SERVICE, JsonUtil.toJson(printRequest));
-//
-//            CompletableFuture<TResponse<Map<String, TCPPrintResponse>>> printResponse = printerClient.printV3(TRequestUtils.userCallHeaderMap(), printRequest);
-//
-//            try {
-//                printed = printResponse.get().getStatus().equalsIgnoreCase("success");
-//            } catch (Exception e) {
-//                log.error("{} : print response failed",TConstants.PDF_PRINT_SERVICE, e);
-//                printed = false;
-//            }
-//
-//            if (printed) {
-//                log.info("{} BulkPrint request to printerClient successful", TConstants.PDF_PRINT_SERVICE);
-//                return true;
-//            } else {
-//                log.error("{} : print request to printer client failed",TConstants.PDF_PRINT_SERVICE);
-//                return false;
-//            }
-//        } catch (Exception e){
-//            log.error ( "{} : print failed for BulkPrint for urls {}, department: {}, module: {}, ex : ",TConstants.PDF_PRINT_SERVICE, urls, department.name (),module.name ()  ,e);
-//            return false;
-//        }
-//    }
-//
-//    public boolean printBulkPdfWithPageRange(FormModule formModule, List<BulkPrintPdfItem> printItems, UserContext context){
-//
-//        try {
-//            boolean printed;
-//
-//            log.info("printBulkPdf: {} BulkPrintPdfItems: {} formModule: {} PrintItems: {}",
-//                    TConstants.PDF_PRINT_SERVICE, printItems, formModule, JsonUtil.toJson(printItems));
-//
-//            List<PrintDetails> printDetailsList = new ArrayList<>();
-//            for (BulkPrintPdfItem bulkPrintPdfItem : printItems) {
-//                PrintDetails printDetail = PrintDetails.builder()
-//                        .copies(bulkPrintPdfItem.getCopies())
-//                        .url(bulkPrintPdfItem.getUrl())
-//                        .pageStart(bulkPrintPdfItem.getPageStart().intValue())
-//                        .pageEnd(bulkPrintPdfItem.getPageEnd().intValue())
-//                        .duplex(bulkPrintPdfItem.isDuplex())
-//                        .build();
-//                printDetailsList.add(printDetail);
-//            }
-//
-//            PrintRequestV2 printRequest = PrintRequestV2.builder()
-//                    .department(com.tekion.tekionconstant.permission.Department.ACCOUNTING)
-//                    .formModule(com.tekion.printer.beans.enums.FormModule.fromValue(formModule.toString()))
-//                    .userId(UserContextProvider.getCurrentUserId())
-//                    .options(getOptions(formModule))
-//                    .printDetails(printDetailsList)
-//                    .build();
-//
-//            log.info("{} : print request : {}",TConstants.PDF_PRINT_SERVICE, JsonUtil.toJson(printRequest));
-//
-//            CompletableFuture<TResponse<Map<String, TCPPrintResponse>>> printResponse = printerClient.printV3(TRequestUtils.userCallHeaderMap(), printRequest);
-//
-//            try {
-//                printed = printResponse.get().getStatus().equalsIgnoreCase("success");
-//            } catch (Exception e) {
-//                log.error("{} : print response failed",TConstants.PDF_PRINT_SERVICE, e);
-//                printed = false;
-//            }
-//
-//            if (printed) {
-//                log.info("{} BulkPrint response from printerClient: {}", TConstants.PDF_PRINT_SERVICE, printResponse.get().getStatus());
-//                return true;
-//            } else {
-//                log.error("{} : print request to printer client failed",TConstants.PDF_PRINT_SERVICE);
-//                return false;
-//            }
-//        } catch (Exception e){
-//            log.error ( "{} : print failed for BulkPrint department: {}, module: {}, ex : ",TConstants.PDF_PRINT_SERVICE, Department.ACCOUNTING.name (),com.tekion.printer.beans.enums.FormModule.fromValue(formModule.toString()).name()  ,e);
-//            return false;
-//        }
-//    }
-//
-//    public String getPrinterIdByDepartment(Department department, FormModule moduleName) {
-//        try{
-//            TekionResponse<List <PrinterMapping>> mappingsByDepartment = preferenceClient.getMappingsByDepartment ( department );
-//            List <PrinterMapping> printerMappings = mappingsByDepartment.getData ( );
-//            LinkedHashSet <ModuleMapping> moduleMappings = printerMappings.get ( 0 ).getModuleMappings ( );
-//            String printerId = printerMappings.get ( 0 ).getDefaultPrinter ().getMacId ();
-//            if(moduleName!=null){
-//                for ( ModuleMapping moduleMapping:moduleMappings ) {
-//                    if(moduleMapping.getModuleName ().equals (moduleName  )){
-//                        printerId= moduleMapping.getDefaultPrinter ().getMacId ();
-//                        break;
-//                    }
-//                }
-//            }
-//            return transformIdToCorrectFormat(printerId);
-//        } catch(Exception e){
-//            log.error ( "{} : unable to get printer details for department: {}",TConstants.PDF_PRINT_SERVICE, Department.ACCOUNTING.name (),e );
-//            return null;
-//        }
-//    }
-//
-//    private String transformIdToCorrectFormat(String printerId) {
-//        Pattern p = Pattern.compile("(.{" + 2 + "})", Pattern.DOTALL);
-//        Matcher m = p.matcher(printerId);
-//        String reqPrinterId = m.replaceAll ( "$1" + ":" );
-//        if(reqPrinterId.substring(reqPrinterId.length() - 1).equals ( ":" )){
-//            return reqPrinterId.substring(0, reqPrinterId.length() - 1);
-//        } else {
-//            return reqPrinterId;
-//        }
-//    }
-//
-//    private Options generateOptions(FormModule module) {
-//        return generateOptions(module, -1,  INVALID_PAGE_END,TConstants.DEFAULT_COPY_NUM);
-//    }
-//
-//
-//    private Options generateOptions(FormModule module, int pageStart, int pageEnd, int noOfCopies) {
-//        Options options = new Options();
-//        options.setCopies(noOfCopies);
-//        options.setPageStart(pageStart);
-//        if(pageStart != -1 ) options.setPageEnd(pageEnd);
-//
-//        switch (module){
-//            case CHECK_PRINT:
-//                options.setPaperSize ( "Letter" );
-//                break;
-//
-//            default:
-//                options.setPaperSize ( "Letter" );
-//                break;
-//        }
-//        return options;
-//    }
-//
+
+    public boolean printBulkPdf(Department department, FormModule module, List<String> urls, UserContext context, int noOfCopies) {
+        try {
+            boolean printed;
+            log.info("{} : formModule: {} NoOfCopies: {}",TConstants.PDF_PRINT_SERVICE, module, noOfCopies);
+
+            List<PrintDetails> printDetailsList = new ArrayList<>();
+            for (String url : urls) {
+                PrintDetails printDetail = PrintDetails.builder()
+                        .copies(noOfCopies)
+                        .url(url)
+                        .pageStart(INVALID_PAGE_START)
+                        .pageEnd(INVALID_PAGE_END)
+                        .build();
+                printDetailsList.add(printDetail);
+            }
+
+            PrintRequestV2 printRequest = PrintRequestV2.builder()
+                    .department(com.tekion.tekionconstant.permission.Department.ACCOUNTING)
+                    .formModule(com.tekion.printer.beans.enums.FormModule.fromValue(module.toString()))
+                    .userId(UserContextProvider.getCurrentUserId())
+                    //.options(getOptions(module))
+                    .printDetails(printDetailsList)
+                    .build();
+
+            log.info("{} : print request : {}",TConstants.PDF_PRINT_SERVICE, JsonUtil.toJson(printRequest));
+
+            CompletableFuture<TResponse<Map<String, TCPPrintResponse>>> printResponse = printerClient.printV3(TRequestUtils.userCallHeaderMap(), printRequest);
+
+            try {
+                printed = printResponse.get().getStatus().equalsIgnoreCase("success");
+            } catch (Exception e) {
+                log.error("{} : print response failed",TConstants.PDF_PRINT_SERVICE, e);
+                printed = false;
+            }
+
+            if (printed) {
+                log.info("{} BulkPrint request to printerClient successful", TConstants.PDF_PRINT_SERVICE);
+                return true;
+            } else {
+                log.error("{} : print request to printer client failed",TConstants.PDF_PRINT_SERVICE);
+                return false;
+            }
+        } catch (Exception e){
+            log.error ( "{} : print failed for BulkPrint for urls {}, department: {}, module: {}, ex : ",TConstants.PDF_PRINT_SERVICE, urls, department.name (),module.name ()  ,e);
+            return false;
+        }
+    }
+
+    public boolean printBulkPdfWithPageRange(FormModule formModule, List<BulkPrintPdfItem> printItems, UserContext context){
+
+        try {
+            boolean printed;
+
+            log.info("printBulkPdf: {} BulkPrintPdfItems: {} formModule: {} PrintItems: {}",
+                    TConstants.PDF_PRINT_SERVICE, printItems, formModule, JsonUtil.toJson(printItems));
+
+            List<PrintDetails> printDetailsList = new ArrayList<>();
+            for (BulkPrintPdfItem bulkPrintPdfItem : printItems) {
+                PrintDetails printDetail = PrintDetails.builder()
+                        .copies(bulkPrintPdfItem.getCopies())
+                        .url(bulkPrintPdfItem.getUrl())
+                        .pageStart(bulkPrintPdfItem.getPageStart().intValue())
+                        .pageEnd(bulkPrintPdfItem.getPageEnd().intValue())
+                        .duplex(bulkPrintPdfItem.isDuplex())
+                        .build();
+                printDetailsList.add(printDetail);
+            }
+
+            PrintRequestV2 printRequest = PrintRequestV2.builder()
+                    .department(com.tekion.tekionconstant.permission.Department.ACCOUNTING)
+                    .formModule(com.tekion.printer.beans.enums.FormModule.fromValue(formModule.toString()))
+                    .userId(UserContextProvider.getCurrentUserId())
+                    //.options(getOptions(formModule))
+                    .printDetails(printDetailsList)
+                    .build();
+
+            log.info("{} : print request : {}",TConstants.PDF_PRINT_SERVICE, JsonUtil.toJson(printRequest));
+
+            CompletableFuture<TResponse<Map<String, TCPPrintResponse>>> printResponse = printerClient.printV3(TRequestUtils.userCallHeaderMap(), printRequest);
+
+            try {
+                printed = printResponse.get().getStatus().equalsIgnoreCase("success");
+            } catch (Exception e) {
+                log.error("{} : print response failed",TConstants.PDF_PRINT_SERVICE, e);
+                printed = false;
+            }
+
+            if (printed) {
+                log.info("{} BulkPrint response from printerClient: {}", TConstants.PDF_PRINT_SERVICE, printResponse.get().getStatus());
+                return true;
+            } else {
+                log.error("{} : print request to printer client failed",TConstants.PDF_PRINT_SERVICE);
+                return false;
+            }
+        } catch (Exception e){
+            log.error ( "{} : print failed for BulkPrint department: {}, module: {}, ex : ",TConstants.PDF_PRINT_SERVICE, Department.ACCOUNTING.name (),com.tekion.printer.beans.enums.FormModule.fromValue(formModule.toString()).name()  ,e);
+            return false;
+        }
+    }
+
+    public String getPrinterIdByDepartment(Department department, FormModule moduleName) {
+        try{
+            TekionResponse<List <PrinterMapping>> mappingsByDepartment = preferenceClient.getMappingsByDepartment ( department );
+            List <PrinterMapping> printerMappings = mappingsByDepartment.getData ( );
+            LinkedHashSet <ModuleMapping> moduleMappings = printerMappings.get ( 0 ).getModuleMappings ( );
+            String printerId = printerMappings.get ( 0 ).getDefaultPrinter ().getMacId ();
+            if(moduleName!=null){
+                for ( ModuleMapping moduleMapping:moduleMappings ) {
+                    if(moduleMapping.getModuleName ().equals (moduleName  )){
+                        printerId= moduleMapping.getDefaultPrinter ().getMacId ();
+                        break;
+                    }
+                }
+            }
+            return transformIdToCorrectFormat(printerId);
+        } catch(Exception e){
+            log.error ( "{} : unable to get printer details for department: {}",TConstants.PDF_PRINT_SERVICE, Department.ACCOUNTING.name (),e );
+            return null;
+        }
+    }
+
+    private String transformIdToCorrectFormat(String printerId) {
+        Pattern p = Pattern.compile("(.{" + 2 + "})", Pattern.DOTALL);
+        Matcher m = p.matcher(printerId);
+        String reqPrinterId = m.replaceAll ( "$1" + ":" );
+        if(reqPrinterId.substring(reqPrinterId.length() - 1).equals ( ":" )){
+            return reqPrinterId.substring(0, reqPrinterId.length() - 1);
+        } else {
+            return reqPrinterId;
+        }
+    }
+
+    private Options generateOptions(FormModule module) {
+        return generateOptions(module, -1,  INVALID_PAGE_END,TConstants.DEFAULT_COPY_NUM);
+    }
+
+
+    private Options generateOptions(FormModule module, int pageStart, int pageEnd, int noOfCopies) {
+        Options options = new Options();
+        options.setCopies(noOfCopies);
+        options.setPageStart(pageStart);
+        if(pageStart != -1 ) options.setPageEnd(pageEnd);
+
+        switch (module){
+            case CHECK_PRINT:
+                options.setPaperSize ( "Letter" );
+                break;
+
+            default:
+                options.setPaperSize ( "Letter" );
+                break;
+        }
+        return options;
+    }
+
 //    private PrinterOptions getOptions(FormModule module) {
 //        PrinterOptions options = new PrinterOptions();
 //        APSetup apSetup = apSetupService.getApSetup();
@@ -713,7 +726,7 @@
 //        options.setPaperSize(DEFAULT_PAPER_SIZE_LETTER);
 //        return options;
 //    }
-//
+
 //    private PrinterOptions getOptionsForFormGenerationModule(FormModule module) {
 //        PrinterOptions options = new PrinterOptions();
 //        APSetup apSetup = apSetupService.getApSetup();
@@ -726,48 +739,54 @@
 //        options.setPaperSize(DEFAULT_PAPER_SIZE_LETTER);
 //        return options;
 //    }
-//
-//
-//    private String exportPdfUrl() {
-//        String host =  getBaseUrlForPdfExport();
-//        return host + "/exports/pdf";
-//    }
-//
-//    private String exportBulkPdfUrl() {
-//        String host = getBaseUrlForPdfExport();
-//        return host + TConstants.PDF_EXPORT_URL;
-//    }
-//
-//    private String getBaseUrlForPdfExport(){
-//
-//        String NEW_PDF_EXPORT_BASE_PATH_ENV_NAME = "export_host";
-//
-//        String host = System.getenv(NEW_PDF_EXPORT_BASE_PATH_ENV_NAME);
-//        if(host == null  || host.isEmpty()){
-//            host = System.getenv("config_host");
-//        }
-//        return host;
-//    }
-//
-//    private String exportPrintUrl() {
-//        ServerConfigFlat tekion_cloud_print = new ServerConfigServiceImpl ( ).findServerConfig ( ServerType.SERVICE.name ( ),
-//                "TEKION_CLOUD_PRINT", NO_TENANT_ID, NO_DEALER_ID );
-//        return tekion_cloud_print.getServiceHostURL ();
-//    }
-//
-//
-//    private String fetchMediaUrl() {
-//        ServerConfigFlat serverConfig = new ServerConfigServiceImpl ( ).findServerConfig ( "SERVICE", "DMS",
-//                UserContextProvider.getDSETenantName ( ), NO_DEALER_ID );
-//        String host =  serverConfig.getServiceHostURL ();
-//        host += "/media/r/u/presignedurls";
-//        return host;
-//    }
-//
-//    private String printBulkPdfUrl(){
-//        String BULK_PDF_PRINT_URL = "/pms/u/v3/print";
-//        String host = System.getenv("config_host");
-//
-//        return host + BULK_PDF_PRINT_URL;
-//    }
-//}
+
+
+    private String exportPdfUrl() {
+        String host =  getBaseUrlForPdfExport();
+        return host + "/exports/pdf";
+    }
+
+    private String exportBulkPdfUrl() {
+        String host = getBaseUrlForPdfExport();
+        return host + TConstants.PDF_EXPORT_URL;
+    }
+
+    private String getBaseUrlForPdfExport(){
+
+        String NEW_PDF_EXPORT_BASE_PATH_ENV_NAME = "export_host";
+
+        String host = System.getenv(NEW_PDF_EXPORT_BASE_PATH_ENV_NAME);
+        if(host == null  || host.isEmpty()){
+            host = System.getenv("config_host");
+        }
+        return host;
+    }
+
+    private String exportPrintUrl() {
+        ServerConfigFlat tekion_cloud_print = new ServerConfigServiceImpl ( ).findServerConfig ( ServerType.SERVICE.name ( ),
+                "TEKION_CLOUD_PRINT", NO_TENANT_ID, NO_DEALER_ID );
+        return tekion_cloud_print.getServiceHostURL ();
+    }
+
+
+    private String fetchMediaUrl() {
+        ServerConfigFlat serverConfig = new ServerConfigServiceImpl ( ).findServerConfig ( "SERVICE", "DMS",
+                UserContextProvider.getDSETenantName ( ), NO_DEALER_ID );
+        String host =  serverConfig.getServiceHostURL ();
+        host += "/media/r/u/presignedurls";
+        return host;
+    }
+
+    private String printBulkPdfUrl(){
+        String BULK_PDF_PRINT_URL = "/pms/u/v3/print";
+        String host = System.getenv("config_host");
+
+        return host + BULK_PDF_PRINT_URL;
+    }
+
+	public static HttpHeaders buildHeaders() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.addAll(TRequestUtils.userCallHttpHeaders());
+		return headers;
+	}
+}

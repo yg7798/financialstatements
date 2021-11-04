@@ -35,4 +35,5 @@ dependencies {
         exclude  group: 'com.tekion.sdk', module: 'configclient'
     }
     compile("com.tekion.sdk:slackclient:0.0.2-SNAPSHOT")
+    compile("com.tekion.sdk:printer-client-v2:0.0.4-SNAPSHOT")
 }

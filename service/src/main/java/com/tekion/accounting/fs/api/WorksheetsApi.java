@@ -7,7 +7,6 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.service.worksheet.HCWorksheetService;
 import com.tekion.accounting.fs.service.worksheet.MemoWorksheetService;
 import com.tekion.accounting.fs.service.worksheet.MemoWorksheetTemplateService;
-import com.tekion.accounting.fs.utils.DealerConfig;
 import com.tekion.accounting.fs.utils.UserContextUtils;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import com.tekion.core.validation.TValidator;
@@ -22,13 +21,12 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/memoworksheet")
+@RequestMapping("/memoWorksheet")
 public class WorksheetsApi {
 	private final TValidator validator;
 	private final MemoWorksheetService memoWorksheetService;
 	private final MemoWorksheetTemplateService memoWorksheetTemplateService;
 	private final HCWorksheetService hcWorksheetService;
-	private final DealerConfig dealerConfig;
 
 	@PostMapping("/headcount/templates")
 	public ResponseEntity saveHCTemplate(@RequestBody HCWorksheetTemplate hcWorksheetTemplate){
