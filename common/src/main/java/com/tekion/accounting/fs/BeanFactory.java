@@ -100,6 +100,11 @@ public class BeanFactory {
 		return restTemplate;
 	}
 
+	@Bean(value = "noFrillsRestTemplate")
+	public RestTemplate otherRestTemplate() {
+		return new RestTemplate();
+	}
+
 	@Bean
 	public DefaultUriBuilderFactory uriBuilderFactory() {
 		return new DefaultUriBuilderFactory(System.getenv("config_host"));

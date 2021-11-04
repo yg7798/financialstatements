@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.service.accountingService;
 
+import com.tekion.as.models.beans.AccountingSettings;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalance;
 import com.tekion.as.models.dto.MonthInfo;
@@ -20,5 +21,7 @@ public interface AccountingService {
 
 	TrialBalance getTrialBalanceReportForMonth(int year, int month, Long tillEpoch, Set<String> accountTypesToDiscard, Boolean excludeNoActivityAccounts, boolean m13Toggle,
 													  boolean addM13DetailsInDecBalances);
+
+	AccountingSettings getAccountingSettings();
 }
 

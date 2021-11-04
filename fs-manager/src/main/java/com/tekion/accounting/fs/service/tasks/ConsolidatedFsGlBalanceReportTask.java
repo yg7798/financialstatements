@@ -1,7 +1,6 @@
 package com.tekion.accounting.fs.service.tasks;
 
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
-import com.tekion.accounting.fs.utils.TimeUtils;
 import com.tekion.accounting.fs.utils.UserContextUtils;
 import com.tekion.as.models.beans.TrialBalance;
 import com.tekion.as.models.beans.TrialBalanceRow;
@@ -10,7 +9,6 @@ import com.tekion.core.utils.UserContextProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -60,16 +58,4 @@ public class ConsolidatedFsGlBalanceReportTask implements Callable<List<TrialBal
 		}
 		return new ArrayList<>(trialBalance.getAccountRows());
 	}
-
-	private long getPostAheadMonthInfoInEpoch(MonthInfo activeMonthInfo){
-		long postAheadInEpoch;
-		if(activeMonthInfo.getMonth() == Calendar.DECEMBER){
-			postAheadInEpoch = TimeUtils.getMonthsEndTime(activeMonthInfo.getYear()+1, 0);
-		} else{
-			postAheadInEpoch = TimeUtils.getMonthsEndTime(activeMonthInfo.getYear(), activeMonthInfo.getMonth()+1);
-		}
-		return postAheadInEpoch;
-	}
-
-
 }

@@ -21,6 +21,7 @@ dependencies {
     compile('com.tekion.sdk:servicecommons:3.0.31-SNAPSHOT')
     implementation('com.tekion.accounting:accounting-client:1.0.41-SNAPSHOT')
     compile('com.tekion.sdk:mongosupport:2.0.11-SNAPSHOT')
+    compile('com.tekion.sdk:storagesupport:2.0.10-SNAPSHOT')
     compile('com.tekion.sdk:globalsettingsclient:0.0.26-SNAPSHOT')
     compile('com.tekion.sdk:preferenceclient:1.0.149-SNAPSHOT')
     compile('com.tekion.sdk:accountingpreferenceclient:0.0.2-SNAPSHOT')
@@ -33,4 +34,5 @@ dependencies {
         exclude  group: 'com.tekion.sdk', module: 'sdkcore'
         exclude  group: 'com.tekion.sdk', module: 'configclient'
     }
+    compile("com.tekion.sdk:slackclient:0.0.2-SNAPSHOT")
 }
