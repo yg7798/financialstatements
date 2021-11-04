@@ -6,6 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.tekion.accounting.fs.utils.UserContextUtils;
 import com.tekion.admin.beans.dealersetting.DealerMaster;
 import com.tekion.admin.beans.property.DealerProperty;
+import com.tekion.cachesupport.lib.cache.RedisCacheFactory;
 import com.tekion.client.globalsettings.GlobalSettingsClient;
 import com.tekion.clients.dealerproperty.DealerPropertyService;
 import com.tekion.clients.preference.client.PreferenceClient;
@@ -14,17 +15,21 @@ import com.tekion.core.feign.ClientBuilder;
 import com.tekion.core.serverconfig.service.ServerConfigService;
 import com.tekion.core.service.internalauth.AbstractServiceClientFactory;
 import com.tekion.core.service.internalauth.TokenGenerator;
+import com.tekion.core.utils.TGlobalConstants;
 import com.tekion.core.utils.async.DynamicScalingExecutorService;
 import com.tekion.core.utils.async.ScalingThreadPoolExecutor;
 import com.tekion.core.utils.springasync.DelegatingUserContextExecutorServiceToAsyncTaskWrapper;
 import com.tekion.sdk.storage.s3.S3ObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -115,5 +120,11 @@ public class BeanFactory {
 	@Bean
 	public S3ObjectStorageService getS3ObjectStorageService(ServerConfigService serverConfigService) {
 		return new S3ObjectStorageService(serverConfigService);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public RedisTemplate<String, Object> getGlobalRedisTemplate(@Autowired RedisCacheFactory redisCacheFactory) {
+		return redisCacheFactory.getRedisTemplateForTenant(TGlobalConstants.NO_TENANT_ID);
 	}
 }
