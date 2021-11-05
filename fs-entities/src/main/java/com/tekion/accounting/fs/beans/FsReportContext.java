@@ -52,6 +52,8 @@ public class FsReportContext {
 		fsrContext.setFromYear(fromYear);
 		fsrContext.setRequestedMonth(requestedMonth);
 		fsrContext.setRequestedYear(requestedYear);
+		fsrContext.setAddM13BalInDecBalances(addM13BalInDecBalances);
+		fsrContext.setIncludeM13(includeM13);
 		fsrContext.setGlIdsRelatedToMonthlyPL(glIdsRelatedToMonthlyPL);
 		return fsrContext;
 	}
