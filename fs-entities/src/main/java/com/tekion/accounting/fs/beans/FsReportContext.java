@@ -48,6 +48,10 @@ public class FsReportContext {
 
 	public com.tekion.as.models.beans.fs.FsReportContext toAccountingFSRContext(){
 		com.tekion.as.models.beans.fs.FsReportContext fsrContext = new com.tekion.as.models.beans.fs.FsReportContext();
+		fsrContext.setFromMonth(fromMonth);
+		fsrContext.setFromYear(fromYear);
+		fsrContext.setRequestedMonth(requestedMonth);
+		fsrContext.setRequestedYear(requestedYear);
 		fsrContext.setGlIdsRelatedToMonthlyPL(glIdsRelatedToMonthlyPL);
 		return fsrContext;
 	}
