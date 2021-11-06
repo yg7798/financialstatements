@@ -35,6 +35,16 @@ public class AccountingServiceImpl implements AccountingService {
 	}
 
 	@Override
+	public TrialBalance getTrialBalanceReportForMonth(int year, int month, Long tillEpoch, Set<String> accountTypesToDiscard, Boolean excludeNoActivityAccounts, boolean m13Toggle, boolean addM13DetailsInDecBalances) {
+		return null;
+	}
+
+	@Override
+	public AccountingSettings getAccountingSettings() {
+		return null;
+	}
+
+	@Override
 	public MonthInfo getActiveMonthInfo() {
 		MonthInfo monthInfo = accountingClient.getActiveMonthInfo().getData();
 		monthInfo.setMonth(monthInfo.getMonth()-1);
@@ -44,15 +54,5 @@ public class AccountingServiceImpl implements AccountingService {
 	@Override
 	public MonthInfo getPostAheadMonthInfo() {
 		return accountingClient.getPostAheadMonthInfo().getData();
-	}
-
-	@Override
-	public TrialBalance getTrialBalanceReportForMonth(int year, int month, Long tillEpoch, Set<String> accountTypesToDiscard, Boolean excludeNoActivityAccounts, boolean m13Toggle, boolean addM13DetailsInDecBalances) {
-		return null;
-	}
-
-	@Override
-	public AccountingSettings getAccountingSettings() {
-		return null;
 	}
 }

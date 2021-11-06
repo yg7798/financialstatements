@@ -2568,9 +2568,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 	}
 
 	private Map<Integer, Map<String, Map<String, BigDecimal>>> getGlBalCntInfoForFS(com.tekion.as.models.beans.fs.FsReportContext fsrContext){
-		log.info("fsrContext {}", fsrContext);
-		Map<Integer, Map<String, Map<String, BigDecimal>>> x = accountingClient.getGlBalCntInfoForFS(fsrContext).getData();
-		log.info("getGlBalCntInfoForFS {}", x);
 		return accountingClient.getGlBalCntInfoForFS(fsrContext).getData();
 	}
 
