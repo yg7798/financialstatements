@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.beans;
 
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.as.models.beans.TrialBalanceRow;
+import com.tekion.as.models.beans.fs.FsReportContextDto;
 import com.tekion.as.models.dto.MonthInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,8 +47,8 @@ public class FsReportContext {
 	private String mmddyyyy;
 	private Set<String> glIdsRelatedToMonthlyPL;
 
-	public com.tekion.as.models.beans.fs.FsReportContext toAccountingFSRContext(){
-		com.tekion.as.models.beans.fs.FsReportContext fsrContext = new com.tekion.as.models.beans.fs.FsReportContext();
+	public FsReportContextDto toAccountingFSRContext(){
+		FsReportContextDto fsrContext = new FsReportContextDto();
 		fsrContext.setFromMonth(fromMonth);
 		fsrContext.setFromYear(fromYear);
 		fsrContext.setRequestedMonth(requestedMonth);

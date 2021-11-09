@@ -4,6 +4,9 @@ package com.tekion.accounting.fs;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.fasterxml.jackson.databind.node.TextNode;
 
+import com.tekion.core.properties.TekionCommonProperties;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -204,15 +207,18 @@ public class TConstants {
 	//	public static final boolean IS_LOCAL = GeneralUtils.isLocalClusterType();
 //
 	//excelDataTypeFormats
-//	public static final String EXCEL_DATA_TYPE_GENERAL = BuiltinFormats.getBuiltinFormat(0);
-//	public static final String EXCEL_DATA_TYPE_PERCENT = BuiltinFormats.getBuiltinFormat(10);
-//	public static final String EXCEL_DATA_TYPE_0 = BuiltinFormats.getBuiltinFormat(1);
-//	public static final String EXCEL_DATA_TYPE_0_00 = BuiltinFormats.getBuiltinFormat(2);
-//	public static final String EXCEL_DATA_TYPE_M_D_YY = BuiltinFormats.getBuiltinFormat(BuiltinFormats.getBuiltinFormat("m/d/yy"));
-//	public static final String EXCEL_DATA_TYPE_h_m_aa = BuiltinFormats.getBuiltinFormat(BuiltinFormats.getBuiltinFormat("h:mm AM/PM"));
-//	public static final String EXCEL_DATA_TYPE_h_m_ss_aa = BuiltinFormats.getBuiltinFormat(BuiltinFormats.getBuiltinFormat("h:mm:ss AM/PM"));
+	public static final String EXCEL_DATA_TYPE_GENERAL = BuiltinFormats.getBuiltinFormat(0);
+	public static final String EXCEL_DATA_TYPE_PERCENT = BuiltinFormats.getBuiltinFormat(10);
+	public static final String EXCEL_DATA_TYPE_0 = BuiltinFormats.getBuiltinFormat(1);
+	public static final String EXCEL_DATA_TYPE_0_00 = BuiltinFormats.getBuiltinFormat(2);
+	public static final String EXCEL_DATA_TYPE_M_D_YY = BuiltinFormats.getBuiltinFormat(BuiltinFormats.getBuiltinFormat("m/d/yy"));
+	public static final String EXCEL_DATA_TYPE_h_m_aa = BuiltinFormats.getBuiltinFormat(BuiltinFormats.getBuiltinFormat("h:mm AM/PM"));
+	public static final String EXCEL_DATA_TYPE_h_m_ss_aa = BuiltinFormats.getBuiltinFormat(BuiltinFormats.getBuiltinFormat("h:mm:ss AM/PM"));
 	public static final String EXCEL_DATA_TYPE_MM_DD_YYYY = "mm/dd/yyyy";
 	public static final String EXCEL_DATA_TYPE_MM_DD_YY = "mm/dd/yy";
+
+	public static final int DEFAULT_BATCH_SIZE_FOR_EXCEL = 5000;
+	public static final int DEFAULT_EXCEL_PLAIN_VIEW_LIMIT = 2_00_000;
 
 	//date format
 	public static final String DATE_FORMAT_DD_MM_YY_HH_MM_AA = "MM/dd/yy hh:mm aa";
@@ -232,8 +238,6 @@ public class TConstants {
 
 
 	//excel
-	public static final int DEFAULT_BATCH_SIZE_FOR_EXCEL = 5000;
-	public static final int DEFAULT_EXCEL_PLAIN_VIEW_LIMIT = 2_00_000;
 	public static final String INQUIRY_TOOL_NOTIFICATION_DISPLAY_NAME = "Inquiry Tool";
 	public static final String CASHIERING= "Cashiering";
 	public static final String OTHER_GL_POSTING= "Other GL Posting";
@@ -355,5 +359,7 @@ public class TConstants {
 	//Recurring schedule
 	public static final int LAST_DAY_OF_MONTH = 32;
 	public static final int RECURRING_SCHEDULE_LAST_DAY_LIMIT = 28;
+
+	public static final boolean IS_LOCAL = "local".equals(System.getenv(TekionCommonProperties.CLUSTER_TYPE));
 
 }

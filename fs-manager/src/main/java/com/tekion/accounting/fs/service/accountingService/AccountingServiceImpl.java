@@ -4,7 +4,10 @@ import com.tekion.as.client.AccountingClient;
 import com.tekion.as.models.beans.AccountingSettings;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalance;
+import com.tekion.as.models.beans.TrialBalanceRow;
 import com.tekion.as.models.dto.MonthInfo;
+import com.tekion.core.es.common.i.ITekSearchRequest;
+import com.tekion.core.es.request.ESResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -54,5 +57,15 @@ public class AccountingServiceImpl implements AccountingService {
 	@Override
 	public MonthInfo getPostAheadMonthInfo() {
 		return accountingClient.getPostAheadMonthInfo().getData();
+	}
+
+	@Override
+	public List<TrialBalanceRow> getConsolidatedGlBalancesForMonth(int year, int month_0_11, Set<String> dealerIds, Boolean excludeInactiveAccounts, Boolean includeM13, boolean addM13BalInDecBalances){
+		return null;
+	}
+
+	@Override
+	public ESResponse<GLAccount> defaultSearch(ITekSearchRequest request) {
+		return null;
 	}
 }

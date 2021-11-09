@@ -41,6 +41,7 @@ import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.MediaResponse;
 import com.tekion.as.models.beans.TrialBalance;
 import com.tekion.as.models.beans.TrialBalanceRow;
+import com.tekion.as.models.beans.fs.FsReportContextDto;
 import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.beans.DynamicProperty;
 import com.tekion.clients.preference.client.PreferenceClient;
@@ -2567,7 +2568,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 		return accountingClient.getAccountingSettings().getData().getFiscalYearStartMonth();
 	}
 
-	private Map<Integer, Map<String, Map<String, BigDecimal>>> getGlBalCntInfoForFS(com.tekion.as.models.beans.fs.FsReportContext fsrContext){
+	private Map<Integer, Map<String, Map<String, BigDecimal>>> getGlBalCntInfoForFS(FsReportContextDto fsrContext){
 		return accountingClient.getGlBalCntInfoForFS(fsrContext).getData();
 	}
 

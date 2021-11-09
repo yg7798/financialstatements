@@ -20,6 +20,8 @@ import com.tekion.core.utils.TGlobalConstants;
 import com.tekion.core.utils.async.DynamicScalingExecutorService;
 import com.tekion.core.utils.async.ScalingThreadPoolExecutor;
 import com.tekion.core.utils.springasync.DelegatingUserContextExecutorServiceToAsyncTaskWrapper;
+import com.tekion.notificationsv2.client.NotificationsV2Client;
+import com.tekion.notificationsv2.client.NotificationsV2ClientFactory;
 import com.tekion.printerclient.PrinterClient;
 import com.tekion.printerclientv2.PrinterClientV2;
 import com.tekion.sdk.storage.s3.S3ObjectStorageService;
@@ -142,5 +144,10 @@ public class BeanFactory {
 	public PrinterClient printerClient(FeignBuilderFactory feignBuilderFactory) {
 		return feignBuilderFactory.buildFeignClientInstance(
 				FeignBuilderFactory.buildInstanceUrl("pms"), PrinterClient.class, FULL, new ErrorDecoder.Default(), null);
+	}
+
+	@Bean
+	public NotificationsV2Client createNotificationClient(NotificationsV2ClientFactory factory) {
+		return factory.createClient();
 	}
 }

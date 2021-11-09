@@ -19,7 +19,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compileOnly 'org.projectlombok:lombok'
     compile('com.tekion.sdk:servicecommons:3.0.31-SNAPSHOT')
-    implementation('com.tekion.accounting:accounting-client:1.0.41-SNAPSHOT')
+    implementation('com.tekion.accounting:accounting-client:1.0.42xd-SNAPSHOT')
     compile('com.tekion.sdk:mongosupport:2.0.11-SNAPSHOT')
     compile('com.tekion.sdk:storagesupport:2.0.10-SNAPSHOT')
     compile('com.tekion.sdk:globalsettingsclient:0.0.26-SNAPSHOT')
@@ -36,4 +36,8 @@ dependencies {
     }
     compile("com.tekion.sdk:slackclient:0.0.2-SNAPSHOT")
     compile("com.tekion.sdk:printer-client-v2:0.0.4-SNAPSHOT")
+    compile("com.tekion.sdk:notificationV2Client:1.0.72-SNAPSHOT")
+    compile("com.tekion.sdk:tmysqllib:2.0.7-SNAPSHOT")
+    implementation 'org.apache.poi:poi:5.0.0'
+
 }
