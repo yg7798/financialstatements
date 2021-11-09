@@ -5,7 +5,7 @@ import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalance;
 import com.tekion.as.models.beans.TrialBalanceRow;
 import com.tekion.as.models.dto.MonthInfo;
-import com.tekion.core.es.common.i.ITekSearchRequest;
+import com.tekion.core.es.common.impl.TekSearchRequest;
 import com.tekion.core.es.request.ESResponse;
 
 import java.util.List;
@@ -34,6 +34,6 @@ public interface AccountingService {
 
 	List<TrialBalanceRow> getConsolidatedGlBalancesForMonth(int year, int month_0_11, Set<String> dealerIds, Boolean excludeInactiveAccounts, Boolean includeM13, boolean addM13BalInDecBalances);
 
-	ESResponse<GLAccount> defaultSearch(ITekSearchRequest request);
+	ESResponse<GLAccount> defaultSearch(TekSearchRequest request);
 }
 
