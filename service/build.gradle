@@ -48,4 +48,5 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     compile('com.tekion.sdk:servicecommons:3.0.31-SNAPSHOT')
     compile project(':fs-manager')
+    implementation( group: 'com.tekion.core', name: 'excel-generation-client', version: '0.0.91-SNAPSHOT')
 }
