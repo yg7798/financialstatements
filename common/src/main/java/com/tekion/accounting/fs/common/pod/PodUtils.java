@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.common.pod;
 
 import com.google.common.collect.Lists;
 import com.tekion.accounting.fs.common.GlobalService;
+import com.tekion.accounting.fs.common.core.dealerInfo.DealerInfo;
 import com.tekion.client.globalsettings.beans.TenantInfo;
 import com.tekion.client.globalsettings.beans.dto.DealerInfoWithOEMDetails;
 import com.tekion.core.exceptions.TConfigurationNotFoundException;

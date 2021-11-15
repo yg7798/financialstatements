@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.template;
+package com.tekion.accounting.fs.service.helper.template;
 
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.enums.Template;

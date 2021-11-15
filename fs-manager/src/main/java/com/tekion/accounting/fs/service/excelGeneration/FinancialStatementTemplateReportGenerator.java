@@ -9,7 +9,7 @@ import com.tekion.accounting.fs.service.helper.excelGeneration.dto.financialStat
 import com.tekion.accounting.fs.service.helper.excelGeneration.enums.ExcelReportType;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.oemPayload.FinancialStatementService;
-import com.tekion.accounting.fs.common.template.TemplateService;
+import com.tekion.accounting.fs.service.helper.template.TemplateService;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.core.excelGeneration.models.model.template.ExcelTemplateBatchData;
 import com.tekion.core.excelGeneration.models.model.template.ExcelTemplateRequestDto;

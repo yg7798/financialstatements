@@ -1,7 +1,7 @@
-package com.tekion.accounting.fs.common.slackAlert.config;
+package com.tekion.accounting.fs.service.helper.slackAlert.config;
 
 import com.google.common.collect.Maps;
-import com.tekion.accounting.fs.common.slackAlert.enums.SlackAlertModuleName;
+import com.tekion.accounting.fs.service.helper.slackAlert.enums.SlackAlertModuleName;
 import com.tekion.clients.slack.SlackClient;
 import com.tekion.core.serverconfig.service.ServerConfigService;
 import lombok.extern.slf4j.Slf4j;

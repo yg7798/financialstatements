@@ -2,7 +2,7 @@ package com.tekion.accounting.fs.common;
 
 import com.google.common.collect.Lists;
 import com.tekion.accounting.fs.common.pod.BasePodLevelRunRequestDto;
-import com.tekion.accounting.fs.common.pod.DealerInfo;
+import com.tekion.accounting.fs.common.core.dealerInfo.DealerInfo;
 import com.tekion.accounting.fs.common.pod.PodUtils;
 import com.tekion.accounting.fs.common.utils.MDCUtils;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;

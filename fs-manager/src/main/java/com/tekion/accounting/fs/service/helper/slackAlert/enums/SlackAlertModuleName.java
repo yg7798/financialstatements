@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.slackAlert.enums;
+package com.tekion.accounting.fs.service.helper.slackAlert.enums;
 
 /** Below enum is used to mention the module name used for slack alerting **/
 public enum SlackAlertModuleName {

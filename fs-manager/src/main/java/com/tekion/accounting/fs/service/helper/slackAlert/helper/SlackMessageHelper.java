@@ -1,7 +1,7 @@
-package com.tekion.accounting.fs.common.slackAlert.helper;
+package com.tekion.accounting.fs.service.helper.slackAlert.helper;
 
 import com.google.common.collect.Lists;
-import com.tekion.accounting.fs.common.slackAlert.FsSlackMessageDto;
+import com.tekion.accounting.fs.service.helper.slackAlert.FsSlackMessageDto;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.clients.slack.beans.Field;
 import com.tekion.clients.slack.beans.SlackMessageRequest;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-import static com.tekion.accounting.fs.common.slackAlert.utils.SlackUtil.*;
+import static com.tekion.accounting.fs.service.helper.slackAlert.utils.SlackUtil.*;
 
 @UtilityClass
 @Slf4j

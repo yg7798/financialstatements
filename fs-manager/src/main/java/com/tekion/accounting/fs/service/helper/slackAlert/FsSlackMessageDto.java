@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.slackAlert;
+package com.tekion.accounting.fs.service.helper.slackAlert;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

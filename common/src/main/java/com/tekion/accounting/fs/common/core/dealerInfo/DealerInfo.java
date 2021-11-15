@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.pod;
+package com.tekion.accounting.fs.common.core.dealerInfo;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,5 @@
-package com.tekion.accounting.fs.common.slackAlert;
+package com.tekion.accounting.fs.common.core.dealerInfo;
 
-import com.tekion.accounting.fs.common.pod.DealerInfo;
 import lombok.Data;
 
 import java.util.List;

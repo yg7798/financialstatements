@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.template;
+package com.tekion.accounting.fs.service.helper.template;
 
 import java.io.File;
 

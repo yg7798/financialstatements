@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.slackAlert.utils;
+package com.tekion.accounting.fs.service.helper.slackAlert.utils;
 
 import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.date.utils.MonthInfoDto;

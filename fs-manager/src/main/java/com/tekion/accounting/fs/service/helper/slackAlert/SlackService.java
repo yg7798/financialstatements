@@ -1,10 +1,10 @@
-package com.tekion.accounting.fs.common.slackAlert;
+package com.tekion.accounting.fs.service.helper.slackAlert;
 
 import com.google.common.collect.Lists;
-import com.tekion.accounting.fs.common.slackAlert.config.SlackConfig;
-import com.tekion.accounting.fs.common.slackAlert.enums.SlackAlertModuleName;
-import com.tekion.accounting.fs.common.slackAlert.helper.SlackMessageHelper;
-import com.tekion.accounting.fs.common.slackAlert.utils.SlackUtil;
+import com.tekion.accounting.fs.service.helper.slackAlert.config.SlackConfig;
+import com.tekion.accounting.fs.service.helper.slackAlert.enums.SlackAlertModuleName;
+import com.tekion.accounting.fs.service.helper.slackAlert.helper.SlackMessageHelper;
+import com.tekion.accounting.fs.service.helper.slackAlert.utils.SlackUtil;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.clients.slack.SlackClient;
 import com.tekion.clients.slack.beans.Field;

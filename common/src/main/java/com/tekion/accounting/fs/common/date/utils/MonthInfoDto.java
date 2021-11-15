@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.common.date.utils;
 
-import com.tekion.accounting.fs.common.slackAlert.DealerInfoDto;
+import com.tekion.accounting.fs.common.core.dealerInfo.DealerInfoDto;
 import lombok.Data;
 
 @Data
