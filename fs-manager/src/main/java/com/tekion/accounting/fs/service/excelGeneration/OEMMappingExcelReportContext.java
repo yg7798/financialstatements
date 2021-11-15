@@ -3,7 +3,7 @@ package com.tekion.accounting.fs.service.excelGeneration;
 import com.google.common.collect.Maps;
 import com.tekion.accounting.fs.common.excelGeneration.context.ExcelReportContext;
 import com.tekion.accounting.fs.beans.common.FSEntry;
-import com.tekion.accounting.fs.common.cache.dtos.OptionMinimal;
+import com.tekion.accounting.fs.service.helper.cache.dtos.OptionMinimal;
 import com.tekion.accounting.fs.common.enums.CustomFieldType;
 import com.tekion.accounting.fs.common.excelGeneration.dto.financialStatement.OEMMappingRequestDto;
 import com.tekion.as.models.beans.GLAccount;

@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.cache.redis.enums;
+package com.tekion.accounting.fs.service.helper.cache.redis.enums;
 
 
 import com.tekion.accounting.fs.common.TConstants;
@@ -6,7 +6,7 @@ import com.tekion.core.utils.UserContextProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import static com.tekion.accounting.fs.common.cache.redis.enums.CacheLevel.DEALER_LEVEL;
+import static com.tekion.accounting.fs.service.helper.cache.redis.enums.CacheLevel.DEALER_LEVEL;
 
 
 /** this is can be used for static key. Key format will be cacheLevel pattern + redis cache identifier name

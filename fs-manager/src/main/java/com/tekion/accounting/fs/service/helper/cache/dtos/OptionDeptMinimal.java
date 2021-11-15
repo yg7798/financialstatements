@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.cache.dtos;
+package com.tekion.accounting.fs.service.helper.cache.dtos;
 
 import lombok.*;
 

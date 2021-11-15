@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.cache.redis;
+package com.tekion.accounting.fs.service.helper.cache.redis;
 
 import com.tekion.cachesupport.lib.cache.RedisCacheFactory;
 import com.tekion.core.utils.TCollectionUtils;

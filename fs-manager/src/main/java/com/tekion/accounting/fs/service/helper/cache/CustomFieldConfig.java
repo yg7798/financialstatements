@@ -1,10 +1,10 @@
-package com.tekion.accounting.fs.common.cache;
+package com.tekion.accounting.fs.service.helper.cache;
 
-import com.tekion.accounting.fs.common.cache.dtos.OptionMinimal;
+import com.tekion.accounting.fs.service.helper.cache.dtos.OptionMinimal;
 import com.tekion.accounting.fs.common.TConstants;
-import com.tekion.accounting.fs.common.cache.redis.dto.CustomFieldCacheDto;
-import com.tekion.accounting.fs.common.cache.redis.enums.RedisCacheIdentifier;
-import com.tekion.accounting.fs.common.cache.redis.implementation.CustomFieldCache;
+import com.tekion.accounting.fs.service.helper.cache.redis.dto.CustomFieldCacheDto;
+import com.tekion.accounting.fs.service.helper.cache.redis.enums.RedisCacheIdentifier;
+import com.tekion.accounting.fs.service.helper.cache.redis.implementation.CustomFieldCache;
 import com.tekion.accounting.fs.common.enums.AccountingCustomField;
 import com.tekion.accounting.fs.common.enums.CustomFieldType;
 import com.tekion.clients.preference.beans.CustomField;

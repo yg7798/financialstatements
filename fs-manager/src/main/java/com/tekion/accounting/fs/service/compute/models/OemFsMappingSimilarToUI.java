@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.service.compute.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tekion.accounting.fs.common.cache.dtos.OptionMinimal;
+import com.tekion.accounting.fs.service.helper.cache.dtos.OptionMinimal;
 import com.tekion.accounting.fs.common.enums.CustomFieldType;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalanceRow;

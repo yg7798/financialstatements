@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.cache.redis;
+package com.tekion.accounting.fs.service.helper.cache.redis;
 
 import org.springframework.data.redis.serializer.RedisSerializer;
 

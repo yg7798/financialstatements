@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.cache.redis.helper;
+package com.tekion.accounting.fs.service.helper.cache.redis.helper;
 
 import java.util.concurrent.TimeUnit;
 

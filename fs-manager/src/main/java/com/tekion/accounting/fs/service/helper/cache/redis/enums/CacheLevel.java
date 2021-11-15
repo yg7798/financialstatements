@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.cache.redis.enums;
+package com.tekion.accounting.fs.service.helper.cache.redis.enums;
 
 public enum CacheLevel {
     GLOBAL_LEVEL,
