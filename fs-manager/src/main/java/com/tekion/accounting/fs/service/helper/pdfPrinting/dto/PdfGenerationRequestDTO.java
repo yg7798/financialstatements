@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.pdfPrinting.dto;
+package com.tekion.accounting.fs.service.helper.pdfPrinting.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

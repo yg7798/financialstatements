@@ -2,10 +2,10 @@ package com.tekion.accounting.fs.service.printing;
 
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.service.printing.models.FSViewStatementDto;
-import com.tekion.accounting.fs.common.pdfPrinting.PDFPrintService;
-import com.tekion.accounting.fs.common.pdfPrinting.dto.BulkPdfRequest;
-import com.tekion.accounting.fs.common.pdfPrinting.dto.PdfDocumentType;
-import com.tekion.accounting.fs.common.pdfPrinting.dto.PdfStatus;
+import com.tekion.accounting.fs.service.helper.pdfPrinting.PDFPrintService;
+import com.tekion.accounting.fs.service.helper.pdfPrinting.dto.BulkPdfRequest;
+import com.tekion.accounting.fs.service.helper.pdfPrinting.dto.PdfDocumentType;
+import com.tekion.accounting.fs.service.helper.pdfPrinting.dto.PdfStatus;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.RequiredArgsConstructor;

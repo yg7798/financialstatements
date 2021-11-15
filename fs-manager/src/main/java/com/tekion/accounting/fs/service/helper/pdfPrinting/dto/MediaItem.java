@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.pdfPrinting.dto;
+package com.tekion.accounting.fs.service.helper.pdfPrinting.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

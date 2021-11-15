@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.common.pdfPrinting.enums;
+package com.tekion.accounting.fs.service.helper.pdfPrinting.enums;
 
 public enum PdfPrintStatus {
     PENDING,

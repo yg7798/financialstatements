@@ -2,7 +2,6 @@ package com.tekion.accounting.fs.common;
 
 import com.tekion.accounting.fs.common.dpProvider.DpProvider;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
-import com.tekion.accounting.fs.common.pdfPrinting.PDFPrintService;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.core.validation.TValidator;
 import com.tekion.podclient.PodConfigService;
@@ -19,8 +18,8 @@ public class StaticContextInitializer {
 	@Autowired
 	private DpProvider dpProvider;
 
-	@Autowired
-	private PDFPrintService pdfPrintService;
+//	@Autowired
+//	private PDFPrintService pdfPrintService;
 
 
 	@Qualifier(value = AsyncContextDecorator.ASYNC_THREAD_POOL)
