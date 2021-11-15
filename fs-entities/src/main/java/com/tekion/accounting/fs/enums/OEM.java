@@ -31,6 +31,7 @@ public enum OEM {
 	Mazda("Mazda", "mazda", "Mazda"),
 	RollsRoyce("bmw", "bmw", "rollsroyce"),
 	Bentley("volkswagen", "volkswagen", "bentley"),
+	Volvo("Volvo","Volvo", "Volvo"),
 	@Deprecated
 	VW("Volkswagen","volkswagen", "Volkswagen");
 
