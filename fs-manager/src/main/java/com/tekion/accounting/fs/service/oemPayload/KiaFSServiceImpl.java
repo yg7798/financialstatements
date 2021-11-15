@@ -1,14 +1,14 @@
 package com.tekion.accounting.fs.service.oemPayload;
 
 
-import com.tekion.accounting.fs.beans.ProcessFinancialStatement;
-import com.tekion.accounting.fs.beans.integration.Detail;
-import com.tekion.accounting.fs.beans.integration.FinancialStatement;
-import com.tekion.accounting.fs.beans.integration.Header;
-import com.tekion.accounting.fs.dto.oemPayload.FinancialStatementRequestDto;
+import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
+import com.tekion.accounting.fs.integration.Detail;
+import com.tekion.accounting.fs.integration.FinancialStatement;
+import com.tekion.accounting.fs.integration.Header;
+import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
-import com.tekion.accounting.fs.utils.DealerConfig;
+import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

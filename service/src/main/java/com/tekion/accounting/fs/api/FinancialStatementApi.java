@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.api;
 
-import com.tekion.accounting.fs.dto.oemPayload.FinancialReportRequestBody;
-import com.tekion.accounting.fs.dto.oemPayload.FinancialStatementRequestDto;
+import com.tekion.accounting.fs.dto.request.FinancialReportRequestBody;
+import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.service.oemPayload.FSReportServiceImpl;
 import com.tekion.accounting.fs.service.oemPayload.FsXMLServiceImpl;
 import lombok.RequiredArgsConstructor;

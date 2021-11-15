@@ -5,11 +5,11 @@ import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
 import com.mongodb.bulk.BulkWriteUpsert;
 import com.mongodb.client.result.UpdateResult;
-import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
-import com.tekion.accounting.fs.utils.JsonUtil;
-import com.tekion.accounting.fs.utils.TMongoUtils;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import com.tekion.core.utils.TCollectionUtils;
@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.tekion.accounting.fs.TConstants.*;
-import static com.tekion.accounting.fs.beans.FSEntry.FS_ID;
-import static com.tekion.accounting.fs.beans.OemFSMetadataCellsInfo.OEM_ID;
-import static com.tekion.accounting.fs.utils.UserContextUtils.getDefaultSiteId;
+import static com.tekion.accounting.fs.common.TConstants.*;
+import static com.tekion.accounting.fs.beans.common.FSEntry.FS_ID;
+import static com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo.OEM_ID;
+import static com.tekion.accounting.fs.common.utils.UserContextUtils.getDefaultSiteId;
 
 @Slf4j
 @Component

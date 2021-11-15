@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.dto;
 
-import com.tekion.accounting.fs.OemFSMetadataMappingDtoValidatorGroup;
-import com.tekion.accounting.fs.beans.OemFSMetadataCellsInfo;
+import com.tekion.accounting.fs.common.validation.OemFSMetadataMappingDtoValidatorGroup;
+import com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo;
 import com.tekion.accounting.fs.enums.OEM;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

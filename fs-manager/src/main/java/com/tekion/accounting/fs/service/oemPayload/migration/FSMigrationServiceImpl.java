@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.oemPayload.migration;
 
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.repos.*;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetRepo;

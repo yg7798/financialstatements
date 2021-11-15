@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.repos;
 
 
-import com.tekion.accounting.fs.beans.OemConfig;
+import com.tekion.accounting.fs.beans.common.OemConfig;
 import com.tekion.core.mongo.BaseGlobalMongoRepository;
 import com.tekion.core.serverconfig.beans.ModuleName;
 import com.tekion.core.utils.UserContextProvider;
@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import static com.tekion.accounting.fs.TConstants.*;
+import static com.tekion.accounting.fs.common.TConstants.*;
 
 
 @Component

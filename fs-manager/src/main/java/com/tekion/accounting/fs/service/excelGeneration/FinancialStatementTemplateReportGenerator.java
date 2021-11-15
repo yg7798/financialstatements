@@ -1,16 +1,16 @@
 package com.tekion.accounting.fs.service.excelGeneration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tekion.accounting.fs.beans.FSEntry;
-import com.tekion.accounting.fs.dto.oemPayload.FinancialStatementRequestDto;
-import com.tekion.accounting.fs.excelGeneration.abstractExecutors.AccAbstractTemplateReportGenerator;
-import com.tekion.accounting.fs.excelGeneration.dto.AccExcelRequestDto;
-import com.tekion.accounting.fs.excelGeneration.dto.financialStatement.FSTemplateRequestValidationGroup;
-import com.tekion.accounting.fs.excelGeneration.enums.ExcelReportType;
+import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.abstractExecutors.AccAbstractTemplateReportGenerator;
+import com.tekion.accounting.fs.common.excelGeneration.dto.AccExcelRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.dto.financialStatement.FSTemplateRequestValidationGroup;
+import com.tekion.accounting.fs.common.excelGeneration.enums.ExcelReportType;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.oemPayload.FinancialStatementService;
-import com.tekion.accounting.fs.template.TemplateService;
-import com.tekion.accounting.fs.utils.JsonUtil;
+import com.tekion.accounting.fs.common.template.TemplateService;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.core.excelGeneration.models.model.template.ExcelTemplateBatchData;
 import com.tekion.core.excelGeneration.models.model.template.ExcelTemplateRequestDto;
 import com.tekion.core.excelGeneration.models.model.template.FetchTemplateDataRequest;

@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.repos;
 
-import com.tekion.accounting.fs.TConstants;
+import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
 import com.tekion.accounting.fs.beans.mappings.OEMFinancialMappingMedia;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import static com.tekion.accounting.fs.TConstants.TENANT_DEFAULT;
+import static com.tekion.accounting.fs.common.TConstants.TENANT_DEFAULT;
 
 
 @Component

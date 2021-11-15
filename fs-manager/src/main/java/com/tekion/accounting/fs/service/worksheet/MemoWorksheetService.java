@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.worksheet;
 
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
 import com.tekion.accounting.fs.dto.memo.CopyMemoValuesDto;
 import com.tekion.accounting.fs.dto.memo.MemoBulkUpdateDto;

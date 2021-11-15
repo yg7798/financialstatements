@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.service.oemPayload;
 
-import com.tekion.accounting.fs.beans.ProcessFinancialStatement;
+import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
 import com.tekion.accounting.fs.dto.integration.FSSubmitResponse;
-import com.tekion.accounting.fs.dto.oemPayload.FinancialStatementRequestDto;
+import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.core.excelGeneration.models.model.template.SingleCellData;
 
 import javax.servlet.http.HttpServletResponse;

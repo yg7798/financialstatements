@@ -1,10 +1,11 @@
 package com.tekion.accounting.fs.service.excelGeneration;
 
 import com.google.common.collect.Maps;
-import com.tekion.accounting.fs.beans.FSEntry;
-import com.tekion.accounting.fs.cache.dtos.OptionMinimal;
-import com.tekion.accounting.fs.enums.CustomFieldType;
-import com.tekion.accounting.fs.excelGeneration.dto.financialStatement.OEMMappingRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.context.ExcelReportContext;
+import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.common.cache.dtos.OptionMinimal;
+import com.tekion.accounting.fs.common.enums.CustomFieldType;
+import com.tekion.accounting.fs.common.excelGeneration.dto.financialStatement.OEMMappingRequestDto;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalanceRow;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OEMMappingExcelReportContext extends com.tekion.as.excelGenearation.context.ExcelReportContext {
+public class OEMMappingExcelReportContext extends ExcelReportContext {
 
 	private List<GLAccount> glAccountList = new ArrayList<>();
 	private Map<CustomFieldType, Map<String, OptionMinimal>> keyToIdToOptionMap = Maps.newHashMap();

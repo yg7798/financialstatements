@@ -1,10 +1,10 @@
 package com.tekion.accounting.fs.dto.cellcode;
 
-import com.tekion.accounting.fs.beans.AccountingOemFsCellCode;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.dto.OemCellSubType;
 import com.tekion.accounting.fs.enums.FsCellCodeSource;
 import com.tekion.accounting.fs.enums.OEM;
-import com.tekion.accounting.fs.utils.OemFSUtils;
+import com.tekion.accounting.fs.common.utils.OemFSUtils;
 import com.tekion.core.utils.TStringUtils;
 import lombok.Data;
 

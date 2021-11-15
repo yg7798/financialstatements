@@ -3,11 +3,11 @@ package com.tekion.accounting.fs.repos;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
-import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.FSType;
-import com.tekion.accounting.fs.utils.TMongoUtils;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import com.tekion.core.utils.UserContextProvider;
@@ -22,9 +22,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 
-import static com.tekion.accounting.fs.TConstants.*;
-import static com.tekion.accounting.fs.beans.FSEntry.FS_TYPE;
-import static com.tekion.accounting.fs.utils.UserContextUtils.getDefaultSiteId;
+import static com.tekion.accounting.fs.common.TConstants.*;
+import static com.tekion.accounting.fs.beans.common.FSEntry.FS_TYPE;
+import static com.tekion.accounting.fs.common.utils.UserContextUtils.getDefaultSiteId;
 
 @Component
 public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> implements FSEntryRepo {

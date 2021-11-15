@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.fsMetaData;
 
-import com.tekion.accounting.fs.beans.OemFSMetadataCellsInfo;
+import com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo;
 import com.tekion.accounting.fs.dto.OemFSMetadataCellMappingCreateDto;
 import com.tekion.accounting.fs.dto.OemFsMetadataCellMappingInfo;
 

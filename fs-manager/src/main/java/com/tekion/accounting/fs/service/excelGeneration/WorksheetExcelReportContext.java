@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheetTemplate;
-import com.tekion.accounting.fs.excelGeneration.generators.financialStatement.dto.MemoWorksheetExcelRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.generators.financialStatement.dto.MemoWorksheetExcelRequestDto;
 import com.tekion.core.excelGeneration.models.model.v2.FetchNextBatchRequestV2;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,12 +1,12 @@
 package com.tekion.accounting.fs.service.accountingInfo;
 
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.dto.AccountingInfoDto;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.accountingInfo.AccountingInfoRepo;
-import com.tekion.accounting.fs.utils.JsonUtil;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.AllArgsConstructor;

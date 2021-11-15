@@ -1,16 +1,17 @@
 package com.tekion.accounting.fs.service.excelGeneration;
 
+import com.tekion.accounting.fs.common.excelGeneration.reportRows.MemoWorksheetReportRow;
 import com.tekion.accounting.fs.enums.AccountingError;
-import com.tekion.accounting.fs.excelGeneration.abstractExecutors.AccAbstractExcelReportGeneratorV2;
-import com.tekion.accounting.fs.excelGeneration.columnConfigs.financialStatment.MemoWorksheetColumnConfig;
-import com.tekion.accounting.fs.excelGeneration.dto.AccExcelRequestDto;
-import com.tekion.accounting.fs.excelGeneration.dto.SheetInfoDto;
-import com.tekion.accounting.fs.excelGeneration.enums.ExcelReportSheet;
-import com.tekion.accounting.fs.excelGeneration.enums.ExcelReportType;
-import com.tekion.accounting.fs.excelGeneration.generators.financialStatement.dto.MemoWorksheetExcelRequestDto;
-import com.tekion.accounting.fs.excelGeneration.generators.financialStatement.dto.MemoWorksheetRequestDto;
-import com.tekion.accounting.fs.utils.JsonUtil;
-import com.tekion.accounting.fs.validation.NotNullGroup;
+import com.tekion.accounting.fs.common.excelGeneration.abstractExecutors.AccAbstractExcelReportGeneratorV2;
+import com.tekion.accounting.fs.common.excelGeneration.columnConfigs.financialStatment.MemoWorksheetColumnConfig;
+import com.tekion.accounting.fs.common.excelGeneration.dto.AccExcelRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.dto.SheetInfoDto;
+import com.tekion.accounting.fs.common.excelGeneration.enums.ExcelReportSheet;
+import com.tekion.accounting.fs.common.excelGeneration.enums.ExcelReportType;
+import com.tekion.accounting.fs.common.excelGeneration.generators.financialStatement.dto.MemoWorksheetExcelRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.generators.financialStatement.dto.MemoWorksheetRequestDto;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
+import com.tekion.accounting.fs.common.validation.NotNullGroup;
 import com.tekion.core.excelGeneration.models.model.ColumnConfig;
 import com.tekion.core.excelGeneration.models.model.Sort;
 import com.tekion.core.excelGeneration.models.model.v2.ExcelGenerationRequestDtoV2;
@@ -96,7 +97,7 @@ public class MemoWorksheetExcelReportGenerator extends AccAbstractExcelReportGen
 		NextBatchDataV2 nextBatchDataV2 = new NextBatchDataV2();
 		switch (fetchNextBatchRequestV2.getDataFetchType()){
 			case DATA_RECORDS:
-				List<com.tekion.as.excelGenearation.reportRows.MemoWorksheetReportRow> memoWorksheetReportRows = helperService.getExportableReportRows(reportType,context);
+				List<MemoWorksheetReportRow> memoWorksheetReportRows = helperService.getExportableReportRows(reportType,context);
 				Map<String, SheetInfoDto> sheetInfoDtoMap = TCollectionUtils.transformToMap(context.getReportRequestDto().getSheetInfoDtoSet(), SheetInfoDto::getSheetIdentifier);
 				SheetInfoDto sheetInfoDto = sheetInfoDtoMap.get(fetchNextBatchRequestV2.getSheetIdentifier());
 				nextBatchDataV2.setRowDataList(helperService.getSingleRowDataList(memoWorksheetReportRows, sheetInfoDto));

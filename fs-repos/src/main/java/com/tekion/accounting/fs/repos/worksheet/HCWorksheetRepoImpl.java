@@ -2,8 +2,8 @@ package com.tekion.accounting.fs.repos.worksheet;
 
 import com.google.common.collect.Lists;
 import com.mongodb.bulk.BulkWriteUpsert;
-import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.memo.HCWorksheet;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
@@ -19,11 +19,11 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.List;
 
-import static com.tekion.accounting.fs.TConstants.DEALER_ID;
-import static com.tekion.accounting.fs.TConstants.SITE_ID;
-import static com.tekion.accounting.fs.beans.FSEntry.FS_ID;
-import static com.tekion.accounting.fs.beans.OemTemplate.OEM_ID;
-import static com.tekion.accounting.fs.utils.UserContextUtils.getDefaultSiteId;
+import static com.tekion.accounting.fs.common.TConstants.DEALER_ID;
+import static com.tekion.accounting.fs.common.TConstants.SITE_ID;
+import static com.tekion.accounting.fs.beans.common.FSEntry.FS_ID;
+import static com.tekion.accounting.fs.beans.common.OemTemplate.OEM_ID;
+import static com.tekion.accounting.fs.common.utils.UserContextUtils.getDefaultSiteId;
 
 
 @Component

@@ -1,13 +1,13 @@
 package com.tekion.accounting.fs.service.oemPayload;
 
-import com.tekion.accounting.fs.beans.AccountingOemFsCellCode;
-import com.tekion.accounting.fs.beans.integration.Detail;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
+import com.tekion.accounting.fs.integration.Detail;
 import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.OemCellValueType;
 import com.tekion.accounting.fs.enums.OemValueType;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
 import com.tekion.accounting.fs.service.oemPayload.beans.FillDetailContext;
-import com.tekion.accounting.fs.utils.DealerConfig;
+import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

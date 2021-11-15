@@ -2,7 +2,7 @@ package com.tekion.accounting.fs.dto.cellcode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
-import com.tekion.accounting.fs.beans.AccountingOemFsCellCode;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

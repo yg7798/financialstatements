@@ -31,7 +31,5 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.16'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile('com.tekion.sdk:mongosupport:2.0.11-SNAPSHOT')
-    compile('com.tekion.sdk:mysqlsupport:2.0.11-SNAPSHOT')
     compile project(':common')
-    implementation('com.tekion.accounting:accounting-client:1.0.42xd-SNAPSHOT')
 }

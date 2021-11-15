@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.repos;
 
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.compute;
 
-import com.tekion.accounting.fs.beans.*;
+import com.tekion.accounting.fs.beans.common.*;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.dto.*;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;

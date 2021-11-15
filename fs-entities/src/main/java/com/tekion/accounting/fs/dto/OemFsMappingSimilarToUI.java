@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tekion.accounting.fs.cache.dtos.OptionMinimal;
-import com.tekion.accounting.fs.enums.CustomFieldType;
+import com.tekion.accounting.fs.common.cache.dtos.OptionMinimal;
+import com.tekion.accounting.fs.common.enums.CustomFieldType;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalanceRow;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import static com.tekion.accounting.fs.enums.CustomFieldType.DEPARTMENT;
+import static com.tekion.accounting.fs.common.enums.CustomFieldType.DEPARTMENT;
 import static com.tekion.core.utils.TStringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 

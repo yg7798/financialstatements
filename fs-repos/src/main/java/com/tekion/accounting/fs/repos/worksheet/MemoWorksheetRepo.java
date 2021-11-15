@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.repos.worksheet;
 
 import com.mongodb.bulk.BulkWriteUpsert;
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
 
 import java.util.Collection;

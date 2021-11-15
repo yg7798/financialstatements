@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.service.oemPayload;
 
-import com.tekion.accounting.fs.dto.oemPayload.FinancialReportRequestBody;
-import com.tekion.accounting.fs.dto.oemPayload.FinancialStatXmlRequest;
-import com.tekion.accounting.fs.utils.DealerConfig;
+import com.tekion.accounting.fs.dto.request.FinancialReportRequestBody;
+import com.tekion.accounting.fs.dto.request.FinancialStatXmlRequest;
+import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

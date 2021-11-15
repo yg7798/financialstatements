@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.dto.fsEntry;
 
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.Data;
 

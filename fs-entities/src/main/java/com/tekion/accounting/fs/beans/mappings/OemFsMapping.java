@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.beans.mappings;
 
-import com.tekion.accounting.fs.beans.MigrationMetaDataForFsEntry;
+import com.tekion.accounting.fs.beans.common.MigrationMetaDataForFsEntry;
 import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.*;

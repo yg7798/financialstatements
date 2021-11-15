@@ -2,23 +2,24 @@ package com.tekion.accounting.fs.service.excelGeneration;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.AccountingOemFsCellGroup;
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.common.excelGeneration.dto.ESReportCallbackDto;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
-import com.tekion.accounting.fs.cache.CustomFieldConfig;
-import com.tekion.accounting.fs.cache.dtos.OptionMinimal;
+import com.tekion.accounting.fs.common.cache.CustomFieldConfig;
+import com.tekion.accounting.fs.common.cache.dtos.OptionMinimal;
+import com.tekion.accounting.fs.common.utils.*;
 import com.tekion.accounting.fs.enums.AccountType;
-import com.tekion.accounting.fs.enums.CustomFieldType;
+import com.tekion.accounting.fs.common.enums.CustomFieldType;
 import com.tekion.accounting.fs.enums.FSType;
-import com.tekion.accounting.fs.excelGeneration.dto.financialStatement.OEMMappingRequestDto;
-import com.tekion.accounting.fs.excelGeneration.enums.ExcelReportType;
-import com.tekion.accounting.fs.excelGeneration.reportRows.OEMMappingReportRow;
+import com.tekion.accounting.fs.common.excelGeneration.dto.financialStatement.OEMMappingRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.enums.ExcelReportType;
+import com.tekion.accounting.fs.common.excelGeneration.reportRows.OEMMappingReportRow;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
-import com.tekion.accounting.fs.utils.*;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalanceRow;
 import com.tekion.as.models.dto.MonthInfo;
@@ -38,11 +39,11 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.tekion.accounting.fs.TConstants.BLANK_STRING;
-import static com.tekion.accounting.fs.TConstants.STATUS;
+import static com.tekion.accounting.fs.common.TConstants.BLANK_STRING;
+import static com.tekion.accounting.fs.common.TConstants.STATUS;
 import static com.tekion.accounting.fs.dto.OemFsMappingSimilarToUI.MAPPED;
 import static com.tekion.accounting.fs.dto.OemFsMappingSimilarToUI.UNMAPPED;
-import static com.tekion.accounting.fs.enums.CustomFieldType.DEPARTMENT;
+import static com.tekion.accounting.fs.common.enums.CustomFieldType.DEPARTMENT;
 import static com.tekion.core.utils.TStringUtils.isBlank;
 import static com.tekion.core.utils.TStringUtils.isNotBlank;
 import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
@@ -139,7 +140,7 @@ public class OEMMappingExcelHelperService {
 	}
 
 	private void populateDefaultsInContext(OEMMappingExcelReportContext context) {
-		com.tekion.as.excelGenearation.dto.ESReportCallbackDto esReportCallbackDto = JsonUtil.initializeFromJson(JsonUtil.toJson(context.getFetchNextBatchRequest().getOriginalPayload()), com.tekion.as.excelGenearation.dto.ESReportCallbackDto.class);
+		ESReportCallbackDto esReportCallbackDto = JsonUtil.initializeFromJson(JsonUtil.toJson(context.getFetchNextBatchRequest().getOriginalPayload()), ESReportCallbackDto.class);
 		context.setEsReportCallbackDto(esReportCallbackDto);
 		OEMMappingRequestDto oemMappingRequestDto = JsonUtil.initializeFromJson(JsonUtil.toJson(context.getEsReportCallbackDto().getExtraInfoForCallback()), OEMMappingRequestDto.class);
 		context.setOemMappingRequestDto(oemMappingRequestDto);

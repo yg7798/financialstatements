@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.List;
 
-import static com.tekion.accounting.fs.TConstants.DEALER_ID;
-import static com.tekion.accounting.fs.TConstants.TENANT_DEFAULT;
+import static com.tekion.accounting.fs.common.TConstants.DEALER_ID;
+import static com.tekion.accounting.fs.common.TConstants.TENANT_DEFAULT;
 
 @Component
 public class AccountingInfoRepoImpl extends BaseTenantLevelMongoRepository<AccountingInfo> implements AccountingInfoRepo {

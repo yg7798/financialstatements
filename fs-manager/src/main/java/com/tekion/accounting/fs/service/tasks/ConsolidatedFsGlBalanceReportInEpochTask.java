@@ -1,11 +1,11 @@
 package com.tekion.accounting.fs.service.tasks;
 
 import com.google.common.collect.Sets;
-import com.tekion.accounting.fs.beans.FsReportContext;
-import com.tekion.accounting.fs.dpProvider.DpUtils;
+import com.tekion.accounting.fs.dto.context.FsReportContext;
+import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
-import com.tekion.accounting.fs.utils.TimeUtils;
-import com.tekion.accounting.fs.utils.UserContextUtils;
+import com.tekion.accounting.fs.common.utils.TimeUtils;
+import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.as.models.beans.TrialBalanceRow;
 import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.core.utils.UserContextProvider;

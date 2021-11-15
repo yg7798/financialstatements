@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.repos;
 
 import com.mongodb.client.result.UpdateResult;
-import com.tekion.accounting.fs.beans.OemFSMetadataCellsInfo;
-import com.tekion.accounting.fs.utils.JsonUtil;
+import com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.core.mongo.BaseGlobalMongoRepository;
 import com.tekion.core.serverconfig.beans.ModuleName;
 import com.tekion.core.utils.UserContextProvider;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.tekion.accounting.fs.TConstants.*;
+import static com.tekion.accounting.fs.common.TConstants.*;
 
 @Component
 @Slf4j

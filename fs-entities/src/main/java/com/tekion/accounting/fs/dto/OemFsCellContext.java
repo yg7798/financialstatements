@@ -1,9 +1,9 @@
 package com.tekion.accounting.fs.dto;
 
 import com.google.common.collect.Maps;
-import com.tekion.accounting.fs.beans.AccountingOemFsCellCode;
-import com.tekion.accounting.fs.beans.OEMFsCellCodeSnapshot;
-import com.tekion.accounting.fs.beans.OemConfig;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
+import com.tekion.accounting.fs.beans.common.OEMFsCellCodeSnapshot;
+import com.tekion.accounting.fs.beans.common.OemConfig;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.memo.HCWorksheet;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;

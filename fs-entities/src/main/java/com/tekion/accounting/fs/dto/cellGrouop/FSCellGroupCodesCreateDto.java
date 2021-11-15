@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.dto.cellGrouop;
 
 import com.google.common.collect.Lists;
-import com.tekion.accounting.fs.beans.AccountingOemFsCellGroup;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;

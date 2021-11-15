@@ -1,14 +1,15 @@
 package com.tekion.accounting.fs.service.excelGeneration;
 
-import com.tekion.accounting.fs.excelGeneration.abstractExecutors.AccAbstractExcelReportGenerator;
-import com.tekion.accounting.fs.excelGeneration.dto.AccExcelRequestDto;
-import com.tekion.accounting.fs.excelGeneration.dto.financialStatement.OEMMappingRequestDto;
-import com.tekion.accounting.fs.excelGeneration.enums.ExcelReportType;
-import com.tekion.accounting.fs.excelGeneration.helper.ExcelReportGeneratorHelper;
-import com.tekion.accounting.fs.excelGeneration.reportRows.OEMMappingReportRow;
-import com.tekion.accounting.fs.utils.JsonUtil;
-import com.tekion.accounting.fs.validation.NotNullGroup;
-import com.tekion.accounting.fs.validation.RangeValidatorGroup;
+import com.tekion.accounting.fs.common.excelGeneration.abstractExecutors.AccAbstractExcelReportGenerator;
+import com.tekion.accounting.fs.common.excelGeneration.dto.AccExcelRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.dto.ESReportCallbackDto;
+import com.tekion.accounting.fs.common.excelGeneration.dto.financialStatement.OEMMappingRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.enums.ExcelReportType;
+import com.tekion.accounting.fs.common.excelGeneration.helper.ExcelReportGeneratorHelper;
+import com.tekion.accounting.fs.common.excelGeneration.reportRows.OEMMappingReportRow;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
+import com.tekion.accounting.fs.common.validation.NotNullGroup;
+import com.tekion.accounting.fs.common.validation.RangeValidatorGroup;
 import com.tekion.core.excelGeneration.models.model.ExcelGenerationRequestDto;
 import com.tekion.core.excelGeneration.models.model.FetchNextBatchRequest;
 import com.tekion.core.excelGeneration.models.model.NextBatchData;
@@ -37,7 +38,7 @@ public class OEMMappingExcelReportGenerator extends AccAbstractExcelReportGenera
 
 		OEMMappingRequestDto oemMappingRequestDto = JsonUtil.initializeFromJson(JsonUtil.toJson(requestDto.getRequestDetails()), OEMMappingRequestDto.class);
 		validator.validate(oemMappingRequestDto, RangeValidatorGroup.class, NotNullGroup.class);
-		com.tekion.as.excelGenearation.dto.ESReportCallbackDto reportCallbackDto = new com.tekion.as.excelGenearation.dto.ESReportCallbackDto();
+		ESReportCallbackDto reportCallbackDto = new ESReportCallbackDto();
 		reportCallbackDto.setExtraInfoForCallback(oemMappingRequestDto);
 		reportCallbackDto.setMinimizedResourceMetaData(getMinimizeMetadata(excelGenerationRequestDtoForClient));
 

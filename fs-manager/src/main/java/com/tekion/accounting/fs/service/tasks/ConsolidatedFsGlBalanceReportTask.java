@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.service.tasks;
 
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
-import com.tekion.accounting.fs.utils.UserContextUtils;
+import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.as.models.beans.TrialBalance;
 import com.tekion.as.models.beans.TrialBalanceRow;
 import com.tekion.as.models.dto.MonthInfo;

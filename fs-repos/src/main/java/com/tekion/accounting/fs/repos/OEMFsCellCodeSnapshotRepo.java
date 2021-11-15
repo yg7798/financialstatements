@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.repos;
 
 import com.mongodb.bulk.BulkWriteUpsert;
-import com.tekion.accounting.fs.beans.FSEntry;
-import com.tekion.accounting.fs.beans.OEMFsCellCodeSnapshot;
+import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.beans.common.OEMFsCellCodeSnapshot;
 
 import java.util.Collection;
 import java.util.List;

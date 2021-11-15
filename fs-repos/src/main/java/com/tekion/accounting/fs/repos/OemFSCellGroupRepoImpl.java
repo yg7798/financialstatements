@@ -3,10 +3,10 @@ package com.tekion.accounting.fs.repos;
 import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
 import com.mongodb.bulk.BulkWriteUpsert;
-import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.AccountingOemFsCellGroup;
-import com.tekion.accounting.fs.beans.OemTemplate;
-import com.tekion.accounting.fs.utils.TMongoUtils;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
+import com.tekion.accounting.fs.beans.common.OemTemplate;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.mongo.BaseGlobalMongoRepository;
 import com.tekion.core.serverconfig.beans.ModuleName;
 import com.tekion.core.utils.TCollectionUtils;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.tekion.accounting.fs.TConstants.*;
+import static com.tekion.accounting.fs.common.TConstants.*;
 
 
 @Slf4j

@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.dto.fsEntry;
 
-import com.tekion.accounting.fs.beans.FSEntry;
-import com.tekion.accounting.fs.beans.MigrationMetaDataForFsEntry;
+import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.beans.common.MigrationMetaDataForFsEntry;
 import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.core.utils.TStringUtils;

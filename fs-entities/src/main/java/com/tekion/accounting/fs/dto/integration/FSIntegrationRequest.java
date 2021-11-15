@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.dto.integration;
 
-import com.tekion.accounting.fs.beans.integration.FinancialStatement;
+import com.tekion.accounting.fs.integration.FinancialStatement;
 import lombok.Data;
 
 import java.util.List;

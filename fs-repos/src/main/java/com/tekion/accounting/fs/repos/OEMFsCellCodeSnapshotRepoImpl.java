@@ -1,9 +1,9 @@
 package com.tekion.accounting.fs.repos;
 
 import com.mongodb.bulk.BulkWriteUpsert;
-import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.FSEntry;
-import com.tekion.accounting.fs.beans.OEMFsCellCodeSnapshot;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.beans.common.OEMFsCellCodeSnapshot;
 import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.enums.FSType;
@@ -20,11 +20,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static com.tekion.accounting.fs.TConstants.*;
-import static com.tekion.accounting.fs.beans.FSEntry.FS_ID;
-import static com.tekion.accounting.fs.beans.FSEntry.FS_TYPE;
-import static com.tekion.accounting.fs.beans.OemTemplate.OEM_ID;
-import static com.tekion.accounting.fs.utils.UserContextUtils.getDefaultSiteId;
+import static com.tekion.accounting.fs.common.TConstants.*;
+import static com.tekion.accounting.fs.beans.common.FSEntry.FS_ID;
+import static com.tekion.accounting.fs.beans.common.FSEntry.FS_TYPE;
+import static com.tekion.accounting.fs.beans.common.OemTemplate.OEM_ID;
+import static com.tekion.accounting.fs.common.utils.UserContextUtils.getDefaultSiteId;
 
 @Component
 public class OEMFsCellCodeSnapshotRepoImpl extends BaseDealerLevelMongoRepository<OEMFsCellCodeSnapshot> implements OEMFsCellCodeSnapshotRepo {

@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.dto;
 
 
-import com.tekion.accounting.fs.beans.integration.Detail;
+import com.tekion.accounting.fs.integration.Detail;
 import com.tekion.accounting.fs.beans.accountingInfo.FsOemPayloadInfo;
 import com.tekion.accounting.fs.enums.OEM;
 import lombok.AllArgsConstructor;

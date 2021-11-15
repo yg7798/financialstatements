@@ -1,18 +1,18 @@
 package com.tekion.accounting.fs.service.oemPayload;
 
-import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.AccountingOemFsCellCode;
-import com.tekion.accounting.fs.beans.FSEntry;
-import com.tekion.accounting.fs.beans.ProcessFinancialStatement;
-import com.tekion.accounting.fs.beans.integration.Detail;
-import com.tekion.accounting.fs.beans.integration.FinancialStatement;
-import com.tekion.accounting.fs.dto.oemPayload.FinancialReportRequestBody;
-import com.tekion.accounting.fs.dto.oemPayload.FinancialStatementRequestDto;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
+import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
+import com.tekion.accounting.fs.integration.Detail;
+import com.tekion.accounting.fs.integration.FinancialStatement;
+import com.tekion.accounting.fs.dto.request.FinancialReportRequestBody;
+import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
 import com.tekion.accounting.fs.service.oemPayload.beans.NCTRow;
-import com.tekion.accounting.fs.utils.DealerConfig;
-import com.tekion.accounting.fs.utils.TimeUtils;
+import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.beans.DynamicProperty;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 
-import static com.tekion.accounting.fs.TConstants.ACCOUNTING_MODULE;
+import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
 import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
 import static com.tekion.core.utils.UserContextProvider.getCurrentTenantId;
 

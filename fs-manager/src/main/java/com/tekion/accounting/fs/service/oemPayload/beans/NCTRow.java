@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.oemPayload.beans;
 
-import com.tekion.accounting.fs.beans.integration.Detail;
+import com.tekion.accounting.fs.integration.Detail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

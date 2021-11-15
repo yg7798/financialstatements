@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.oemPayload;
 
-import com.tekion.accounting.fs.utils.JsonUtil;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.core.utils.UserContextProvider;
 import com.tekion.integration.masterdata.beans.ProviderInfoRequest;
 import com.tekion.integration.masterdata.response.ProviderDealerMappingInfoResponse;

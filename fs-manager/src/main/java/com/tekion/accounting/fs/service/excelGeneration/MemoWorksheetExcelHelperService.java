@@ -1,25 +1,25 @@
 package com.tekion.accounting.fs.service.excelGeneration;
 
 
-import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.MemoValue;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheetTemplate;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.enums.OemCellDurationType;
-import com.tekion.accounting.fs.excelGeneration.columnConfigs.enums.ExcelCellFormattingHolder;
-import com.tekion.accounting.fs.excelGeneration.columnConfigs.financialStatment.MemoWorksheetColumnConfig;
-import com.tekion.accounting.fs.excelGeneration.dto.SheetInfoDto;
-import com.tekion.accounting.fs.excelGeneration.generators.financialStatement.dto.MemoWorksheetExcelRequestDto;
-import com.tekion.accounting.fs.excelGeneration.generators.financialStatement.dto.MemoWorksheetRequestDto;
-import com.tekion.accounting.fs.excelGeneration.generators.financialStatement.dto.WorksheetApplicableFilter;
-import com.tekion.accounting.fs.excelGeneration.helper.ExcelReportGeneratorHelper;
+import com.tekion.accounting.fs.common.excelGeneration.columnConfigs.enums.ExcelCellFormattingHolder;
+import com.tekion.accounting.fs.common.excelGeneration.columnConfigs.financialStatment.MemoWorksheetColumnConfig;
+import com.tekion.accounting.fs.common.excelGeneration.dto.SheetInfoDto;
+import com.tekion.accounting.fs.common.excelGeneration.generators.financialStatement.dto.MemoWorksheetExcelRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.generators.financialStatement.dto.MemoWorksheetRequestDto;
+import com.tekion.accounting.fs.common.excelGeneration.generators.financialStatement.dto.WorksheetApplicableFilter;
+import com.tekion.accounting.fs.common.excelGeneration.helper.ExcelReportGeneratorHelper;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.worksheet.MemoWorksheetService;
 import com.tekion.accounting.fs.service.worksheet.MemoWorksheetTemplateService;
-import com.tekion.accounting.fs.utils.JsonUtil;
-import com.tekion.as.excelGenearation.reportRows.MemoWorksheetReportRow;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
+import com.tekion.accounting.fs.common.excelGeneration.reportRows.MemoWorksheetReportRow;
 import com.tekion.core.excelGeneration.models.model.ColumnConfig;
 import com.tekion.core.excelGeneration.models.model.v2.SheetDetails;
 import com.tekion.core.excelGeneration.models.model.v2.SingleRowData;
@@ -36,9 +36,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.tekion.accounting.fs.TConstants.STATUS;
-import static com.tekion.accounting.fs.excelGeneration.reportRows.OEMMappingReportRow.ACTIVE;
-import static com.tekion.accounting.fs.excelGeneration.reportRows.OEMMappingReportRow.INACTIVE;
+import static com.tekion.accounting.fs.common.TConstants.STATUS;
+import static com.tekion.accounting.fs.common.excelGeneration.reportRows.OEMMappingReportRow.ACTIVE;
+import static com.tekion.accounting.fs.common.excelGeneration.reportRows.OEMMappingReportRow.INACTIVE;
 
 @Component
 @RequiredArgsConstructor

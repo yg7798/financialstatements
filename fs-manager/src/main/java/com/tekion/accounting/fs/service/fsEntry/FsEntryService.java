@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.fsEntry;
 
-import com.tekion.accounting.fs.beans.FSEntry;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.dto.fsEntry.FSEntryUpdateDto;
 import com.tekion.accounting.fs.dto.fsEntry.FsEntryCreateDto;
 import com.tekion.accounting.fs.dto.mappings.FsMappingInfosResponseDto;

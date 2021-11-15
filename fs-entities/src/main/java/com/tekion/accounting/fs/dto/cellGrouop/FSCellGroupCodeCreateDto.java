@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.dto.cellGrouop;
 
-import com.tekion.accounting.fs.beans.AccountingOemFsCellGroup;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.enums.OEM;
-import com.tekion.accounting.fs.utils.OemFSUtils;
+import com.tekion.accounting.fs.common.utils.OemFSUtils;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

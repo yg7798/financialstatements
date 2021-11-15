@@ -1,12 +1,12 @@
 package com.tekion.accounting.fs.repos.worksheet;
 
 import com.mongodb.bulk.BulkWriteUpsert;
-import com.tekion.accounting.fs.TConstants;
-import com.tekion.accounting.fs.beans.FSEntry;
-import com.tekion.accounting.fs.beans.OemTemplate;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.beans.common.OemTemplate;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
-import com.tekion.accounting.fs.utils.TMongoUtils;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import com.tekion.core.serverconfig.beans.ModuleName;
 import com.tekion.core.utils.TCollectionUtils;
@@ -23,12 +23,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.tekion.accounting.fs.TConstants.DEALER_ID;
-import static com.tekion.accounting.fs.TConstants.SITE_ID;
-import static com.tekion.accounting.fs.beans.FSEntry.FS_ID;
-import static com.tekion.accounting.fs.beans.OemTemplate.OEM_ID;
+import static com.tekion.accounting.fs.common.TConstants.DEALER_ID;
+import static com.tekion.accounting.fs.common.TConstants.SITE_ID;
+import static com.tekion.accounting.fs.beans.common.FSEntry.FS_ID;
+import static com.tekion.accounting.fs.beans.common.OemTemplate.OEM_ID;
 import static com.tekion.accounting.fs.beans.memo.MemoWorksheet.FIELD_TYPE;
-import static com.tekion.accounting.fs.utils.UserContextUtils.getDefaultSiteId;
+import static com.tekion.accounting.fs.common.utils.UserContextUtils.getDefaultSiteId;
 
 @Service
 public class MemoWorksheetRepoImpl extends BaseDealerLevelMongoRepository<MemoWorksheet> implements MemoWorksheetRepo {

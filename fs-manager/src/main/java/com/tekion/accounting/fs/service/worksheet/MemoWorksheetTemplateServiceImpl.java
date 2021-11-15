@@ -5,7 +5,7 @@ import com.tekion.accounting.fs.beans.memo.MemoWorksheetTemplate;
 import com.tekion.accounting.fs.dto.memo.MemoWorksheetTemplateRequestDto;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetTemplateRepo;
-import com.tekion.accounting.fs.utils.DealerConfig;
+import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.core.utils.TCollectionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
