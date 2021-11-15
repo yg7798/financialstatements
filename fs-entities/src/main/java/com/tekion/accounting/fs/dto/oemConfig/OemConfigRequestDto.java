@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.dto;
+package com.tekion.accounting.fs.dto.oemConfig;
 
 
 import com.tekion.accounting.fs.beans.common.OemConfig;

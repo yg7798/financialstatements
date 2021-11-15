@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.api;
 
-import com.tekion.accounting.fs.dto.FSViewStatementDto;
-import com.tekion.accounting.fs.dto.OemCodeUpdateDto;
-import com.tekion.accounting.fs.dto.OemTemplateReqDto;
+import com.tekion.accounting.fs.service.printing.models.FSViewStatementDto;
+import com.tekion.accounting.fs.dto.cellcode.OemCodeUpdateDto;
+import com.tekion.accounting.fs.dto.oemTemplate.OemTemplateReqDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodesCreateDto;
 import com.tekion.accounting.fs.dto.cellcode.CellCodeSnapshotCreateDto;

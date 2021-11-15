@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.dto;
+package com.tekion.accounting.fs.dto.cellcode;
 
 
 import lombok.AllArgsConstructor;

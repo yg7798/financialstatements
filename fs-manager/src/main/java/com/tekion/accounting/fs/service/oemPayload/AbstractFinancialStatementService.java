@@ -9,7 +9,7 @@ import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.OemConfig;
 import com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo;
 import com.tekion.accounting.fs.integration.*;
-import com.tekion.accounting.fs.dto.CellAddressMapping;
+import com.tekion.accounting.fs.beans.common.CellAddressMapping;
 import com.tekion.accounting.fs.dto.cellcode.FsCellCodeDetailsResponseDto;
 import com.tekion.accounting.fs.dto.cellcode.FsCodeDetail;
 import com.tekion.accounting.fs.dto.integration.FSIntegrationRequest;

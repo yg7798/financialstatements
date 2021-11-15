@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.dto;
+package com.tekion.accounting.fs.dto.oemTemplate;
 
 import com.tekion.accounting.fs.enums.OEM;
 import lombok.AllArgsConstructor;

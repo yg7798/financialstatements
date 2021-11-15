@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.configurations.Launcher;
 
 import com.tekion.accounting.fs.configurations.ApiConfig;
+import com.tekion.accounting.fs.configurations.RestrictedApiConfig;
 import com.tekion.core.service.TekionServiceApplication;
 import com.tekion.core.service.api.DefaultServiceApiWebConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -82,6 +83,19 @@ public class Launcher extends SpringBootServletInitializer implements TekionServ
 		DispatcherServletRegistrationBean servletRegistrationBean = new DispatcherServletRegistrationBean(dispatcherServlet,
 				APP_ROOT + "/u/*");
 		servletRegistrationBean.setName("fsApi");
+		servletRegistrationBean.setLoadOnStartup(1);
+		return servletRegistrationBean;
+	}
+
+	@Bean
+	public ServletRegistrationBean accountingRestrictedApi() {
+		DispatcherServlet dispatcherServlet = new DispatcherServlet();
+		AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
+		applicationContext.register(RestrictedApiConfig.class);
+		dispatcherServlet.setApplicationContext(applicationContext);
+		ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(dispatcherServlet,
+				APP_ROOT + "/r/*");
+		servletRegistrationBean.setName("AccountingRestrictedApi");
 		servletRegistrationBean.setLoadOnStartup(1);
 		return servletRegistrationBean;
 	}

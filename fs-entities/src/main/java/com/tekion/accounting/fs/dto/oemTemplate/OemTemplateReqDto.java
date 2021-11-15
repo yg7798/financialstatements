@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.dto;
+package com.tekion.accounting.fs.dto.oemTemplate;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

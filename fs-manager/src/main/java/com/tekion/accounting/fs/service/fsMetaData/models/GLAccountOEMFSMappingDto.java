@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.dto;
+package com.tekion.accounting.fs.service.fsMetaData.models;
 
 import com.tekion.accounting.fs.enums.OEM;
 import lombok.Data;

@@ -5,7 +5,7 @@ import com.tekion.accounting.fs.dto.context.FsReportContext;
 import com.tekion.accounting.fs.beans.common.OEMFsCellCodeSnapshot;
 import com.tekion.accounting.fs.beans.common.OemConfig;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
-import com.tekion.accounting.fs.dto.OemFsCellContext;
+import com.tekion.accounting.fs.service.compute.models.OemFsCellContext;
 import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.core.excelGeneration.models.utils.TCollectionUtils;

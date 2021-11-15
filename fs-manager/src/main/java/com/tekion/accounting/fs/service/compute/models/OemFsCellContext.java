@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.dto;
+package com.tekion.accounting.fs.service.compute.models;
 
 import com.google.common.collect.Maps;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;

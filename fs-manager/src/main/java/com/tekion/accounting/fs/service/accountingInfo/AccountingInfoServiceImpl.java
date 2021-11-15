@@ -2,7 +2,7 @@ package com.tekion.accounting.fs.service.accountingInfo;
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
-import com.tekion.accounting.fs.dto.AccountingInfoDto;
+import com.tekion.accounting.fs.dto.accountingInfo.AccountingInfoDto;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.accountingInfo.AccountingInfoRepo;

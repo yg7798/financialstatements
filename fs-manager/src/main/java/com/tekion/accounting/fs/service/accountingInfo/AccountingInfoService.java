@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.service.accountingInfo;
 
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
-import com.tekion.accounting.fs.dto.AccountingInfoDto;
+import com.tekion.accounting.fs.dto.accountingInfo.AccountingInfoDto;
 import com.tekion.accounting.fs.enums.OEM;
 
 import java.util.Collection;

@@ -1,6 +1,5 @@
 package com.tekion.accounting.fs.beans.common;
 
-import com.tekion.accounting.fs.dto.CellAddressMapping;
 import com.tekion.core.beans.TBaseMongoBean;
 import lombok.*;
 import org.springframework.data.mongodb.core.index.CompoundIndex;

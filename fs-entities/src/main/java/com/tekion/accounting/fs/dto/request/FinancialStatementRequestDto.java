@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.tekion.accounting.fs.dto.FSTemplateRequestValidationGroup;
+import com.tekion.accounting.fs.dto.validator.FSTemplateRequestValidationGroup;
 import com.tekion.accounting.fs.enums.FinancialYearType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

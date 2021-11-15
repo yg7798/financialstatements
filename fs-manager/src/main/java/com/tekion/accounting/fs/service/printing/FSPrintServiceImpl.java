@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.service.printing;
 
 import com.tekion.accounting.fs.common.TConstants;
-import com.tekion.accounting.fs.dto.FSViewStatementDto;
+import com.tekion.accounting.fs.service.printing.models.FSViewStatementDto;
 import com.tekion.accounting.fs.common.pdfPrinting.PDFPrintService;
 import com.tekion.accounting.fs.common.pdfPrinting.dto.BulkPdfRequest;
 import com.tekion.accounting.fs.common.pdfPrinting.dto.PdfDocumentType;

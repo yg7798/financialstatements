@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.dto;
+package com.tekion.accounting.fs.dto.accountingInfo;
 
 
 import com.tekion.accounting.fs.integration.Detail;

@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.dto;
+package com.tekion.accounting.fs.beans.common;
 
 import com.tekion.accounting.fs.common.validation.OemFSMetadataMappingDtoValidatorGroup;
 import com.tekion.accounting.fs.integration.CellAddressInfo;

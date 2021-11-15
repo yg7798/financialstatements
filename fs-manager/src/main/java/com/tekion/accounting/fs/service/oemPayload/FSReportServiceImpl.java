@@ -2,7 +2,7 @@ package com.tekion.accounting.fs.service.oemPayload;
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
-import com.tekion.accounting.fs.dto.FSTemplateRequestValidationGroup;
+import com.tekion.accounting.fs.dto.validator.FSTemplateRequestValidationGroup;
 import com.tekion.accounting.fs.dto.integration.FSSubmitResponse;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.OEM;

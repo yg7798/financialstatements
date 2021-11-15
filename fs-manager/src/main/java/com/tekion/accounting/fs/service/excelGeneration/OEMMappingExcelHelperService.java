@@ -41,8 +41,8 @@ import java.util.stream.Collectors;
 
 import static com.tekion.accounting.fs.common.TConstants.BLANK_STRING;
 import static com.tekion.accounting.fs.common.TConstants.STATUS;
-import static com.tekion.accounting.fs.dto.OemFsMappingSimilarToUI.MAPPED;
-import static com.tekion.accounting.fs.dto.OemFsMappingSimilarToUI.UNMAPPED;
+import static com.tekion.accounting.fs.service.compute.models.OemFsMappingSimilarToUI.MAPPED;
+import static com.tekion.accounting.fs.service.compute.models.OemFsMappingSimilarToUI.UNMAPPED;
 import static com.tekion.accounting.fs.common.enums.CustomFieldType.DEPARTMENT;
 import static com.tekion.core.utils.TStringUtils.isBlank;
 import static com.tekion.core.utils.TStringUtils.isNotBlank;

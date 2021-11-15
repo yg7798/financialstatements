@@ -1,6 +1,5 @@
 package com.tekion.accounting.fs.dto.cellcode;
 
-import com.tekion.accounting.fs.dto.OemCellSubType;
 import com.tekion.accounting.fs.enums.OemCellDurationType;
 import com.tekion.accounting.fs.enums.OemCellValueType;
 import com.tekion.accounting.fs.enums.OemValueType;

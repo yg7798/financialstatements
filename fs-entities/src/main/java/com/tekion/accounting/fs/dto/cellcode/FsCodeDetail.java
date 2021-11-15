@@ -1,6 +1,5 @@
 package com.tekion.accounting.fs.dto.cellcode;
 
-import com.tekion.accounting.fs.dto.OemGlAccountDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
