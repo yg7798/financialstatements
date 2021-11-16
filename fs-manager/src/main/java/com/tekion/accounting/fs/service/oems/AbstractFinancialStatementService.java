@@ -70,15 +70,22 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
     protected FsXMLServiceImpl fsXMLService;
     @Autowired
     protected DPClient dpClient;
+    @Autowired
     protected AccountingInfoService infoService;
+    @Autowired
     protected PreferenceClient preferenceClient;
+    @Autowired
     protected OemConfigRepo oemConfigRepo;
+    @Autowired
+    protected AccountingService accountingService;
+    @Autowired
     protected OemFSMetadataMappingService fsMetadataMappingService;
+    @Autowired
     protected IntegrationService integrationService;
+    @Autowired
     protected FSEntryRepo fsEntryRepo;
+    @Autowired
     protected SlackService slackService;
-
-    AccountingService accountingService;
 
     public static final String MTD = "MTD";
     public static final String YTD = "YTD";
