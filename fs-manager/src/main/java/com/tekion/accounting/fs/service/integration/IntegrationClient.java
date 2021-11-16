@@ -3,7 +3,7 @@ package com.tekion.accounting.fs.service.integration;
 import com.tekion.accounting.fs.dto.integration.FSIntegrationRequest;
 import com.tekion.accounting.fs.dto.integration.FSSubmitResponse;
 import com.tekion.accounting.fs.enums.AccountingError;
-import com.tekion.accounting.fs.service.oemPayload.OEMInfo;
+import com.tekion.accounting.fs.service.oems.OEMInfo;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.feign.ClientBuilder;

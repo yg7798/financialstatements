@@ -2,8 +2,8 @@ package com.tekion.accounting.fs.api;
 
 import com.tekion.accounting.fs.dto.request.FinancialReportRequestBody;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
-import com.tekion.accounting.fs.service.oemPayload.FSReportServiceImpl;
-import com.tekion.accounting.fs.service.oemPayload.FsXMLServiceImpl;
+import com.tekion.accounting.fs.service.oems.FSReportServiceImpl;
+import com.tekion.accounting.fs.service.oems.FsXMLServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
