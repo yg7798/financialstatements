@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile project(':fs-entities')
     compile project(':fs-repos')
-    compile project(':common')
+    compile('org.apache.poi:poi-ooxml:5.0.0')
+    compile('com.tekion.integration.sdk:tinmasterdataclient:0.0.15-SNAPSHOT')
 }

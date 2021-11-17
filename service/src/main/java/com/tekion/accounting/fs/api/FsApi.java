@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.api;
 
-import com.tekion.accounting.fs.service.FsEntryService;
+import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
 import com.tekion.core.validation.TValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -18,6 +18,4 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile project(':fs-entities')
-    compile project(':common')
-    compile('com.tekion.sdk:mongosupport:2.0.11-SNAPSHOT')
 }
