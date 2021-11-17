@@ -1,15 +1,19 @@
 package com.tekion.accounting.fs.client;
 
+import com.tekion.accounting.fs.entities.AccountingInfo;
+import com.tekion.accounting.fs.entities.OEMFsCellCodeSnapshotBulkResponseDto;
+import com.tekion.core.beans.TResponse;
 import com.tekion.core.feign.ClientBuilder;
 import com.tekion.core.service.internalauth.AbstractServiceClientFactory;
 import com.tekion.core.service.internalauth.FeignAuthInterceptor;
 import com.tekion.core.service.internalauth.TokenGenerator;
-import feign.Logger;
-import feign.RequestInterceptor;
+import feign.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface FSInternalClient {
 
@@ -28,4 +32,15 @@ public interface FSInternalClient {
 		return builder.buildClient(
 				hostUrl, FSInternalClient.class, level, new FSClientErrorDecoder(), null, interceptors );
 	}
+
+	@RequestLine("POST accounting/u/oemMapping/fsReport/{oemId}/{oemFsYear}/v/{oemFsVersion}/bulk")
+	TResponse<List<OEMFsCellCodeSnapshotBulkResponseDto>> getFSReportBulk(@HeaderMap Map<String, String> headerMap,
+																		  Set<String> codes,
+																		  @Param("oemId") String oemId,
+																		  @Param("oemFsVersion") Integer oemFsVersion,
+																		  @Param("oemFsYear") Integer oemFsYear,
+																		  @QueryMap Map<String,String> queryMap);
+
+	@RequestLine("GET /accounting/u/accountingInfo/")
+	TResponse<AccountingInfo> getAccountingInfo(@HeaderMap Map<String, String> headerMap);
 }
