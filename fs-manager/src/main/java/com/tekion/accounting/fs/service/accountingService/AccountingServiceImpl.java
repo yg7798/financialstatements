@@ -5,6 +5,7 @@ import com.tekion.as.models.beans.AccountingSettings;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalance;
 import com.tekion.as.models.beans.TrialBalanceRow;
+import com.tekion.as.models.beans.fs.FsReportDto;
 import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.core.es.common.impl.TekSearchRequest;
 import com.tekion.core.es.request.ESResponse;
@@ -12,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -67,5 +70,15 @@ public class AccountingServiceImpl implements AccountingService {
 	@Override
 	public ESResponse<GLAccount> defaultSearch(TekSearchRequest request) {
 		return accountingClient.getGLAccountList(request).getData();
+	}
+
+	@Override
+	public TrialBalance getFSTrialBalanceTillDayOfMonth(int startMonth, int startYear, int toMonth, int toYear, long tillEpoch) {
+		return accountingClient.getFSTrialBalanceTillDayOfMonth(startYear, startMonth, toYear, toMonth, tillEpoch).getData();
+	}
+
+	@Override
+	public Map<Integer, Map<String, Map<String, BigDecimal>>> getGlBalCntInfoForFS(FsReportDto fsrContext){
+		return accountingClient.getGlBalCntInfoForFS(fsrContext).getData();
 	}
 }

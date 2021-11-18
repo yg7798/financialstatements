@@ -6,9 +6,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.tekion.accounting.fs.common.GlobalService;
-import com.tekion.accounting.fs.common.TConstants;
-import com.tekion.accounting.fs.common.enums.CustomFieldType;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.*;
 import com.tekion.accounting.fs.beans.mappings.*;
@@ -16,9 +13,10 @@ import com.tekion.accounting.fs.beans.memo.FieldType;
 import com.tekion.accounting.fs.beans.memo.HCWorksheet;
 import com.tekion.accounting.fs.beans.memo.MemoValue;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
-import com.tekion.accounting.fs.service.common.cache.CustomFieldConfig;
-import com.tekion.accounting.fs.service.common.cache.dtos.OptionMinimal;
+import com.tekion.accounting.fs.common.GlobalService;
+import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
+import com.tekion.accounting.fs.common.enums.CustomFieldType;
 import com.tekion.accounting.fs.common.utils.*;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodesCreateDto;
@@ -37,6 +35,8 @@ import com.tekion.accounting.fs.repos.worksheet.HCWorksheetRepo;
 import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
+import com.tekion.accounting.fs.service.common.cache.CustomFieldConfig;
+import com.tekion.accounting.fs.service.common.cache.dtos.OptionMinimal;
 import com.tekion.accounting.fs.service.compute.models.CellCodeKey;
 import com.tekion.accounting.fs.service.compute.models.OemFsCellContext;
 import com.tekion.accounting.fs.service.compute.models.OemFsMappingSimilarToUI;
@@ -51,7 +51,6 @@ import com.tekion.as.models.beans.TrialBalanceRow;
 import com.tekion.as.models.beans.fs.FsReportDto;
 import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.beans.DynamicProperty;
-import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.TStringUtils;
@@ -79,10 +78,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.tekion.accounting.fs.common.AsyncContextDecorator.ASYNC_THREAD_POOL;
-import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
 import static com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode.additionInfoField_codeIdentifier;
 import static com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode.additionInfoField_month;
+import static com.tekion.accounting.fs.common.AsyncContextDecorator.ASYNC_THREAD_POOL;
+import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
 import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
 import static com.tekion.core.utils.UserContextProvider.getCurrentTenantId;
 import static java.util.stream.Collectors.groupingBy;
@@ -106,16 +105,13 @@ public class FsComputeServiceImpl implements FsComputeService {
 	private final OemConfigRepo oemConfigRepo;
 	private final AccountingInfoService aiService;
 	private final DPClient dpClient;
-	private final PreferenceClient preferenceClient;
 	public final FsEntryService fsEntryService;
 	public final FSEntryRepo fsEntryRepo;
 	public final GlobalService globalService;
 	public final AccountingClient accountingClient;
 	public final AccountingService accountingService;
 	public final CustomFieldConfig customFieldConfig;
-	//private final MonthLedgerService monthLedgerService;
 
-	//private final RedisCacheFactory redisCacheFactory;
 
 	@Qualifier(ASYNC_THREAD_POOL)
 	@Autowired
@@ -570,13 +566,11 @@ public class FsComputeServiceImpl implements FsComputeService {
 			fiscalStartYear = fiscalStartYear-1;
 		}
 
-		TrialBalance trialBalance = getFSTrialBalanceTillDayOfMonth(fiscalStartYear,
+		TrialBalance trialBalance = accountingService.getFSTrialBalanceTillDayOfMonth(fiscalStartYear,
 						fiscalStartMonth,tillDate.get(Calendar.YEAR), tillDate.get(Calendar.MONTH)
 						, tillDate.getTimeInMillis());
 
-		//TODO: Fix here
-		return null;
-		//return trialBalance.getAccountRows().stream().collect(Collectors.toMap(TrialBalanceRow::getAccountId, k -> k));
+		return trialBalance.getAccountRows().stream().collect(Collectors.toMap(TrialBalanceRow::getAccountId, k -> k));
 	}
 
 	@Override
@@ -2568,20 +2562,15 @@ public class FsComputeServiceImpl implements FsComputeService {
 	}
 
 	private MonthInfo getActiveMonthInfo(){
-		return accountingClient.getActiveMonthInfo().getData();
+		return accountingService.getActiveMonthInfo();
 	}
 
 	private int getFiscalYearStartMonth(){
-		return accountingClient.getAccountingSettings().getData().getFiscalYearStartMonth();
+		return accountingService.getAccountingSettings().getFiscalYearStartMonth();
 	}
 
 	private Map<Integer, Map<String, Map<String, BigDecimal>>> getGlBalCntInfoForFS(FsReportDto fsrContext){
-		return accountingClient.getGlBalCntInfoForFS(fsrContext).getData();
-	}
-
-	//TODO: implement this is accounting client
-	private TrialBalance getFSTrialBalanceTillDayOfMonth(int fiscalStartYear, int fiscalStartMonth, int calYear, int calMonth, long milliSec){
-		return null;
+		return accountingService.getGlBalCntInfoForFS(fsrContext);
 	}
 }
 
