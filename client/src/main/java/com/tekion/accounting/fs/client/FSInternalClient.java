@@ -33,7 +33,7 @@ public interface FSInternalClient {
 				hostUrl, FSInternalClient.class, level, new FSClientErrorDecoder(), null, interceptors );
 	}
 
-	@RequestLine("POST accounting/u/oemMapping/fsReport/{oemId}/{oemFsYear}/v/{oemFsVersion}/bulk")
+	@RequestLine("POST financial-statements/u/oemMapping/fsReport/{oemId}/{oemFsYear}/v/{oemFsVersion}/bulk")
 	TResponse<List<OEMFsCellCodeSnapshotBulkResponseDto>> getFSReportBulk(@HeaderMap Map<String, String> headerMap,
 																		  Set<String> codes,
 																		  @Param("oemId") String oemId,
@@ -41,6 +41,6 @@ public interface FSInternalClient {
 																		  @Param("oemFsYear") Integer oemFsYear,
 																		  @QueryMap Map<String,String> queryMap);
 
-	@RequestLine("GET /accounting/u/accountingInfo/")
+	@RequestLine("GET financial-statements/u/accountingInfo/")
 	TResponse<AccountingInfo> getAccountingInfo(@HeaderMap Map<String, String> headerMap);
 }
