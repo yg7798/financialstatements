@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.entities;
+package com.tekion.accounting.fs.client.dtos;
 
 import lombok.Data;
 

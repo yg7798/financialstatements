@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.entities;
+package com.tekion.accounting.fs.client.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountingInfo{
+public class AccountingInfo {
 
 	private static final String SALES_CODE = "salesCode";
 	private static final String SALES_ZONE_CODE = "salesZoneCode";

@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.client;
 
-import com.tekion.accounting.fs.entities.AccountingInfo;
-import com.tekion.accounting.fs.entities.OEMFsCellCodeSnapshotBulkResponseDto;
+import com.tekion.accounting.fs.client.dtos.AccountingInfo;
+import com.tekion.accounting.fs.client.dtos.OEMFsCellCodeSnapshotBulkResponseDto;
 import com.tekion.core.beans.TResponse;
 import com.tekion.core.feign.ClientBuilder;
 import com.tekion.core.service.internalauth.AbstractServiceClientFactory;
