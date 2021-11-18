@@ -14,7 +14,7 @@ version '1.0'
 ext {
     springBootVersion = '2.1.3.RELEASE'
     openFeignVersion = '10.3.0'
-    libVersion = '1.0.0b-SNAPSHOT'
+    libVersion = '1.0.0d-SNAPSHOT'
 }
 
 ext.moduleSourcePath = { moduleName ->
@@ -46,12 +46,12 @@ def removeDependency = { NodeList dependencyArray,
 }
 
 task sourcesJar(type: Jar) {
-    from(moduleSourcePath("client"),moduleSourcePath("common-entities"))
+    from(moduleSourcePath("client"))
     classifier "sources"
 }
 
 jar {
-    from(moduleClassPath("client"),moduleSourcePath("common-entities"))
+    from(moduleClassPath("client"))
 }
 
 artifacts {
@@ -82,7 +82,7 @@ publishing {
             from components.java
             artifacts = [artifact(jar), artifact(sourcesJar)]
             pom {
-                groupId = "com.tekion.financialstatements"
+                groupId = "com.tekion.accounting"
                 artifactId = "financialstatements-client"
                 version = "${libVersion}"
             }
