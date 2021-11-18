@@ -18,7 +18,7 @@ import java.util.Set;
 public interface FSInternalClient {
 
 	static FSInternalClient createClient(ClientBuilder builder, AbstractServiceClientFactory clientFactory, TokenGenerator generator ) {
-		String csInstanceUrl = clientFactory.getServiceBaseUrl( "FINANCIAL-STATEMENTS");
+		String csInstanceUrl = clientFactory.getServiceBaseUrl( "FINANCIAL_STATEMENTS");
 		return createClient( builder, csInstanceUrl, generator );
 	}
 
