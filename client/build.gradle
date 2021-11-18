@@ -8,7 +8,7 @@ apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
-group 'FinancialStatementsService'
+group 'com.tekion.accounting.fs'
 version '1.0'
 
 ext {
