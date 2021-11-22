@@ -93,7 +93,7 @@ public class GMFinancialStatementServiceImpl extends AbstractFinancialStatementS
             return;
         }
 
-        String report = generateFsXMLByPreference(requestDto);
+        String report = generateXML(requestDto);;
         response.setContentType("application/xml");
         response.setHeader("Content-Disposition", "attachment;filename=thisIsTheFileName.xml");
         try{
@@ -203,9 +203,5 @@ public class GMFinancialStatementServiceImpl extends AbstractFinancialStatementS
             }
         }
         return sb.toString();
-    }
-
-    private String generateFsXMLByPreference(FinancialStatementRequestDto requestDto) {
-        return generateXML(requestDto);
     }
 }
