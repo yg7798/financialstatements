@@ -46,7 +46,7 @@ public class HCWorksheetApi {
 		return TResponseEntityBuilder.okResponseEntity(hcWorksheetService.getHCWorksheets(fsId));
 	}
 
-	@PutMapping("/")
+	@PutMapping("")
 	public ResponseEntity updateHCWorksheets(@RequestBody HCBulkUpdateDto hcBulkUpdateDto){
 		validator.validate(hcBulkUpdateDto);
 		return TResponseEntityBuilder.okResponseEntity(hcWorksheetService.bulkUpdate(hcBulkUpdateDto));
