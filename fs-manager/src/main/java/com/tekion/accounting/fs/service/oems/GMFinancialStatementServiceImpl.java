@@ -1,19 +1,16 @@
 package com.tekion.accounting.fs.service.oems;
 
-import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
-import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
-import com.tekion.accounting.fs.integration.Detail;
-import com.tekion.accounting.fs.integration.FinancialStatement;
-import com.tekion.accounting.fs.dto.request.FinancialReportRequestBody;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.AccountingError;
-import com.tekion.accounting.fs.service.integration.IntegrationClient;
+import com.tekion.accounting.fs.integration.Detail;
+import com.tekion.accounting.fs.integration.FinancialStatement;
+import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
 import com.tekion.accounting.fs.service.external.nct.NCTRow;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
-import com.tekion.accounting.fs.common.utils.TimeUtils;
-import com.tekion.beans.DynamicProperty;
+import com.tekion.accounting.fs.service.integration.IntegrationClient;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
@@ -22,38 +19,26 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.*;
-
-import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
-import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
-import static com.tekion.core.utils.UserContextProvider.getCurrentTenantId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 @Slf4j
 public class GMFinancialStatementServiceImpl extends AbstractFinancialStatementService{
 
-    private static final String USE_DEFAULT_API = "";
-    private static final String USE_NEW_API = "NEW_API";
-    private static final String FS_XML_PROPERTY = "NEW_FS_XML_PREFERENCE";
     public static final int NCB_STATEMENT_YEAR = 0;
     public static final List<String> zeroValues = Arrays.asList("0", "0.0", "0.00");
 
-    private DynamicProperty<String> dealerXmlPref;
-
     public GMFinancialStatementServiceImpl(DealerConfig dc, IntegrationClient ic, FsXMLServiceImpl fs) {
         super(dc, ic, fs);
-    }
-
-    @PostConstruct
-    public void postConstruct(){
-        dealerXmlPref = dpClient.getStringProperty(ACCOUNTING_MODULE, FS_XML_PROPERTY);
     }
 
     @Override
@@ -85,7 +70,7 @@ public class GMFinancialStatementServiceImpl extends AbstractFinancialStatementS
             return;
         }
 
-        String report = generateFsXMLByPreference(requestDto);
+        String report = generateXML(requestDto);;
         response.setContentType("application/xml");
         response.setHeader("Content-Disposition", "attachment;filename=thisIsTheFileName.xml");
         try{
@@ -195,29 +180,5 @@ public class GMFinancialStatementServiceImpl extends AbstractFinancialStatementS
             }
         }
         return sb.toString();
-    }
-
-    private String generateFsXMLByPreference(FinancialStatementRequestDto requestDto) {
-
-        String globalPref = dealerXmlPref.getSafeGlobalValue(USE_DEFAULT_API);
-        String dealerPref = dealerXmlPref.getSafeValueWithUserContext(USE_DEFAULT_API);
-
-        log.info("dealer property loaded {}", dealerXmlPref.isPropertyLoadedWithUserContext());
-        log.info("global property loaded {}", dealerXmlPref.isGlobalPropertyLoaded());
-
-        log.info(" dealer prop value: {} tenant Id {} dealerId {}", dealerPref, getCurrentTenantId(), getCurrentDealerId());
-        log.info("global prop val: {}", globalPref);
-
-        if(USE_NEW_API.equals(dealerPref) ||  (USE_DEFAULT_API.equals(dealerPref) && USE_NEW_API.equals(globalPref))){
-            log.info("Using new Api for XML generation");
-            return generateXML(requestDto);
-
-        }else{
-
-            log.info("Using old Api for XML generation");
-            Calendar c = TimeUtils.buildCalendar(requestDto.getTillEpoch());
-            return fsXMLService.getFinancialStatement( new FinancialReportRequestBody(String.valueOf(c.get(Calendar.YEAR))
-                , String.valueOf(c.get(Calendar.MONTH))));
-        }
     }
 }

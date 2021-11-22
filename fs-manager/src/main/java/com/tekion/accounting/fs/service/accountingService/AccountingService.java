@@ -4,11 +4,14 @@ import com.tekion.as.models.beans.AccountingSettings;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.beans.TrialBalance;
 import com.tekion.as.models.beans.TrialBalanceRow;
+import com.tekion.as.models.beans.fs.FsReportDto;
 import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.core.es.common.impl.TekSearchRequest;
 import com.tekion.core.es.request.ESResponse;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface AccountingService {
@@ -32,8 +35,15 @@ public interface AccountingService {
 
 	MonthInfo getPostAheadMonthInfo();
 
-	List<TrialBalanceRow> getConsolidatedGlBalancesForMonth(int year, int month_0_11, Set<String> dealerIds, Boolean excludeInactiveAccounts, Boolean includeM13, boolean addM13BalInDecBalances);
+	List<TrialBalanceRow> getConsolidatedGlBalancesForMonth(int year, int month_0_11, Set<String> dealerIds,
+															Boolean excludeInactiveAccounts, Boolean includeM13,
+															boolean addM13BalInDecBalances);
+
+	Map<Integer, Map<String, Map<String, BigDecimal>>> getGlBalCntInfoForFS(FsReportDto fsrContext);
 
 	ESResponse<GLAccount> defaultSearch(TekSearchRequest request);
+
+	@Deprecated
+	TrialBalance getFSTrialBalanceTillDayOfMonth(int startMonth, int startYear, int toMonth, int toYear, long tillEpoch);
 }
 
