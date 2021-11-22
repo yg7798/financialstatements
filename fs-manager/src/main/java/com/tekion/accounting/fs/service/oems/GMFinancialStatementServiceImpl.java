@@ -1,18 +1,16 @@
 package com.tekion.accounting.fs.service.oems;
 
-import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
-import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
-import com.tekion.accounting.fs.integration.Detail;
-import com.tekion.accounting.fs.integration.FinancialStatement;
-import com.tekion.accounting.fs.dto.request.FinancialReportRequestBody;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.AccountingError;
-import com.tekion.accounting.fs.service.integration.IntegrationClient;
+import com.tekion.accounting.fs.integration.Detail;
+import com.tekion.accounting.fs.integration.FinancialStatement;
+import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
 import com.tekion.accounting.fs.service.external.nct.NCTRow;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
-import com.tekion.accounting.fs.common.utils.TimeUtils;
+import com.tekion.accounting.fs.service.integration.IntegrationClient;
 import com.tekion.beans.DynamicProperty;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
@@ -29,11 +27,15 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
-import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
-import static com.tekion.core.utils.UserContextProvider.getCurrentTenantId;
+
+
+
 
 @Component
 @Slf4j
@@ -46,6 +48,12 @@ public class GMFinancialStatementServiceImpl extends AbstractFinancialStatementS
     public static final List<String> zeroValues = Arrays.asList("0", "0.0", "0.00");
 
     private DynamicProperty<String> dealerXmlPref;
+//
+//    @Autowired
+//    TemplateService templateService;
+//
+//    @Autowired
+//    ServerConfigService configService;
 
     public GMFinancialStatementServiceImpl(DealerConfig dc, IntegrationClient ic, FsXMLServiceImpl fs) {
         super(dc, ic, fs);
@@ -198,26 +206,6 @@ public class GMFinancialStatementServiceImpl extends AbstractFinancialStatementS
     }
 
     private String generateFsXMLByPreference(FinancialStatementRequestDto requestDto) {
-
-        String globalPref = dealerXmlPref.getSafeGlobalValue(USE_DEFAULT_API);
-        String dealerPref = dealerXmlPref.getSafeValueWithUserContext(USE_DEFAULT_API);
-
-        log.info("dealer property loaded {}", dealerXmlPref.isPropertyLoadedWithUserContext());
-        log.info("global property loaded {}", dealerXmlPref.isGlobalPropertyLoaded());
-
-        log.info(" dealer prop value: {} tenant Id {} dealerId {}", dealerPref, getCurrentTenantId(), getCurrentDealerId());
-        log.info("global prop val: {}", globalPref);
-
-        if(USE_NEW_API.equals(dealerPref) ||  (USE_DEFAULT_API.equals(dealerPref) && USE_NEW_API.equals(globalPref))){
-            log.info("Using new Api for XML generation");
-            return generateXML(requestDto);
-
-        }else{
-
-            log.info("Using old Api for XML generation");
-            Calendar c = TimeUtils.buildCalendar(requestDto.getTillEpoch());
-            return fsXMLService.getFinancialStatement( new FinancialReportRequestBody(String.valueOf(c.get(Calendar.YEAR))
-                , String.valueOf(c.get(Calendar.MONTH))));
-        }
+        return generateXML(requestDto);
     }
 }
