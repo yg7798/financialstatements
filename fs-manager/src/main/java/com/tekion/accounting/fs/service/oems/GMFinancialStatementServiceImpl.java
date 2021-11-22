@@ -11,7 +11,6 @@ import com.tekion.accounting.fs.integration.FinancialStatement;
 import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
 import com.tekion.accounting.fs.service.external.nct.NCTRow;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
-import com.tekion.beans.DynamicProperty;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
@@ -20,7 +19,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -32,36 +30,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
-
-
-
-
 @Component
 @Slf4j
 public class GMFinancialStatementServiceImpl extends AbstractFinancialStatementService{
 
-    private static final String USE_DEFAULT_API = "";
-    private static final String USE_NEW_API = "NEW_API";
-    private static final String FS_XML_PROPERTY = "NEW_FS_XML_PREFERENCE";
     public static final int NCB_STATEMENT_YEAR = 0;
     public static final List<String> zeroValues = Arrays.asList("0", "0.0", "0.00");
 
-    private DynamicProperty<String> dealerXmlPref;
-//
-//    @Autowired
-//    TemplateService templateService;
-//
-//    @Autowired
-//    ServerConfigService configService;
-
     public GMFinancialStatementServiceImpl(DealerConfig dc, IntegrationClient ic, FsXMLServiceImpl fs) {
         super(dc, ic, fs);
-    }
-
-    @PostConstruct
-    public void postConstruct(){
-        dealerXmlPref = dpClient.getStringProperty(ACCOUNTING_MODULE, FS_XML_PROPERTY);
     }
 
     @Override
