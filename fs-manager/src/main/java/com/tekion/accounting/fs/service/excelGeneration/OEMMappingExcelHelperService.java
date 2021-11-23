@@ -224,7 +224,7 @@ public class OEMMappingExcelHelperService {
 		for (TekFilterRequest filter : TCollectionUtils.nullSafeList(oemMappingRequestDto.getFilters())){
 			if (filter.getValues().size() > 0) {
 				if (STATUS.equalsIgnoreCase(filter.getField())){
-					oemMappingReportRows = oemMappingReportRows.stream().filter(row -> filter.getValues().contains(row.getStatus())).collect(Collectors.toList());
+					oemMappingReportRows = oemMappingReportRows.stream().filter(row -> filter.getValues().contains(row.getStatus().toUpperCase())).collect(Collectors.toList());
 				}
 			}
 		}
