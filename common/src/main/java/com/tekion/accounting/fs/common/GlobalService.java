@@ -6,7 +6,9 @@ import com.tekion.accounting.fs.common.core.dealerInfo.DealerInfo;
 import com.tekion.accounting.fs.common.pod.PodUtils;
 import com.tekion.accounting.fs.common.utils.MDCUtils;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
+import com.tekion.accounting.fs.dto.mappings.OemSiteDetailsDto;
 import com.tekion.admin.beans.beansdto.DealerMasterBulkRequest;
+import com.tekion.admin.beans.oemsites.OemSite;
 import com.tekion.client.globalsettings.GlobalSettingsClient;
 import com.tekion.client.globalsettings.beans.Status;
 import com.tekion.client.globalsettings.beans.TenantInfo;
@@ -224,6 +226,23 @@ public class GlobalService {
 			return preferenceClient.getAllDealerMastersWithSelectedFields(dealerMasterBulkRequest).getData();
 		}
 		return Collections.emptyList();
+	}
+
+	public List<OemSiteDetailsDto> getOemSiteDetails() {
+		try {
+			List<OemSiteDetailsDto> oemSiteDetailsDtos = new ArrayList<>();
+			List<OemSite> listOfOemSitesForDealers =  TCollectionUtils.nullSafeCollection(preferenceClient.findAllOemSitesForDealer(UserContextProvider.getCurrentDealerId()).getData());
+			for (OemSite oemSite : listOfOemSitesForDealers) {
+				OemSiteDetailsDto oemSiteDetailsDto = new OemSiteDetailsDto();
+				oemSiteDetailsDto.setSiteId(oemSite.getSiteId());
+				oemSiteDetailsDto.setName(oemSite.getName());
+				oemSiteDetailsDtos.add(oemSiteDetailsDto);
+			}
+			return oemSiteDetailsDtos;
+		} catch (Exception e) {
+			log.error("error while fetching the OEM site details",e);
+			throw e;
+		}
 	}
 
 }
