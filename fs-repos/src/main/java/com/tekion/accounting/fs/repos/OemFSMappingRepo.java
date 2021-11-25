@@ -44,4 +44,7 @@ public interface OemFSMappingRepo {
 
     void updateFsIdInOemFsMapping(FSEntry fsEntry);
 
+    List<OemFsMapping> getFSEntriesByFsIdsAndDealerId(List<String> fsIds, String dealerId);
+
+    void deleteOemFsMappingByIdAndDealerId(Set<String> id, String dealerId);
 }
