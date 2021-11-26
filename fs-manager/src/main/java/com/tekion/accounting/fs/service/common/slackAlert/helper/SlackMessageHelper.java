@@ -554,9 +554,10 @@ public class SlackMessageHelper {
         );
         slackMessageFields.add(titleField);
         slackMessageRequest.getFields().add(createFieldForSlackMessage( "TenantId , DealerId", slackMessageDto.getTenantId() +" - "+slackMessageDto.getDealerId(), true));
-        slackMessageRequest.getFields().add(createDealerNameField());
-        addRegularFields(slackMessageRequest);
+        slackMessageRequest.getFields().add(createFieldForSlackMessage("DealerName", slackMessageDto.getDealerName(), true));
+        slackMessageRequest.getFields().add(createFieldForSlackMessage("SiteName", slackMessageDto.getSiteName(), true));
         slackMessageRequest.getFields().add(createTraceIdField());
+        addRegularFields(slackMessageRequest);
         slackMessageRequest.setColor(blue);
         return slackMessageRequest;
     }

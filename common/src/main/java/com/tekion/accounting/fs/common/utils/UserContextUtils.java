@@ -6,16 +6,15 @@ import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.core.dealerInfo.DealerInfoDto;
 import com.tekion.accounting.fs.common.core.dealerInfo.DealerInfo;
+import com.tekion.accounting.fs.dto.mappings.OemSiteDetailsDto;
+import com.tekion.admin.beans.dealersetting.DealerMaster;
 import com.tekion.client.globalsettings.beans.Status;
 import com.tekion.client.globalsettings.beans.TenantInfo;
 import com.tekion.client.globalsettings.beans.dto.DealerInfoWithOEMDetails;
 import com.tekion.core.utils.*;
 import lombok.experimental.UtilityClass;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tekion.core.utils.TGlobalConstants.TEK_SITE_ID_PRESENT_KEY;
@@ -163,5 +162,21 @@ public class UserContextUtils {
 		userContext.setDealerId(dealerId);
 		userContext.setUserId(UserContextProvider.getCurrentUserId());
 		return  userContext;
+	}
+
+
+	public static Map<String, String> getSiteIdVsNameForCurrentDealer(GlobalService globalService){
+		List<OemSiteDetailsDto> listOfOemSiteDetails = TCollectionUtils.nullSafeList(globalService.getOemSiteDetails());
+		return listOfOemSiteDetails.stream().collect(Collectors.toMap(
+				OemSiteDetailsDto::getSiteId, OemSiteDetailsDto::getName, (oldValue, newValue) -> newValue));
+	}
+
+	public static Map<String, String> getDealerIdVsDealerNameForTenant(String tenantId, GlobalService globalService){
+		Map<String, String> dealerNameToIdMapping = new HashMap<>();
+		List<DealerMaster> dealerMasters = globalService.getAllDealerDetailsForTenant(tenantId);
+		dealerMasters.forEach(dealerMaster -> {
+			dealerNameToIdMapping.put(dealerMaster.getId(),dealerMaster.getDealerName().trim());
+		});
+		return dealerNameToIdMapping;
 	}
 }

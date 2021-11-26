@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.service.oems;
 
+import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.enums.Month;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
@@ -8,6 +9,7 @@ import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.OemConfig;
 import com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo;
+import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.integration.*;
 import com.tekion.accounting.fs.beans.common.CellAddressMapping;
 import com.tekion.accounting.fs.dto.cellcode.FsCellCodeDetailsResponseDto;
@@ -86,6 +88,8 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
     protected FSEntryRepo fsEntryRepo;
     @Autowired
     protected SlackService slackService;
+    @Autowired
+    protected GlobalService globalService;
 
     public static final String MTD = "MTD";
     public static final String YTD = "YTD";
@@ -115,10 +119,13 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
             response =  integrationClient.submitFS(fsIntegrationRequest, OEMInfo.builder().oem(oem.getOem()).brand(brand).build(), fsEntry.getSiteId());
         }
         finally {
-            log.info("Response from integration {} ",response);
             if(Objects.isNull(response.getResponse())){
+                Map<String, String> idVsDealerNameForTenant = UserContextUtils.getDealerIdVsDealerNameForTenant(UserContextProvider.getCurrentTenantId(), globalService);
+                Map<String, String> siteIdVsNameMap = UserContextUtils.getSiteIdVsNameForCurrentDealer(globalService);
                 FsSlackMessageDto slackMessageDto = FsSlackMessageDto.builder()
                         .dealerId(UserContextProvider.getCurrentDealerId())
+                        .dealerName(idVsDealerNameForTenant.get(UserContextProvider.getCurrentDealerId()))
+                        .siteName(siteIdVsNameMap.get(UserContextUtils.getSiteIdFromUserContext()))
                         .tenantId(UserContextProvider.getCurrentTenantId())
                         .oemId(fsEntry.getOemId())
                         .status(FAILED)
