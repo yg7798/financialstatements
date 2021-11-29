@@ -159,11 +159,12 @@ public class OEMMappingExcelHelperService {
 		List<GLAccount> glAccounts = new ArrayList<>();
 		UserContext oldUserContext = UserContextProvider.getContext();
 		try{
-			TekFilterRequest franchiseFilter = TCollectionUtils.nullSafeList(context.getOemMappingRequestDto().getFilters()).stream()
+			List<TekFilterRequest> filterRequests = TCollectionUtils.nullSafeList(context.getOemMappingRequestDto().getFilters()).stream()
 					.filter(filter -> "franchise".equalsIgnoreCase(filter.getField()))
-					.collect(Collectors.toList()).get(0);
-			if(franchiseFilter.getValues().size() > 0){
-				dealerIds = TCollectionUtils.nullSafeList(franchiseFilter.getValues()).stream().map(Object::toString).collect(Collectors.toSet());
+					.collect(Collectors.toList());
+
+			if(filterRequests.size()>0 && filterRequests.get(0).getValues().size() > 0){
+				dealerIds = TCollectionUtils.nullSafeList(filterRequests.get(0).getValues()).stream().map(Object::toString).collect(Collectors.toSet());
 			}
 			for(String dealerId: dealerIds){
 				try{
