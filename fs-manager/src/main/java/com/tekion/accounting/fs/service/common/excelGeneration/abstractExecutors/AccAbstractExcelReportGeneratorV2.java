@@ -96,7 +96,7 @@ public abstract class AccAbstractExcelReportGeneratorV2 extends AbstractExcelRep
 
     @Override
     protected String getServiceName() {
-        return TConstants.SERVICE_NAME_ACCOUNTING;
+        return TConstants.SERVICE_NAME_FINANCIAL_STATEMENTS;
     }
 
     @Override

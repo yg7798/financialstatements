@@ -87,6 +87,7 @@ public class TConstants {
 	public static final String INTERNAL_PAY_TYPE = "INTERNAL";
 
 	public static final String SERVICE_NAME_ACCOUNTING = "ACCOUNTING";
+	public static final String SERVICE_NAME_FINANCIAL_STATEMENTS = "FINANCIAL-STATEMENTS";
 
 	public static final String DEPT_TYPE_CUSTOM_FIELD_OPTION = "department_type";
 
