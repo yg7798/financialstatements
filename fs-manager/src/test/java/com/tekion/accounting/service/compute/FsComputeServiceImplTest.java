@@ -60,7 +60,7 @@ public class FsComputeServiceImplTest extends TestCase {
     private static final String FS_ROUND_OFF_PROPERTY = "FS_USE_PRECISION";
 
     @InjectMocks
-    com.tekion.accounting.fs.service.compute.FsComputeServiceImpl oemMappingService;
+    FsComputeServiceImpl oemMappingService;
     @InjectMocks
     TimeUtils timeUtils;
 
