@@ -26,23 +26,26 @@ allprojects {
 
 def allTestCoverageFile = "$buildDir/jacoco/allTestCoverage.exec"
 
-List<String> exclusionList=["**/repo*/**/*",
-                            "**/repo*/*",
-                            "**/bean*/*",
-                            "**/bean*/**/*",
-                            "**/enum*/*",
-                            "**/enum*/**/*",
-                            "**/dto*/*",
-                            "**/dto*/**/*",
-                            "**/*Dto.java",
-                            "**/*RepoImpl.java",
-                            "**/api_restricted/**",
-                            "**/api_restricted/*",
-                            "**/api/**",
-                            "**/api/*",
-                            "**/com/tekion/accounting/fs/common/**",
-                            "**/com/tekion/accounting/fs/client/**",
-                          ]
+List<String> exclusionList=[
+        "**/repo*/**/*",
+        "**/repo*/*",
+        "**/bean*/*",
+        "**/bean*/**/*",
+        "**/enum*/*",
+        "**/enum*/**/*",
+        "**/dto*/*",
+        "**/dto*/**/*",
+        "**/*Dto.java",
+        "**/*RepoImpl.java",
+        "**/api_restricted/**",
+        "**/api_restricted/*",
+        "**/api/**",
+        "**/api/*",
+        "**/com/tekion/accounting/fs/common/**",
+        "**/com/tekion/accounting/fs/client/**",
+        "**/common/**",
+        "**/models/**"
+]
 
 
 

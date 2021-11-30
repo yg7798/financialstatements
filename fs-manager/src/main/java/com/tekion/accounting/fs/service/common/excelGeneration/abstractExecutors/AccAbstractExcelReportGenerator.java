@@ -129,7 +129,7 @@ public abstract class AccAbstractExcelReportGenerator extends AbstractExcelRepor
 
     @Override
     protected String getServiceBaseUrlPrefix() {
-        return "/accounting/u";
+        return "/financial-statements/u";
     }
 
     @Override

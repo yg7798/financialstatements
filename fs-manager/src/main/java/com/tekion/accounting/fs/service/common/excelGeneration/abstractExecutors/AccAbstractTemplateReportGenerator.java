@@ -31,7 +31,7 @@ public abstract class AccAbstractTemplateReportGenerator extends AbstractExcelTe
 
     @Override
     protected String getServiceBaseUrlPrefix() {
-        return "/accounting/u";
+        return "/financial-statements/u";
     }
 
     @Override
