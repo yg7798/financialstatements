@@ -87,7 +87,7 @@ public class OemFSMappingRepoImpl extends BaseDealerLevelMongoRepository<OemFsMa
     }
 
     @Override
-    public List<OemFsMapping> findByGlAccountIdAndYearIncludeDeleted(String fsId, List<String> glAccountIds, String dealerId) {
+    public List<OemFsMapping> findByGlAccountIdAndYearIncludeDeleted(String fsId, Set<String> glAccountIds, String dealerId) {
 
         Criteria criteria = new Criteria(TConstants.GLACCOUNT_ID).in(glAccountIds);
         criteria.and(FS_ID).is(fsId);

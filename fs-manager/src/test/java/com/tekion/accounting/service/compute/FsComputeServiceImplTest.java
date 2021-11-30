@@ -38,7 +38,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -51,7 +51,7 @@ import java.util.stream.Stream;
 
 import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DpUtils.class)
