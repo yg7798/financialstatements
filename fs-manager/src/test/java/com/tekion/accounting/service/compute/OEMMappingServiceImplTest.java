@@ -1,16 +1,12 @@
-package com.tekion.fs;
+package com.tekion.accounting.service.compute;
 
-import com.google.common.cache.LoadingCache;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.OemConfig;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMappingDetail;
 import com.tekion.accounting.fs.beans.mappings.OemFsMappingSnapshot;
-import com.tekion.accounting.fs.beans.memo.HCValue;
-import com.tekion.accounting.fs.beans.memo.HCWorksheet;
-import com.tekion.accounting.fs.beans.memo.MemoValue;
-import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
+import com.tekion.accounting.fs.beans.memo.*;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
@@ -22,6 +18,8 @@ import com.tekion.accounting.fs.repos.*;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetRepo;
 import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
+import com.tekion.accounting.fs.service.accountingService.AccountingService;
+import com.tekion.accounting.fs.service.compute.FsComputeServiceImpl;
 import com.tekion.as.models.beans.AccountingSettings;
 import com.tekion.as.models.beans.TrialBalance;
 import com.tekion.as.models.beans.TrialBalanceRow;
@@ -37,17 +35,23 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
-import com.tekion.accounting.fs.common.TConstants.*;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DpUtils.class)
@@ -56,14 +60,10 @@ public class OEMMappingServiceImplTest extends TestCase {
     private static final String FS_ROUND_OFF_PROPERTY = "FS_USE_PRECISION";
 
     @InjectMocks
-    OEMMappingServiceImpl oemMappingService;
+    FsComputeServiceImpl oemMappingService;
     @InjectMocks
     TimeUtils timeUtils;
 
-    @Mock
-    MonthCloseService monthCloseService;
-    @Mock
-    TrialBalanceService trialBalanceService;
     @Mock
     DealerConfig dealerConfig;
     @Mock
@@ -75,10 +75,6 @@ public class OEMMappingServiceImplTest extends TestCase {
     @Mock
     HCWorksheetRepo hcWorksheetRepo;
     @Mock
-    MonthLedgerService monthLedgerService;
-    @Mock
-    AccountingSettingsService settingsService;
-    @Mock
     DPClient dpClient;
     @Mock
     OemConfigRepo oemConfigRepo;
@@ -88,11 +84,11 @@ public class OEMMappingServiceImplTest extends TestCase {
     AccountingInfoService aiService;
     @Mock
     OemFSMappingRepo oemFSMappingRepo;
-
+    @Mock
+    AccountingService accountingService;
 
     @Before
     public void setUp() throws ExecutionException {
-
         UserContextProvider.setContext(new UserContext("-1", "ca", "4"));
         Mockito.when(dealerConfig.getDealerTimeZone()).thenReturn(TimeZone.getTimeZone("America/Los_Angeles"));
         Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
@@ -121,9 +117,9 @@ public class OEMMappingServiceImplTest extends TestCase {
         Mockito.when(oemMappingService.getOemConfig("Acura")).thenReturn(getOemConfig());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString())).
                 thenReturn(getFsEntry());
-        Mockito.when(monthCloseService.getActiveMonthInfo()).
+        Mockito.when(accountingService.getActiveMonthInfo()).
                 thenReturn(getMonthInfo());
-        Mockito.when(trialBalanceService.getCYTrialBalanceTillDayOfMonth(Mockito.anyLong(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean())).
+        Mockito.when(accountingService.getCYTrialBalanceTillDayOfMonth(Mockito.anyLong(), Mockito.anySet(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean())).
                 thenReturn(getTrialBalance());
         Mockito.when(oemFsMappingSnapshotRepo.findAllSnapshotByYearAndMonth(anyString(), Mockito.anyInt(), anyString())).
                 thenReturn(getOemFsMappingSnapshotList());
@@ -131,7 +127,7 @@ public class OEMMappingServiceImplTest extends TestCase {
                 thenReturn(getMemoWorksheetList());
         Mockito.when(hcWorksheetRepo.findByFsId(anyString()))
                 .thenReturn(getHCWorksheetList());
-        Mockito.when(monthLedgerService.getGlBalCntInfoForFS(Mockito.any()))
+        Mockito.when(accountingService.getGlBalCntInfoForFS(Mockito.any()))
                 .thenReturn(new HashMap<Integer, Map<String, Map<String, BigDecimal>>>() {
                 });
         FsCellCodeDetailsResponseDto fsCellCodeDetailsResponseDto = oemMappingService.computeFsCellCodeDetailsByFsId("6155a7d8b3cb1f0006868cd6", 12345, false, false);
@@ -144,9 +140,9 @@ public class OEMMappingServiceImplTest extends TestCase {
         PowerMockito.when(DpUtils.doUseTbGeneratorV2VersionForFsInOem()).thenReturn(false);
         Mockito.when(oemMappingService.getOemConfig("Acura")).thenReturn(getOemConfig());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), Mockito.anyString())).thenReturn(getFsEntry());
-        Mockito.when(monthCloseService.getActiveMonthInfo()).
+        Mockito.when(accountingService.getActiveMonthInfo()).
                 thenReturn(getMonthInfo());
-        Mockito.when(trialBalanceService.getCYTrialBalanceTillDayOfMonth(Mockito.anyLong(), anySet(), anyBoolean(), anyBoolean(), anyBoolean(), eq(false))).
+        Mockito.when(accountingService.getCYTrialBalanceTillDayOfMonth(Mockito.anyLong(), anySet(), anyBoolean(), anyBoolean(), anyBoolean(), eq(false))).
                 thenReturn(getTrialBalance());
         Mockito.when(oemFsMappingSnapshotRepo.findAllSnapshotByYearAndMonth(anyString(), Mockito.anyInt(), anyString())).
                 thenReturn(getOemFsMappingSnapshotList());
@@ -154,7 +150,7 @@ public class OEMMappingServiceImplTest extends TestCase {
                 thenReturn(getMemoWorksheetList());
         Mockito.when(hcWorksheetRepo.findByFsId(anyString()))
                 .thenReturn(getHCWorksheetList());
-        Mockito.when(monthLedgerService.getGlBalCntInfoForFS(Mockito.any()))
+        Mockito.when(accountingService.getGlBalCntInfoForFS(Mockito.any()))
                 .thenReturn(new HashMap<Integer, Map<String, Map<String, BigDecimal>>>() {
                 });
         FsCellCodeDetailsResponseDto fsCellCodeDetailsResponseDto = oemMappingService.computeFsCellCodeDetailsByFsId("6155a7d8b3cb1f0006868cd6", 1599202256l, false, false);
@@ -164,14 +160,14 @@ public class OEMMappingServiceImplTest extends TestCase {
     @Test
     public void computeFsCellCodeDetailsForFS() {
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), Mockito.anyString())).thenReturn(getFsEntry());
-        Mockito.when(monthCloseService.getActiveMonthInfo()).
+        Mockito.when(accountingService.getActiveMonthInfo()).
                 thenReturn(getMonthInfo());
-        Mockito.when(settingsService.getAccountingSettings()).
+        Mockito.when(accountingService.getAccountingSettings()).
                 thenReturn(getAccountingSettings());
         Mockito.when(oemMappingService.getOemConfig("Acura")).thenReturn(getOemConfig());
         Mockito.when(oemFsMappingSnapshotRepo.findAllSnapshotByYearAndMonth(anyString(), Mockito.anyInt(), anyString())).
                 thenReturn(getOemFsMappingSnapshotList());
-        Mockito.when(trialBalanceService.getFSTrialBalanceTillDayOfMonth(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyLong())).
+        Mockito.when(accountingService.getFSTrialBalanceTillDayOfMonth(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyLong())).
                 thenReturn(getTrialBalance());
         FsCellCodeDetailsResponseDto fsCellCodeDetailsResponseDto = oemMappingService.computeFsCellCodeDetailsForFS("6155a7d8b3cb1f0006868cd6", 1599202256l, false);
         assertNotNull(fsCellCodeDetailsResponseDto);
@@ -228,7 +224,7 @@ public class OEMMappingServiceImplTest extends TestCase {
                 .displayName("display")
                 .year(2020)
                 .version(1)
-                .valueType(MetricItem.VALUE_TYPE.BALANCE.name())
+                .valueType("BALANCE")
                 .subType("mtd")
                 .build();
 
@@ -240,7 +236,7 @@ public class OEMMappingServiceImplTest extends TestCase {
                 .displayName("display1")
                 .year(2021)
                 .version(2)
-                .valueType(MetricItem.VALUE_TYPE.COUNT.name())
+                .valueType("COUNT")
                 .subType("mtd")
                 .build();
 

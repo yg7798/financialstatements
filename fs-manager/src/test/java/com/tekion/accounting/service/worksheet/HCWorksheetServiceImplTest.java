@@ -1,4 +1,4 @@
-package com.tekion.fs;
+package com.tekion.accounting.service.worksheet;
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.HCDepartment;
@@ -13,6 +13,7 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetTemplateRepo;
+import com.tekion.accounting.fs.service.worksheet.HCWorksheetService;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import junit.framework.TestCase;
@@ -23,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ import java.util.stream.Stream;
 public class HCWorksheetServiceImplTest extends TestCase {
 
     @InjectMocks
-    HCWorksheetServiceImplTest hcWorksheetService;
+    HCWorksheetService hcWorksheetService;
 
     @Mock
     HCWorksheetTemplateRepo hcWorksheetTemplateRepo;
@@ -60,7 +62,7 @@ public class HCWorksheetServiceImplTest extends TestCase {
     public void testGetHCWorksheetTemplates() {
         Mockito.when(hcWorksheetTemplateRepo.findForOemByYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
                 thenReturn(getHCWorksheetTemplate2());
-        assertEquals(getHCWorksheetTemplate2(), hcWorksheetService.getHCWorksheetTemplate(OEM.GM,2021 ,2 ));
+        assertEquals(getHCWorksheetTemplate2(), hcWorksheetService.getHCWorksheetTemplate(OEM.GM, 2021, 1));
     }
 
     @Test
