@@ -55,12 +55,12 @@ import static org.mockito.Mockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DpUtils.class)
-public class OEMMappingServiceImplTest extends TestCase {
+public class FsComputeServiceImplTest extends TestCase {
 
     private static final String FS_ROUND_OFF_PROPERTY = "FS_USE_PRECISION";
 
     @InjectMocks
-    FsComputeServiceImpl oemMappingService;
+    com.tekion.accounting.fs.service.compute.FsComputeServiceImpl oemMappingService;
     @InjectMocks
     TimeUtils timeUtils;
 
