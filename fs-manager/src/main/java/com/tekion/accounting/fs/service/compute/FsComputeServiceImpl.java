@@ -302,7 +302,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 				oemFsMapping.setCreatedTime(System.currentTimeMillis());
 				oemFsMapping.setModifiedTime(System.currentTimeMillis());
 				mappingsToUpsertInDb.add(oemFsMapping);
-				glAcctIdVsListOfCodesInDbMap.computeIfAbsent(glAccountId, k -> Lists.newArrayList()).add(oemFsMapping);
 			}else{
 				if(groupCodeVsOemFsMappingFromDbMap.get(groupCode).isDeleted()){
 					groupCodeVsOemFsMappingFromDbMap.get(groupCode).setDeleted(false);
