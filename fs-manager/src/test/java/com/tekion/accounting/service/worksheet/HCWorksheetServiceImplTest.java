@@ -14,6 +14,7 @@ import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetTemplateRepo;
 import com.tekion.accounting.fs.service.worksheet.HCWorksheetService;
+import com.tekion.accounting.fs.service.worksheet.HCWorksheetServiceImpl;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import junit.framework.TestCase;
@@ -39,7 +40,7 @@ import java.util.stream.Stream;
 public class HCWorksheetServiceImplTest extends TestCase {
 
     @InjectMocks
-    HCWorksheetService hcWorksheetService;
+    HCWorksheetServiceImpl hcWorksheetService;
 
     @Mock
     HCWorksheetTemplateRepo hcWorksheetTemplateRepo;
