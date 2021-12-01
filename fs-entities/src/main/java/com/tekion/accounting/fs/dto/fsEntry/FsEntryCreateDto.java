@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.dto.fsEntry;
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.MigrationMetaDataForFsEntry;
+import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.core.utils.TStringUtils;
@@ -33,7 +34,7 @@ public class FsEntryCreateDto {
 
 	public FSEntry createFSEntry() {
 		if(TStringUtils.isBlank(siteId)){
-			//siteId = UserContextUtils.getSiteIdFromUserContext();
+			siteId = UserContextUtils.getSiteIdFromUserContext();
 		}
 		FSEntry fsEntry =  FSEntry.builder()
 				.oemId(oemId.name())
