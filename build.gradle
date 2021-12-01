@@ -42,7 +42,8 @@ List<String> exclusionList=["**/repo*/**/*",
                             "**/api/*",
                             "**/com/tekion/accounting/fs/client/**",
                             "**/common/**",
-                            "**/models/**"
+                            "**/models/**",
+                            "**/excelGeneration/**"
                           ]
 
 
