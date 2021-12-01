@@ -40,8 +40,9 @@ List<String> exclusionList=["**/repo*/**/*",
                             "**/api_restricted/*",
                             "**/api/**",
                             "**/api/*",
-                            "**/com/tekion/accounting/fs/common/**",
                             "**/com/tekion/accounting/fs/client/**",
+                            "**/common/**",
+                            "**/models/**"
                           ]
 
 
