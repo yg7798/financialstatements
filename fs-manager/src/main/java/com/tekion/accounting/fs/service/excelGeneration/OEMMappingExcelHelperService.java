@@ -212,7 +212,6 @@ public class OEMMappingExcelHelperService {
 		} else {
 			month = month - 1;
 		}
-		log.info("month: {} year {} includeM13 {} addM13BalInDecBalances {}", month, year, includeM13, addM13BalInDecBalances);
 		List<TrialBalanceRow> trialBalanceRows = accountingService.getConsolidatedGlBalancesForMonth(
 				year, month, context.getIncludedDealerIds(), true, includeM13, addM13BalInDecBalances);
 		return TCollectionUtils.transformToMap(trialBalanceRows, TrialBalanceRow::getAccountId);
