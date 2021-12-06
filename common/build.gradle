@@ -22,7 +22,7 @@ dependencies {
     compile('com.tekion.accounting:accounting-client:1.0.48-SNAPSHOT')
     compile('com.tekion.sdk:storagesupport:2.0.10-SNAPSHOT')
     compile('com.tekion.sdk:globalsettingsclient:0.0.26-SNAPSHOT')
-    compile('com.tekion.sdk:preferenceclient:1.0.149-SNAPSHOT')
+    compile('com.tekion.sdk:preferenceclient:1.0.160-tst1-SNAPSHOT')
     compile('com.tekion.sdk:accountingpreferenceclient:0.0.2-SNAPSHOT')
     implementation( group: 'com.tekion.sdk', name: 'dealerpropertyclient', version: '1.0.36-SNAPSHOT')
     compile("com.tekion.sdk:printClient:1.0.102-hotfix3.1-SNAPSHOT")
