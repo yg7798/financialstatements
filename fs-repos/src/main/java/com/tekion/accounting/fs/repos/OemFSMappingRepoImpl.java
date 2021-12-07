@@ -257,4 +257,26 @@ public class OemFSMappingRepoImpl extends BaseDealerLevelMongoRepository<OemFsMa
         getMongoTemplate().updateMulti(Query.query(criteria), update, OemFsMapping.class);
     }
 
+    @Override
+    public List<OemFsMapping> getFSEntriesByFsIdsAndDealerId(List<String> fsIds, String dealerId) {
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(FS_ID).in(fsIds);
+        criteria.and(DEALER_ID).is(dealerId);
+        return  this.findAll(criteria, this.getBeanClass(), this.getMongoTemplate());
+    }
+
+    @Override
+    public void deleteOemFsMappingByIdAndDealerId(Set<String> id, String dealerId) {
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(ID).in(id);
+        criteria.and(DEALER_ID).is(dealerId);
+
+        Update update = new Update();
+        update.set(DELETED, true);
+        update.set(MODIFIED_TIME, System.currentTimeMillis());
+        update.set(MODIFIED_BY_USER_ID, UserContextProvider.getCurrentUserId());
+        UpdateResult updateResult = this.getMongoTemplate().updateMulti(Query.query(criteria), update, OemFsMapping.class);
+        log.info("Deleted duplicate mappings from OemFsMapping {}", JsonUtil.toJson(updateResult));
+    }
+
 }
