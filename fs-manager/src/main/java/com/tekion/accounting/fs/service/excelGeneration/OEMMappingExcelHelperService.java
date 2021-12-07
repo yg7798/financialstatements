@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -96,7 +97,11 @@ public class OEMMappingExcelHelperService {
 			reportRow.setAccountType(trialBalanceRow.getAccountType());
 			reportRow.setDepartment("");
 			reportRow.setYtdBalance(trialBalanceRow.getCurrentBalance());
-			reportRow.setMtdBalance(trialBalanceRow.getCurrentBalance().subtract(trialBalanceRow.getOpeningBalance()));
+			BigDecimal curBal = BigDecimal.ZERO;
+			if(Objects.nonNull(trialBalanceRow.getCurrentBalance())) curBal = trialBalanceRow.getCurrentBalance();
+			BigDecimal openBal = BigDecimal.ZERO;
+			if(Objects.nonNull(trialBalanceRow.getOpeningBalance())) openBal = trialBalanceRow.getOpeningBalance();
+			reportRow.setMtdBalance(curBal.subtract(openBal));
 			reportRow.setMtdCount(GeneralUtils.nullSafeLong(trialBalanceRow.getCount()));
 			reportRow.setYtdCount(GeneralUtils.nullSafeLong(trialBalanceRow.getYtdCount()));
 			reportRow.setGroupCodes(TStringUtils.join(idOemFsMappings.get(glAccount.getId()), mappingSeperationDelimeter));
@@ -208,7 +213,7 @@ public class OEMMappingExcelHelperService {
 			month = month - 1;
 		}
 		List<TrialBalanceRow> trialBalanceRows = accountingService.getConsolidatedGlBalancesForMonth(
-				year, month, context.getIncludedDealerIds(), true, true, addM13BalInDecBalances);
+				year, month, context.getIncludedDealerIds(), true, includeM13, addM13BalInDecBalances);
 		return TCollectionUtils.transformToMap(trialBalanceRows, TrialBalanceRow::getAccountId);
 	}
 
