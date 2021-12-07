@@ -166,7 +166,8 @@ public class MemoWorksheetExcelHelperService {
 					memoWorksheetReportRows = memoWorksheetReportRows.stream().filter(row -> filter.getValues().contains(row.getFsPage())).collect(Collectors.toList());
 				}
 				else if (STATUS.toUpperCase().equalsIgnoreCase(filter.getKey())) {
-					memoWorksheetReportRows = memoWorksheetReportRows.stream().filter(row -> filter.getValues().contains(row.getStatus())).collect(Collectors.toList());
+					List<String> filterValues = filter.getValues().stream().filter(Objects::nonNull).map(String::toLowerCase).collect(Collectors.toList());
+					memoWorksheetReportRows = memoWorksheetReportRows.stream().filter(row -> filterValues.contains(row.getStatus().toLowerCase())).collect(Collectors.toList());
 				}
 			}
 		}
