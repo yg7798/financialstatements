@@ -12,3 +12,6 @@
 **/.settings
 **/bin/**
 *.project
+*.hprof
+**/*.hprof
++*fs-manager/java_pid**

@@ -88,8 +88,4 @@ public class SlackUtil {
         return traceIdField;
     }
 
-    public static Field createDealerNameField() {
-        Field dealerNameField = createFieldForSlackMessage("DealerName", dealerConfig.getDealerName(), true);
-        return dealerNameField;
-    }
 }

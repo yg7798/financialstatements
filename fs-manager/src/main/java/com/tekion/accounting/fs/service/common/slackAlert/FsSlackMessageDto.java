@@ -13,6 +13,8 @@ public class FsSlackMessageDto {
 
 	private String oemId ;
 	private String dealerId ;
+	private String dealerName ;
+	private String siteName;
 	private String tenantId ;
 	private String status;
 }

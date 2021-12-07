@@ -1,0 +1,14 @@
+#  Template Java Gradle build
+
+#  This template allows you to test and build your Java project with Gradle.
+#  The workflow allows running tests, code checkstyle and security scans on the default branch.
+
+# Prerequisites: appropriate project structure should exist in the repository.
+
+image: openjdk:8
+
+pipelines:
+  default:
+    - step:
+        script:
+          - bash ./gradlew -PmavenUser=$mavenUser -PmavenPassword=devUser build

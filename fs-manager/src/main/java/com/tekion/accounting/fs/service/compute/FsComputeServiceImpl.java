@@ -226,12 +226,12 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 	@Override
 	public List<OemFsMapping> updateOemFsMapping(OemFsMappingUpdateDto requestDto) {
-		List<String> glAccountIds = requestDto.getMappingsToSave().stream()
+		Set<String> glAccountIds = requestDto.getMappingsToSave().stream()
 				.map(OemFsMappingDetail::getGlAccountId)
-				.collect(Collectors.toList());
+				.collect(Collectors.toSet());
 		glAccountIds.addAll(requestDto.getMappingsToDelete().stream()
 				.map(OemFsMappingDetail::getGlAccountId)
-				.collect(Collectors.toList()));
+				.collect(Collectors.toSet()));
 
 		List<OemFsMapping> existingOemFsMappings = oemFsMappingRepo.findByGlAccountIdAndYearIncludeDeleted(requestDto.getFsId(), glAccountIds, getCurrentDealerId());
 
@@ -302,6 +302,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 				oemFsMapping.setCreatedTime(System.currentTimeMillis());
 				oemFsMapping.setModifiedTime(System.currentTimeMillis());
 				mappingsToUpsertInDb.add(oemFsMapping);
+				glAcctIdVsListOfCodesInDbMap.computeIfAbsent(glAccountId, k -> Lists.newArrayList()).add(oemFsMapping);
 			}else{
 				if(groupCodeVsOemFsMappingFromDbMap.get(groupCode).isDeleted()){
 					groupCodeVsOemFsMappingFromDbMap.get(groupCode).setDeleted(false);

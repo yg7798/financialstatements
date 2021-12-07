@@ -129,12 +129,12 @@ public abstract class AccAbstractExcelReportGenerator extends AbstractExcelRepor
 
     @Override
     protected String getServiceBaseUrlPrefix() {
-        return "/accounting/u";
+        return "/financial-statements/u";
     }
 
     @Override
     protected String getServiceName() {
-        return TConstants.SERVICE_NAME_ACCOUNTING;
+        return TConstants.SERVICE_NAME_FINANCIAL_STATEMENTS;
     }
 
 
