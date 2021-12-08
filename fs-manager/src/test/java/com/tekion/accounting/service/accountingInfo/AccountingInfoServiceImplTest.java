@@ -19,13 +19,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 @PrepareForTest(DpUtils.class)
 public class AccountingInfoServiceImplTest extends TestCase {
 
@@ -170,14 +170,4 @@ public class AccountingInfoServiceImplTest extends TestCase {
         return new ArrayList<>(Collections.singletonList(fsEntry));
     }
 
-    private String setPrimaryOem(AccountingInfo accountingInfo, String oem){
-        if(Objects.isNull(accountingInfo.getPrimaryOEM()))
-            accountingInfo.setPrimaryOEM(oem);
-        return  accountingInfo.getPrimaryOEM();
-    }
-
-    private Set<String> removeOem(AccountingInfo accountingInfo, String oem){
-        accountingInfo.getSupportedOEMs().remove(oem);
-        return  accountingInfo.getSupportedOEMs();
-    }
 }

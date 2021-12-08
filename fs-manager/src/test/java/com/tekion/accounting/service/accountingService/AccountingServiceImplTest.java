@@ -2,7 +2,6 @@ package com.tekion.accounting.service.accountingService;
 
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
-import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.accountingService.AccountingServiceImpl;
 import com.tekion.as.client.AccountingClient;
 import com.tekion.as.models.beans.AccountingSettings;
@@ -24,8 +23,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -33,7 +32,7 @@ import java.util.*;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anySet;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 @PrepareForTest(DpUtils.class)
 public class AccountingServiceImplTest extends TestCase {
 
@@ -41,8 +40,6 @@ public class AccountingServiceImplTest extends TestCase {
     AccountingServiceImpl accountingService;
     @Mock
     DealerConfig dealerConfig;
-    @Mock
-    FSEntryRepo fsEntryRepo;
     @Mock
     AccountingClient accountingClient;
 
@@ -52,25 +49,6 @@ public class AccountingServiceImplTest extends TestCase {
         UserContextProvider.setContext(new UserContext("-1", "ca", "4"));
         Mockito.when(dealerConfig.getDealerTimeZone()).thenReturn(TimeZone.getTimeZone("America/Los_Angeles"));
         Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
-    }
-
-    public List<GLAccount> getGLAccounts() {
-        GLAccount glAccount1 = new GLAccount();
-        glAccount1.setId("g1");
-        glAccount1.setBalance(new BigDecimal(100));
-        glAccount1.setCount(5);
-        glAccount1.setAccountTypeId("ASSET");
-        GLAccount glAccount2 = new GLAccount();
-        glAccount2.setId("g2");
-        glAccount2.setBalance(new BigDecimal(-100));
-        glAccount2.setCount(3);
-        glAccount2.setAccountTypeId("LIABILITY");
-        GLAccount glAccount3 = new GLAccount();
-        glAccount3.setId("g3");
-        glAccount3.setBalance(new BigDecimal(100));
-        glAccount3.setCount(3);
-        glAccount3.setAccountTypeId("OPERATING_EXPENSE");
-        return Arrays.asList(glAccount1, glAccount2, glAccount3);
     }
 
     @Test
@@ -166,6 +144,25 @@ public class AccountingServiceImplTest extends TestCase {
         Assert.assertNotNull(data);
     }
 
+    private List<GLAccount> getGLAccounts() {
+        GLAccount glAccount1 = new GLAccount();
+        glAccount1.setId("g1");
+        glAccount1.setBalance(new BigDecimal(100));
+        glAccount1.setCount(5);
+        glAccount1.setAccountTypeId("ASSET");
+        GLAccount glAccount2 = new GLAccount();
+        glAccount2.setId("g2");
+        glAccount2.setBalance(new BigDecimal(-100));
+        glAccount2.setCount(3);
+        glAccount2.setAccountTypeId("LIABILITY");
+        GLAccount glAccount3 = new GLAccount();
+        glAccount3.setId("g3");
+        glAccount3.setBalance(new BigDecimal(100));
+        glAccount3.setCount(3);
+        glAccount3.setAccountTypeId("OPERATING_EXPENSE");
+        return Arrays.asList(glAccount1, glAccount2, glAccount3);
+    }
+
     private TrialBalance getTrialBalance() {
         List<TrialBalanceRow> trialBalanceRowList = new ArrayList<>();
         trialBalanceRowList.add(getTrialBalanceRow("5_123"));
@@ -174,7 +171,7 @@ public class AccountingServiceImplTest extends TestCase {
         return trialBalance;
     }
 
-    public TResponse<MonthInfo> getActiveMonthInfo() {
+    private TResponse<MonthInfo> getActiveMonthInfo() {
         MonthInfo monthInfo = new MonthInfo();
         monthInfo.setMonth(11);
         monthInfo.setYear(2020);
