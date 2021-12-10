@@ -1,4 +1,4 @@
-package com.tekion.accounting.service.fsMapping;
+package com.tekion.accounting.fs.service.fsMapping;
 
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
@@ -6,7 +6,6 @@ import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
-import com.tekion.accounting.fs.service.fsMapping.FsMappingServiceImpl;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;

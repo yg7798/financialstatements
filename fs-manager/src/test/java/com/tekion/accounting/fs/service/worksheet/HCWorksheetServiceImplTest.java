@@ -1,4 +1,4 @@
-package com.tekion.accounting.service.worksheet;
+package com.tekion.accounting.fs.service.worksheet;
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.HCDepartment;
@@ -7,17 +7,18 @@ import com.tekion.accounting.fs.beans.memo.HCWorksheet;
 import com.tekion.accounting.fs.beans.memo.HCWorksheetTemplate;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
+import com.tekion.accounting.fs.dto.memo.CopyHCWorksheetValuesDto;
+import com.tekion.accounting.fs.dto.memo.CopyMemoValuesDto;
 import com.tekion.accounting.fs.dto.memo.HCBulkUpdateDto;
 import com.tekion.accounting.fs.dto.memo.HCUpdateDto;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetTemplateRepo;
-import com.tekion.accounting.fs.service.worksheet.HCWorksheetService;
-import com.tekion.accounting.fs.service.worksheet.HCWorksheetServiceImpl;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import junit.framework.TestCase;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,19 +26,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.test.context.event.annotation.AfterTestMethod;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+
 @PrepareForTest(UserContextUtils.class)
-@RunWith(MockitoJUnitRunner.Silent.class)
+@RunWith(PowerMockRunner.class)
 public class HCWorksheetServiceImplTest extends TestCase {
+
 
     @InjectMocks
     HCWorksheetServiceImpl hcWorksheetService;
@@ -56,7 +63,15 @@ public class HCWorksheetServiceImplTest extends TestCase {
         UserContextProvider.setContext(new UserContext("-1", "ca", "4"));
         Mockito.when(dealerConfig.getDealerTimeZone()).thenReturn(TimeZone.getTimeZone("America/Los_Angeles"));
         Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        PowerMockito.mockStatic(System.class);
+        PowerMockito.when(System.getenv(Mockito.anyString())).thenReturn("local");
+    }
 
+    @AfterTestMethod
+    public void cleanUp() {
+        reset(hcWorksheetRepo);
+        reset(fsEntryRepo);
+        reset(hcWorksheetTemplateRepo);
     }
 
     @Test
@@ -104,6 +119,97 @@ public class HCWorksheetServiceImplTest extends TestCase {
         assertEquals(2,hcWorksheetList.size());
     }
 
+    @Test
+    public void testCopyValues() {
+        CopyHCWorksheetValuesDto copyHCValuesDto = CopyHCWorksheetValuesDto.builder()
+                .oemId(OEM.GM)
+                .version(1)
+                .fromMonth(1)
+                .fromYear(2020)
+                .toYear(2020)
+                .toMonth(2)
+                .build();
+        Mockito.when(fsEntryRepo.findDefaultType(anyString(),anyInt(), anyString(),anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(hcWorksheetRepo.findByFsId(anyString()))
+                .thenReturn(Arrays.asList(getHCWorksheet1(), getHCWorksheet2()));
+
+        Mockito.when(hcWorksheetRepo.updateBulk(anyList(), anyString()))
+                .thenReturn(new ArrayList<>());
+        assertEquals(2,hcWorksheetService.copyValues(copyHCValuesDto).size());
+        Mockito.verify(fsEntryRepo, times(2)).findDefaultType(anyString(),anyInt(), anyString(),anyString());
+        Mockito.verify(hcWorksheetRepo, times(1)).findByFsId(anyString());
+    }
+
+    @Test
+    public void testCopyValues_whenToMonthAndFromMonthAreDiff() {
+        CopyHCWorksheetValuesDto copyHCValuesDto = CopyHCWorksheetValuesDto.builder()
+                .oemId(OEM.GM)
+                .version(1)
+                .fromMonth(1)
+                .fromYear(2020)
+                .toYear(2021)
+                .toMonth(2)
+                .build();
+        Mockito.when(fsEntryRepo.findDefaultType(anyString(),anyInt(), anyString(),anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(hcWorksheetRepo.findByFsId(anyString()))
+                .thenReturn(Arrays.asList(getHCWorksheet1(), getHCWorksheet2()));
+
+        Mockito.when(hcWorksheetRepo.updateBulk(anyList(), anyString()))
+                .thenReturn(new ArrayList<>());
+        assertEquals(2,hcWorksheetService.copyValues(copyHCValuesDto).size());
+        Mockito.verify(fsEntryRepo, times(2)).findDefaultType(anyString(),anyInt(), anyString(),anyString());
+        Mockito.verify(hcWorksheetRepo, times(2)).findByFsId(anyString());
+    }
+
+    @Test
+    public void testCopyValues_whenToHCSheetIsNull() {
+        CopyHCWorksheetValuesDto copyHCValuesDto = CopyHCWorksheetValuesDto.builder()
+                .oemId(OEM.GM)
+                .version(1)
+                .fromMonth(3)
+                .fromYear(2020)
+                .toYear(2021)
+                .toMonth(4)
+                .build();
+        Mockito.when(fsEntryRepo.findDefaultType(anyString(),anyInt(), anyString(),anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(hcWorksheetRepo.findByFsId(anyString()))
+                .thenReturn(Arrays.asList(getHCWorksheet1()), new ArrayList<>());
+        Mockito.when(hcWorksheetTemplateRepo.findForOemByYearAndCountry(anyString(), anyInt(), anyInt(), anyString()))
+                        .thenReturn(getHCWorksheetTemplate1());
+        assertEquals(2,hcWorksheetService.copyValues(copyHCValuesDto).size());
+        Mockito.verify(fsEntryRepo, times(2)).findDefaultType(anyString(),anyInt(), anyString(),anyString());
+
+        reset(fsEntryRepo);
+        reset(hcWorksheetRepo);
+    }
+
+
+    @Test
+    public void testMigrateHeadCountWorksheetFromOemToFSLevel() {
+        Mockito.when(fsEntryRepo.getFSEntries(anyString()))
+                .thenReturn(Arrays.asList(getFsEntry()));
+        Mockito.doNothing().when(hcWorksheetRepo).updateFsIdInHCWorksheets(any());
+        hcWorksheetService.migrateHeadCountWorksheetFromOemToFSLevel("4");
+        Mockito.verify(fsEntryRepo, times(1)).getFSEntries(anyString());
+        Mockito.verify(hcWorksheetRepo).updateFsIdInHCWorksheets(any());
+    }
+
+    @Test
+    public void testMigrateFromTemplateWithFsId() {
+        Mockito.when(hcWorksheetTemplateRepo.findForOemByYearAndCountry(anyString(), anyInt(), anyInt(), anyString()))
+                .thenReturn(getHCWorksheetTemplate1());
+        Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.doNothing().when(hcWorksheetRepo).insertBulk(any());
+        hcWorksheetService.migrateFromTemplateWithFsId(OEM.GM, 2021, 1, "6155a7d8b3cb1f0006868cd6");
+        Mockito.verify(hcWorksheetTemplateRepo,times(1)).findForOemByYearAndCountry(anyString(), anyInt(), anyInt(), anyString());
+        Mockito.verify(fsEntryRepo, times(1)).findByIdAndDealerIdWithNullCheck(anyString(), anyString());
+        Mockito.verify(hcWorksheetRepo, times(1)).insertBulk(any());
+    }
+
     private HCWorksheetTemplate getHCWorksheetTemplate1() {
         HCWorksheetTemplate hcWorksheetTemplate = new HCWorksheetTemplate();
         hcWorksheetTemplate.setOemId(OEM.GM.getOem());
@@ -135,6 +241,7 @@ public class HCWorksheetServiceImplTest extends TestCase {
         hcWorksheet.setVersion(2);
         hcWorksheet.setYear(2020);
         hcWorksheet.setPosition("s1");
+        hcWorksheet.setId("id1");
 
         HCValue hcValue1 = new HCValue();
         hcValue1.setMonth(1);
@@ -159,6 +266,7 @@ public class HCWorksheetServiceImplTest extends TestCase {
         hcWorksheet.setVersion(3);
         hcWorksheet.setYear(2019);
         hcWorksheet.setPosition("s2");
+        hcWorksheet.setId("id2");
 
         HCValue hcValue1 = new HCValue();
         hcValue1.setMonth(1);
@@ -175,7 +283,7 @@ public class HCWorksheetServiceImplTest extends TestCase {
 
     private HCDepartment getHCDepartment(){
         HCDepartment hcDepartment = new HCDepartment();
-        hcDepartment.setKey("key");
+        hcDepartment.setKey("dep1");
         hcDepartment.setName("name");
         hcDepartment.setOrder(2);
         hcDepartment.setSupportedPositions(Stream.of("s1","s2").collect(Collectors.toList()));

@@ -1,4 +1,4 @@
-package com.tekion.accounting.service.compute;
+package com.tekion.accounting.fs.service.compute;
 
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
