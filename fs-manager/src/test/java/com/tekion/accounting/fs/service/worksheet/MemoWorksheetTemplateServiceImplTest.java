@@ -14,10 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.context.event.annotation.AfterTestMethod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,13 +32,20 @@ public class MemoWorksheetTemplateServiceImplTest extends TestCase {
 
     @Before
     public void setUp(){
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+    }
+
+    @AfterTestMethod
+    public void cleanUp() {
+        Mockito.reset(memoWorksheetTemplateRepo);
     }
 
     @Test
     public void testGetMemoWorksheetTemplates() {
         Mockito.when(memoWorksheetTemplateRepo.findByOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString()))
                 .thenReturn(getMemoWorksheetTemplateList());
-        memoWorksheetService.getMemoWorksheetTemplates(OEM.GM, 2021, 1);
+        assertEquals(2, memoWorksheetService.getMemoWorksheetTemplates(OEM.GM, 2021, 1).size());
+        Mockito.verify(memoWorksheetTemplateRepo, Mockito.times(1)).findByOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString());
     }
 
     @Test
@@ -46,20 +53,22 @@ public class MemoWorksheetTemplateServiceImplTest extends TestCase {
         MemoWorksheetTemplateRequestDto requestDto = getMemoWorksheetTemplateReqDtoList().get(0);
         Mockito.when(memoWorksheetTemplateRepo.save(Mockito.any())).thenReturn(new MemoWorksheetTemplate());
         memoWorksheetService.save(requestDto);
+        Mockito.verify(memoWorksheetTemplateRepo, Mockito.times(1)).save(Mockito.any());
     }
 
     @Test
     public void testSaveBulk() {
         Mockito.when(memoWorksheetTemplateRepo.updateBulk(Mockito.any())).thenReturn(new ArrayList<>());
         memoWorksheetService.saveBulk(getMemoWorksheetTemplateReqDtoList());
+        Mockito.verify(memoWorksheetTemplateRepo, Mockito.times(1)).updateBulk(Mockito.any());
     }
 
     @Test
     public void testDeleteMemoWorksheetTemplatesByKeys() {
         Mockito.when(memoWorksheetTemplateRepo.findByOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(),Mockito.anyInt(),Mockito.any(),Mockito.anyString())).thenReturn(getMemoWorksheetTemplateList());
         Mockito.doNothing().when(memoWorksheetTemplateRepo).deleteTemplatesByKey(Mockito.anyString(), Mockito.anyInt(),Mockito.anyInt(),Mockito.any(),Mockito.anyString());
-        memoWorksheetService.deleteMemoWorksheetTemplatesByKeys(OEM.GM, 2021, 1, Arrays.asList("fsPage").stream().collect(Collectors.toSet()), "US");
-        memoWorksheetService.deleteMemoWorksheetTemplatesByKeys(OEM.GM, 2021, 1, new HashSet<>(), "US");
+        assertEquals(2, memoWorksheetService.deleteMemoWorksheetTemplatesByKeys(OEM.GM, 2021, 1, Arrays.asList("fsPage").stream().collect(Collectors.toSet()), "US").size());
+        Mockito.reset(memoWorksheetTemplateRepo);
     }
 
 

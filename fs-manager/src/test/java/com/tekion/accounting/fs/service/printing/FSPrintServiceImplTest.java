@@ -1,9 +1,8 @@
-package com.tekion.accounting.service.printing;
+package com.tekion.accounting.fs.service.printing;
 
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.service.common.pdfPrinting.PDFPrintService;
-import com.tekion.accounting.fs.service.printing.FSPrintServiceImpl;
 import com.tekion.accounting.fs.service.printing.models.FSViewStatementDto;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;

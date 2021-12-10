@@ -1,8 +1,7 @@
-package com.tekion.accounting.service.accountingService;
+package com.tekion.accounting.fs.service.accountingService;
 
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
-import com.tekion.accounting.fs.service.accountingService.AccountingServiceImpl;
 import com.tekion.as.client.AccountingClient;
 import com.tekion.as.models.beans.AccountingSettings;
 import com.tekion.as.models.beans.GLAccount;

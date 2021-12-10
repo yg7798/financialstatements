@@ -1,26 +1,16 @@
-package com.tekion.accounting.service.integration;
+package com.tekion.accounting.fs.service.integration;
 
-import com.amazonaws.services.dynamodbv2.xspec.M;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.dto.integration.FSIntegrationRequest;
 import com.tekion.accounting.fs.dto.integration.FSSubmitResponse;
-import com.tekion.accounting.fs.enums.AccountingError;
-import com.tekion.accounting.fs.enums.OEM;
-import com.tekion.accounting.fs.service.integration.IntegrationClient;
-import com.tekion.accounting.fs.service.integration.IntegrationInternal;
 import com.tekion.accounting.fs.service.oems.OEMInfo;
-import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.feign.ClientBuilder;
 import com.tekion.core.service.internalauth.AbstractServiceClientFactory;
 import com.tekion.core.utils.TRequestUtils;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
-import feign.Logger;
-import feign.Response;
-import feign.codec.ErrorDecoder;
 import junit.framework.TestCase;
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
