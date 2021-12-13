@@ -1474,7 +1474,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 		while((requiredYear < toYear ) || (requiredYear == toYear && requiredMonth <= toMonth) ) {
 			FSEntry fsEntry = oemYearVsEntryMap.get(requiredYear);
 			if( requiredYear == toYear && requiredMonth == toMonth) {
-				fsCellCodeDetailsResponseDto = computeFsCellCodeDetails(fsEntry, toTimestamp, false, addM13BalInDecBalances);
+				fsCellCodeDetailsResponseDto = computeFsCellCodeDetails(fsEntry, toTimestamp, includeM13, addM13BalInDecBalances);
 			} else {
 				// passing oemFsYear and year as required Year
 				fsCellCodeDetailsResponseDto  = computeFsCellCodeDetails(oemId, requiredYear, oemFsVersion,

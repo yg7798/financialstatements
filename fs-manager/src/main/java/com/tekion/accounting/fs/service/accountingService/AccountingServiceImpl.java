@@ -32,7 +32,7 @@ public class AccountingServiceImpl implements AccountingService {
 
 	@Override
 	public TrialBalance getCYTrialBalanceTillDayOfMonth(long tillEpoch, Set<String> accountTypesToDiscard, boolean excludeInActiveGlAccounts, boolean includeM13, boolean useV2, boolean addM13BalInDecBalances) {
-		return  accountingClient.getCYReport(tillEpoch, excludeInActiveGlAccounts, includeM13, useV2, addM13BalInDecBalances).getData();
+		return  accountingClient.getCYReport(tillEpoch, includeM13, addM13BalInDecBalances, useV2, excludeInActiveGlAccounts).getData();
 	}
 
 	@Override
