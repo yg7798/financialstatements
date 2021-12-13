@@ -1,4 +1,4 @@
-package com.tekion.accounting.service.fsEntry;
+package com.tekion.accounting.fs.service.fsEntry;
 
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
