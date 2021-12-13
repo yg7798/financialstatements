@@ -97,6 +97,11 @@ public class FsEntryServiceImpl implements FsEntryService {
   }
 
   @Override
+  public List<FSEntry> getFSEntries(){
+    return fsEntryRepo.fetchAllByDealerIdNonDeleted(UserContextProvider.getCurrentDealerId());
+  }
+
+  @Override
   public FsMappingInfosResponseDto getFSEntry(String oemId) {
     String siteId = UserContextUtils.getSiteIdFromUserContext();
     List<FSEntry> fsEntriesFromDb;

@@ -76,4 +76,9 @@ public class FsMappingServiceImpl implements FsMappingService {
         }
         return oemFsMappingToBeDeleted;
     }
+
+    @Override
+    public List<OemFsMapping> getMappingsByGLAccounts(String fsId, List<String> glAccounts) {
+        return oemFsMappingRepo.findByGlAccountIdAndYearIncludeDeleted(fsId, glAccounts, UserContextProvider.getCurrentDealerId());
+    }
 }

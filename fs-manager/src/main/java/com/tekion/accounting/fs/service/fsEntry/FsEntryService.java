@@ -14,6 +14,8 @@ public interface FsEntryService {
 
   FsMappingInfosResponseDto getAllFSEntries();
 
+  List<FSEntry> getFSEntries();
+
   FsMappingInfosResponseDto getFSEntry(String oemId);
 
   FSEntry getFSEntryById(String id);

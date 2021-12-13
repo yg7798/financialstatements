@@ -30,6 +30,11 @@ public class FsEntryApi {
 		return TResponseEntityBuilder.okResponseEntity(fsEntryService.createFSEntry(reqDto));
 	}
 
+	@GetMapping("/")
+	public ResponseEntity getFsEntries(){
+		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntries());
+	}
+
 	@GetMapping("/oem/{oemId}")
 	public ResponseEntity getFSEntryByOemId(@PathVariable @NotNull OEM oemId){
 		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntry(oemId.name()));

@@ -9,6 +9,7 @@ import static com.tekion.core.feign.TFeignErrorUtils.fromErrorResponse;
 import static com.tekion.core.feign.TFeignErrorUtils.getErrorDetailsOrNull;
 import static java.util.Objects.nonNull;
 
+
 public class FSClientErrorDecoder implements ErrorDecoder {
 	@Override
 	public Exception decode(String methodKey, Response response) {
