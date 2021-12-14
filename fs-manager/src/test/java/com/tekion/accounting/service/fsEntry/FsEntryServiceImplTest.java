@@ -65,6 +65,7 @@ public class FsEntryServiceImplTest extends TestCase {
         UserContextProvider.setContext(new UserContext("-1", "ca", "4"));
         Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
         mockStatic(System.class);
+        when(System.getenv("CLUSTER_TYPE")).thenReturn("local");
     }
 
     @Test
