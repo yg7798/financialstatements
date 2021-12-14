@@ -5,6 +5,7 @@ import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.fsEntry.FSEntryUpdateDto;
 import com.tekion.accounting.fs.dto.fsEntry.FsEntryCreateDto;
 import com.tekion.accounting.fs.dto.mappings.FsMappingInfo;
@@ -30,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -40,7 +42,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(DpUtils.class)
+@PrepareForTest(UserContextUtils.class)
 public class FsEntryServiceImplTest extends TestCase {
     @InjectMocks
     FsEntryServiceImpl fsEntryService;
@@ -64,7 +66,8 @@ public class FsEntryServiceImplTest extends TestCase {
     public void setUp() {
         UserContextProvider.setContext(new UserContext("-1", "ca", "4"));
         Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
-        mockStatic(System.class);
+        PowerMockito.mockStatic(System.class);
+        when(System.getenv("CLUSTER_TYPE")).thenReturn("local");
     }
 
     @Test
