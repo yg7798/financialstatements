@@ -1,7 +1,6 @@
 package com.tekion.accounting.fs.client;
 
-import com.tekion.accounting.fs.client.dtos.AccountingInfo;
-import com.tekion.accounting.fs.client.dtos.OEMFsCellCodeSnapshotBulkResponseDto;
+import com.tekion.accounting.fs.client.dtos.*;
 import com.tekion.core.beans.TResponse;
 import com.tekion.core.feign.ClientBuilder;
 import com.tekion.core.service.internalauth.AbstractServiceClientFactory;
@@ -18,7 +17,7 @@ import java.util.Set;
 public interface FSInternalClient {
 
 	static FSInternalClient createClient(ClientBuilder builder, AbstractServiceClientFactory clientFactory, TokenGenerator generator ) {
-		String csInstanceUrl = clientFactory.getServiceBaseUrl( "FINANCIAL_STATEMENTS");
+		String csInstanceUrl = clientFactory.getServiceBaseUrl( "FINANCIAL-STATEMENTS");
 		return createClient( builder, csInstanceUrl, generator );
 	}
 
@@ -33,7 +32,7 @@ public interface FSInternalClient {
 				hostUrl, FSInternalClient.class, level, new FSClientErrorDecoder(), null, interceptors );
 	}
 
-	@RequestLine("POST financial-statements/u/oemMapping/fsReport/{oemId}/{oemFsYear}/v/{oemFsVersion}/bulk")
+	@RequestLine("POST /financial-statements/u/oemMapping/fsReport/{oemId}/{oemFsYear}/v/{oemFsVersion}/bulk")
 	TResponse<List<OEMFsCellCodeSnapshotBulkResponseDto>> getFSReportBulk(@HeaderMap Map<String, String> headerMap,
 																		  Set<String> codes,
 																		  @Param("oemId") String oemId,
@@ -41,6 +40,22 @@ public interface FSInternalClient {
 																		  @Param("oemFsYear") Integer oemFsYear,
 																		  @QueryMap Map<String,String> queryMap);
 
-	@RequestLine("GET financial-statements/u/accountingInfo/")
+	@RequestLine("GET /financial-statements/u/accountingInfo/")
 	TResponse<AccountingInfo> getAccountingInfo(@HeaderMap Map<String, String> headerMap);
+
+	@RequestLine("GET /financial-statements/u/fsEntry/")
+	TResponse<List<FsEntryDto>> getFsEntries(@HeaderMap Map<String, String> headerMap);
+
+	@RequestLine("POST /financial-statements/u/cellGroup/{oemId}/{year}/v/{version}")
+	TResponse<List<CellGroupDto>> getCellGroups(@HeaderMap Map<String, String> headerMap,
+												Set<String> codes,
+												@Param("oemId") String oemId,
+												@Param("year") Integer year,
+												@Param("version") Integer version);
+
+	@RequestLine("POST /financial-statements/u/fsMapping/byGlAccounts/fsId/{fsId}")
+	TResponse<List<FsMappingDto>> getFsMappings(@HeaderMap Map<String, String> headerMap,
+												Set<String> glAccountIds,
+												@Param("fsId") String fsId);
+
 }

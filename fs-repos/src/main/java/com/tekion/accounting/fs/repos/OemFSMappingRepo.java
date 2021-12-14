@@ -17,7 +17,7 @@ public interface OemFSMappingRepo {
 
     List<BulkWriteUpsert> updateBulk(List<OemFsMapping> oemFsMappings);
 
-    List<OemFsMapping> findByGlAccountIdAndYearIncludeDeleted(String fsId, Set<String> glAccountIds, String dealerId);
+    List<OemFsMapping> findByGlAccountIdAndYearIncludeDeleted(String fsId, Collection<String> glAccountIds, String dealerId);
 
     List<OemFsMapping> findByGlAccountIdAndYearNonDeleted(List<String> glAccountIds, Integer year, Integer version, String dealerId, String oemId);
 

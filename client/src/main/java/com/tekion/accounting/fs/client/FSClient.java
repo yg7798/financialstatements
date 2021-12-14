@@ -1,8 +1,7 @@
 package com.tekion.accounting.fs.client;
 
 
-import com.tekion.accounting.fs.client.dtos.AccountingInfo;
-import com.tekion.accounting.fs.client.dtos.OEMFsCellCodeSnapshotBulkResponseDto;
+import com.tekion.accounting.fs.client.dtos.*;
 import com.tekion.core.beans.TResponse;
 
 import java.util.List;
@@ -20,5 +19,10 @@ public interface FSClient {
 
 	TResponse<AccountingInfo> getAccountingInfo();
 
+	TResponse<List<FsEntryDto>> getFsEntries();
+
+	TResponse<List<CellGroupDto>> getCellGroups(String oemId, Integer year, Integer version, Set<String> groupCodes);
+
+	TResponse<List<FsMappingDto>> getFsMappings(String fsId, Set<String> glAccountIds);
 }
 

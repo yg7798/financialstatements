@@ -28,4 +28,10 @@ public class FsMappingApi {
     public ResponseEntity deleteOemFsMappingForNonExistingGlAccountOrFsCellCode(@PathVariable String fsId) {
         return TResponseEntityBuilder.okResponseEntity(fsMappingService.deleteInvalidMappings(fsId));
     }
+
+    @PostMapping("/byGlAccounts/fsId/{fsId}")
+    public ResponseEntity getMappingsByGLAccounts(@PathVariable String fsId, @NotNull @RequestBody List<String> glAccountIds) {
+        return TResponseEntityBuilder.okResponseEntity(fsMappingService.getMappingsByGLAccounts(fsId, glAccountIds));
+    }
+
 }

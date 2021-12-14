@@ -57,6 +57,7 @@ public class OemFSCellGroupRepoImpl extends BaseGlobalMongoRepository<Accounting
         criteria.and(AccountingOemFsCellGroup.YEAR).is(year);
         criteria.and(AccountingOemFsCellGroup.VERSION).is(version);
         criteria.and(AccountingOemFsCellGroup.GROUP_CODE).in(groupCodes);
+        criteria.and(COUNTRY).is(country);
         return this.getMongoTemplate().find(Query.query(criteria), AccountingOemFsCellGroup.class);
     }
 

@@ -1,7 +1,6 @@
 package com.tekion.accounting.fs.client;
 
-import com.tekion.accounting.fs.client.dtos.AccountingInfo;
-import com.tekion.accounting.fs.client.dtos.OEMFsCellCodeSnapshotBulkResponseDto;
+import com.tekion.accounting.fs.client.dtos.*;
 import com.tekion.core.beans.TResponse;
 import com.tekion.core.feign.ClientBuilder;
 import com.tekion.core.service.internalauth.AbstractServiceClientFactory;
@@ -10,7 +9,6 @@ import com.tekion.core.utils.TGlobalConstants;
 import com.tekion.core.utils.TRequestUtils;
 import com.tekion.core.utils.UserContextProvider;
 import com.tekion.core.validation.TValidator;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Slf4j
 @Service
 public class FSClientImpl implements FSClient{
 
@@ -65,5 +62,20 @@ public class FSClientImpl implements FSClient{
 	@Override
 	public TResponse<AccountingInfo> getAccountingInfo() {
 		return fsInternalClient.getAccountingInfo(TRequestUtils.internalCallHeaderMap());
+	}
+
+	@Override
+	public TResponse<List<FsEntryDto>> getFsEntries() {
+		return  fsInternalClient.getFsEntries(TRequestUtils.internalCallHeaderMap());
+	}
+
+	@Override
+	public TResponse<List<CellGroupDto>> getCellGroups(String oemId, Integer year, Integer version, Set<String> groupCodes) {
+		return fsInternalClient.getCellGroups(TRequestUtils.internalCallHeaderMap(), groupCodes, oemId, year, version);
+	}
+
+	@Override
+	public TResponse<List<FsMappingDto>> getFsMappings(String fsId, Set<String> glAccountIds) {
+		return fsInternalClient.getFsMappings(TRequestUtils.internalCallHeaderMap(), glAccountIds, fsId);
 	}
 }
