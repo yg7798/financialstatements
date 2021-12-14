@@ -1,4 +1,4 @@
-package com.tekion.accounting.service.accountingInfo;
+package com.tekion.accounting.fs.service.accountingInfo;
 
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.FSEntry;
@@ -9,7 +9,6 @@ import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.accountingInfo.AccountingInfoRepo;
-import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoServiceImpl;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import junit.framework.TestCase;
