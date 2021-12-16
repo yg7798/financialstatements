@@ -172,10 +172,9 @@ public class FsEntryServiceImplTest extends TestCase {
     }
 
     @Test
-    public void testGetFSEntries()
-    {
+    public void testGetFSEntries() {
         Mockito.when(fsEntryRepo.fetchAllByDealerIdNonDeleted(Mockito.anyString())).thenReturn(getFSEntries());
-        assertEquals(getFSEntries(),fsEntryService.getFSEntries());
+        assertEquals(getFSEntries(), fsEntryService.getFSEntries());
     }
 
     private FsMappingInfosResponseDto getFsMappingInfosResponseDto() {
@@ -259,9 +258,8 @@ public class FsEntryServiceImplTest extends TestCase {
         return fsEntry;
     }
 
-    private  List<OemFsMapping> getOemFsMappingList()
-    {
-        OemFsMapping oemFsMapping1=new OemFsMapping();
+    private List<OemFsMapping> getOemFsMappingList() {
+        OemFsMapping oemFsMapping1 = new OemFsMapping();
         oemFsMapping1.setFsId("6155a7d8b3cb1f0006868cd6");
         oemFsMapping1.setDealerId("5");
         oemFsMapping1.setYear(2021);
@@ -269,7 +267,7 @@ public class FsEntryServiceImplTest extends TestCase {
         oemFsMapping1.setGlAccountId("xyz");
         oemFsMapping1.setGlAccountDealerId("abc");
 
-        OemFsMapping oemFsMapping2=new OemFsMapping();
+        OemFsMapping oemFsMapping2 = new OemFsMapping();
         oemFsMapping2.setFsId("6155a7d8b3cb1f0006868cd4");
         oemFsMapping2.setDealerId("5");
         oemFsMapping2.setYear(2021);
@@ -277,14 +275,13 @@ public class FsEntryServiceImplTest extends TestCase {
         oemFsMapping2.setGlAccountId("xyz");
         oemFsMapping2.setGlAccountDealerId("abc");
 
-        List<OemFsMapping> oemFsMappingList=new ArrayList<>();
+        List<OemFsMapping> oemFsMappingList = new ArrayList<>();
         oemFsMappingList.add(oemFsMapping1);
         oemFsMappingList.add(oemFsMapping2);
         return oemFsMappingList;
     }
 
-    private List<FSEntry> getFSEntries2()
-    {
+    private List<FSEntry> getFSEntries2() {
         FSEntry fsEntry = new FSEntry();
         fsEntry.setDealerId("5");
         fsEntry.setYear(2021);
@@ -292,7 +289,7 @@ public class FsEntryServiceImplTest extends TestCase {
         fsEntry.setOemId("Acura");
         fsEntry.setId("6155a7d8b3cb1f0006868cd6");
         fsEntry.setSiteId("-1_5");
-        List<FSEntry> fsEntries=new ArrayList<>();
+        List<FSEntry> fsEntries = new ArrayList<>();
         fsEntries.add(fsEntry);
         return fsEntries;
     }
