@@ -76,4 +76,10 @@ public class FsEntryApi {
 	public ResponseEntity getAllDealersDetails(@PathVariable @NotBlank String fsId){
 		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getDealersDetailForConsolidatedFS(fsId));
 	}
+
+	@PutMapping("/updateName/fsId/{fsId}")
+	public ResponseEntity updateFsEntryForName(@PathVariable @NotNull String  fsId, @RequestParam(required = false, name = "name") String name) {
+		return TResponseEntityBuilder.okResponseEntity(fsEntryService.updateFSEntryName(fsId,name));
+	}
+
 }

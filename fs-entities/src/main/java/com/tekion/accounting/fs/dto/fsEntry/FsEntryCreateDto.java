@@ -31,13 +31,17 @@ public class FsEntryCreateDto {
 	@NotNull private FSType fsType;
 	private MigrationMetaDataForFsEntry migrationMetaDataForFsEntry;
 	@NotNull List<String> dealerIds = new ArrayList<>();
+	private String name;
 
 	public FSEntry createFSEntry() {
+
 		if(TStringUtils.isBlank(siteId)){
 			siteId = UserContextUtils.getSiteIdFromUserContext();
 		}
+
 		FSEntry fsEntry =  FSEntry.builder()
 				.oemId(oemId.name())
+				.name(name)
 				.year(year)
 				.version(version)
 				.dealerId(UserContextProvider.getCurrentDealerId())
@@ -51,6 +55,7 @@ public class FsEntryCreateDto {
 
 		fsEntry.setCreatedTime(System.currentTimeMillis());
 		fsEntry.setModifiedTime(System.currentTimeMillis());
+		fsEntry.updateNameIfEmpty();
 		return fsEntry;
 	}
 }

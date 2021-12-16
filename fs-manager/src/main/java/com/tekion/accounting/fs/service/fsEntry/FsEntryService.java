@@ -32,4 +32,8 @@ public interface FsEntryService {
 
   FsMappingInfosResponseDto getFSEntriesBySiteId(List<String> siteIds);
 
+  void migrateFSName();
+
+  FSEntry updateFSEntryName(String fsId, String name);
+
 }
