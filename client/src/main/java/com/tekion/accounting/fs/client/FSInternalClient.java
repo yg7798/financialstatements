@@ -58,4 +58,7 @@ public interface FSInternalClient {
 												Set<String> glAccountIds,
 												@Param("fsId") String fsId);
 
+	@RequestLine("POST /financial-statements/u/fsMapping/byOemIdAndGroupCode")
+	TResponse<List<FsMappingDto>> getFsMappingsFromOemIdAndGroupCodes(@HeaderMap Map<String, String> internalCallHeaderMap,
+																	  OemIdsAndGroupCodeListDto requestDto);
 }

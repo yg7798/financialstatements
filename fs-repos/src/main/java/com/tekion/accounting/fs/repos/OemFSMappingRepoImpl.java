@@ -279,4 +279,13 @@ public class OemFSMappingRepoImpl extends BaseDealerLevelMongoRepository<OemFsMa
         log.info("Deleted duplicate mappings from OemFsMapping {}", JsonUtil.toJson(updateResult));
     }
 
+    @Override
+    public List<OemFsMapping> findMappingsByGroupCodeAndFsIds(List<String> groupCodes, Set<String> fsIds, String dealerId) {
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(DEALER_ID).is(dealerId);
+        criteria.and(OemFsMapping.FS_CELL_GROUP_CODE).in(groupCodes);
+        criteria.and(FS_ID).in(fsIds);
+        return this.getMongoTemplate().find(Query.query(criteria), OemFsMapping.class);
+    }
+
 }

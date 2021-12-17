@@ -1,8 +1,10 @@
 package com.tekion.accounting.fs.service.fsMapping;
 
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
@@ -44,6 +46,9 @@ public class FsMappingServiceImplTest {
 
     @Mock
     OemFsCellGroupRepo oemFsCellGroupRepo;
+
+    @Mock
+    FSEntryRepo fsEntryRepo;
 
     @Before
     public void setUp() throws ExecutionException {
@@ -123,5 +128,29 @@ public class FsMappingServiceImplTest {
         Mockito.when(oemFsCellGroupRepo.findByOemId(any(), eq(2021), any())).thenReturn(accountingOemFsCellGroupList);
         Set<String> oemFsMappingToBeDeleted = fsMappingService.deleteInvalidMappings("617a3cf25f150300060e3b57");
         Assert.assertEquals(3, oemFsMappingToBeDeleted.size());
+    }
+
+    @Test
+    public void testGetFsMappingsByOemIdAndGroupCodes() {
+        Mockito.when(fsEntryRepo.getFsEntriesByOemIds(Mockito.any(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(Arrays.asList(getFsEntry()));
+        Mockito.when(oemFSMappingRepo.findMappingsByGroupCodeAndFsIds(Mockito.anyList(), Mockito.anySet(), Mockito.anyString()))
+                        .thenReturn(Arrays.asList());
+        fsMappingService.getFsMappingsByOemIdAndGroupCodes(2021, Arrays.asList("_220"), Arrays.asList("GM"));
+        Mockito.verify(fsEntryRepo, Mockito.times(1)).getFsEntriesByOemIds(Mockito.any(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyString());
+        Mockito.verify(oemFSMappingRepo, Mockito.times(1)).findMappingsByGroupCodeAndFsIds(Mockito.anyList(), Mockito.anySet(), Mockito.anyString());
+    }
+
+    private FSEntry getFsEntry()
+    {
+        FSEntry fsEntry=new FSEntry();
+        fsEntry.setDealerId("5");
+        fsEntry.setYear(2021);
+        fsEntry.setVersion(1);
+        fsEntry.setOemId("Acura");
+        fsEntry.setId("6155a7d8b3cb1f0006868cd6");
+        fsEntry.setSiteId("-1_5");
+        fsEntry.setFsType("INTERNAL");
+        return fsEntry;
     }
 }

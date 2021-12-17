@@ -14,7 +14,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class CellGroupDto {
 	private String oemId;
-	private String displayName;
+	private String groupDisplayName;
 	private String code;
 	private Integer year;
 	private Integer version;

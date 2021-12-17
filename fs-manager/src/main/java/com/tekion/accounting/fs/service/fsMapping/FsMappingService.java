@@ -12,4 +12,6 @@ public interface FsMappingService {
     Set<String> deleteInvalidMappings(String fsId);
 
     List<OemFsMapping> getMappingsByGLAccounts(String fsId, List<String> glAccounts);
+
+    List<OemFsMapping> getFsMappingsByOemIdAndGroupCodes(Integer year, List<String> groupCodes, List<String> oemIds);
 }

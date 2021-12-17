@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 
+import static com.tekion.accounting.fs.beans.common.FSEntry.OEM_ID;
 import static com.tekion.accounting.fs.common.TConstants.*;
 import static com.tekion.accounting.fs.beans.common.FSEntry.FS_TYPE;
 import static com.tekion.accounting.fs.common.utils.UserContextUtils.getDefaultSiteId;
@@ -248,6 +249,16 @@ public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> imp
         Criteria criteria = criteriaForNonDeleted();
         criteria.and(DEALER_ID).is(dealerId);
         criteria.and(SITE_ID).in(siteIds);
+        return this.findAll(criteria, this.getBeanClass(), this.getMongoTemplate());
+    }
+
+    @Override
+    public List<FSEntry> getFsEntriesByOemIds(FSType fsType, List<String> oemIds, Integer year, String dealerId) {
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(DEALER_ID).is(dealerId);
+        criteria.and(YEAR).is(year);
+        criteria.and(FS_TYPE).is(fsType);
+        criteria.and(OEM_ID).in(oemIds);
         return this.findAll(criteria, this.getBeanClass(), this.getMongoTemplate());
     }
 

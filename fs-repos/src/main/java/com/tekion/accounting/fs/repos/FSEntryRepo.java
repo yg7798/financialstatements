@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.repos;
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.enums.FSType;
 
 import java.util.List;
 
@@ -51,4 +52,6 @@ public interface FSEntryRepo {
     List<FSEntry> findByOemFsTypeDealerIdAndSiteId(String oemId, String fsType, String dealerId, String siteId);
 
     List<FSEntry> getFSEntriesBySiteId(String dealerId, List<String> siteIds);
+
+    List<FSEntry> getFsEntriesByOemIds(FSType fsType, List<String> oemIds, Integer year, String dealerId);
 }

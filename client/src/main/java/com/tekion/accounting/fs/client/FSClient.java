@@ -24,5 +24,7 @@ public interface FSClient {
 	TResponse<List<CellGroupDto>> getCellGroups(String oemId, Integer year, Integer version, Set<String> groupCodes);
 
 	TResponse<List<FsMappingDto>> getFsMappings(String fsId, Set<String> glAccountIds);
+
+	TResponse<List<FsMappingDto>> getFsMappingsFromOemIdAndGroupCodes(OemIdsAndGroupCodeListDto oemIdsAndGroupCodeListDto);
 }
 

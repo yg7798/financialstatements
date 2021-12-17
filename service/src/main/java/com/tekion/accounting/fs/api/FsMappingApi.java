@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.api;
 
+import com.tekion.accounting.fs.dto.mappings.OemIdsAndGroupCodeListRequestDto;
 import com.tekion.accounting.fs.service.fsMapping.FsMappingService;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,11 @@ public class FsMappingApi {
     @PostMapping("/byGlAccounts/fsId/{fsId}")
     public ResponseEntity getMappingsByGLAccounts(@PathVariable String fsId, @NotNull @RequestBody List<String> glAccountIds) {
         return TResponseEntityBuilder.okResponseEntity(fsMappingService.getMappingsByGLAccounts(fsId, glAccountIds));
+    }
+
+    @PostMapping("/byOemIdAndGroupCode")
+    public ResponseEntity getFsMappingsFromOemIdAndGroupCodes(@NotNull @RequestBody OemIdsAndGroupCodeListRequestDto requestDto) {
+        return TResponseEntityBuilder.okResponseEntity(fsMappingService.getFsMappingsByOemIdAndGroupCodes(requestDto.getYear() ,requestDto.getGroupCodes(), requestDto.getOemIds()));
     }
 
 }
