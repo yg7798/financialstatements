@@ -55,10 +55,10 @@ public class FsEntryApi {
 		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntriesBySiteId(siteIds));
 	}
 
-	@PutMapping("/{fsId}")
-	public ResponseEntity updateFSEntry(@PathVariable("fsId") String fsId, @RequestBody FSEntryUpdateDto FSEntryUpdateDto){
-		validator.validate(FSEntryUpdateDto);
-		return TResponseEntityBuilder.okResponseEntity(fsEntryService.updateFSEntry(fsId, FSEntryUpdateDto));
+	@PutMapping("/update")
+	public ResponseEntity updateFSEntry(@RequestBody FSEntryUpdateDto updateDto){
+		validator.validate(updateDto);
+		return TResponseEntityBuilder.okResponseEntity(fsEntryService.updateFSEntry(updateDto));
 	}
 
 	/**

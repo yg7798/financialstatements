@@ -3,10 +3,12 @@ package com.tekion.accounting.fs.service.fsEntry;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.tekion.accounting.fs.common.GlobalService;
-import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
+import com.tekion.accounting.fs.common.GlobalService;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.fsEntry.FSEntryUpdateDto;
 import com.tekion.accounting.fs.dto.fsEntry.FsEntryCreateDto;
 import com.tekion.accounting.fs.dto.mappings.FsMappingInfo;
@@ -17,8 +19,6 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
-import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.admin.beans.beansdto.DealerMasterBulkRequest;
 import com.tekion.admin.beans.dealersetting.DealerMaster;
 import com.tekion.as.client.AccountingClient;
@@ -64,21 +64,21 @@ public class FsEntryServiceImpl implements FsEntryService {
   @Override
   public FSEntry createFSEntry(FsEntryCreateDto reqDto) {
     FSEntry newFSEntry = reqDto.createFSEntry();
-    if(FSType.CONSOLIDATED.equals(reqDto.getFsType())){
-      if(!UserContextUtils.areDealerIdsBelongsToSameTenant(reqDto.getDealerIds(), dealerConfig.getDealerMaster().getTenantId(), globalService)){
+    if (FSType.CONSOLIDATED.equals(reqDto.getFsType())) {
+      if (!UserContextUtils.areDealerIdsBelongsToSameTenant(reqDto.getDealerIds(), dealerConfig.getDealerMaster().getTenantId(), globalService)) {
         throw new TBaseRuntimeException("DealerIds should belong to same tenant");
       }
     }
     List<FSEntry> existingEntries = new ArrayList<>();
-    if(FSType.OEM.equals(reqDto.getFsType())){
+    if (FSType.OEM.equals(reqDto.getFsType())) {
       existingEntries = fsEntryRepo.find(reqDto.getOemId().name(), reqDto.getYear(),
               UserContextProvider.getCurrentDealerId(), reqDto.getSiteId(), reqDto.getFsType().name());
     }
-    if(existingEntries.size() > 0){
-      log.info("OemMappingInfo already exists for {} {}!", reqDto.getOemId(), reqDto.getYear());
+    if (existingEntries.size() > 0) {
+      log.warn("OemMappingInfo already exists for {} {}!", reqDto.getOemId(), reqDto.getYear());
       return existingEntries.get(0);
     }
-    FSEntry mappingInfo =  fsEntryRepo.save(newFSEntry);
+    FSEntry mappingInfo = fsEntryRepo.save(newFSEntry);
     accountingInfoService.addOem(reqDto.getOemId());
     return mappingInfo;
   }
@@ -179,9 +179,10 @@ public class FsEntryServiceImpl implements FsEntryService {
   }
 
   @Override
-  public FSEntry updateFSEntry(String fsId, FSEntryUpdateDto FSEntryUpdateDto){
-    FSEntry fsEntry = fsEntryRepo.findByIdAndDealerIdWithNullCheck(fsId, UserContextProvider.getCurrentDealerId());
-    fsEntry = FSEntryUpdateDto.updateFsMappingInfo(fsEntry);
+  public FSEntry updateFSEntry(FSEntryUpdateDto updateDto){
+    FSEntry fsEntry = fsEntryRepo.findByIdAndDealerIdWithNullCheck(updateDto.getId(), UserContextProvider.getCurrentDealerId());
+    fsEntry.setName(updateDto.getName());
+    fsEntry.updateNameIfEmpty();
     return fsEntryRepo.save(fsEntry);
   }
 
@@ -275,4 +276,13 @@ public class FsEntryServiceImpl implements FsEntryService {
     return glAccountIds;
   }
 
+  @Override
+  public void migrateFSName() {
+    List<FSEntry> fsEntries;
+    fsEntries = fsEntryRepo.getFSEntries(getCurrentDealerId());
+    for (FSEntry fsEntry : fsEntries) {
+      fsEntry.updateNameToDefault();
+    }
+    fsEntryRepo.bulkUpsert(fsEntries);
+  }
 }

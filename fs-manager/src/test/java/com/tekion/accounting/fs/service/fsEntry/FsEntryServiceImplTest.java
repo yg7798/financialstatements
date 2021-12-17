@@ -3,8 +3,6 @@ package com.tekion.accounting.fs.service.fsEntry;
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
-import com.tekion.accounting.fs.common.GlobalService;
-import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.fsEntry.FSEntryUpdateDto;
@@ -16,7 +14,6 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
-import com.tekion.accounting.fs.service.fsEntry.FsEntryServiceImpl;
 import com.tekion.admin.beans.dealersetting.DealerMaster;
 import com.tekion.as.client.AccountingClient;
 import com.tekion.as.models.beans.GLAccount;
@@ -26,21 +23,20 @@ import com.tekion.core.es.request.ESResponse;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import junit.framework.TestCase;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
@@ -54,15 +50,16 @@ public class FsEntryServiceImplTest extends TestCase {
     @Mock
     FSEntryRepo fsEntryRepo;
     @Mock
-    AccountingInfoService accountingInfoService;
-    @Mock
     OemFSMappingRepo oemFSMappingRepo;
-    @Mock
-    GlobalService globalService;
     @Mock
     PreferenceClient preferenceClient;
     @Mock
     AccountingClient accountingClient;
+    @Mock
+    AccountingInfoService accountingService;
+
+    @Captor
+    ArgumentCaptor<FSEntry> fsEntryArgumentCaptor;
 
     @Before
     public void setUp() {
@@ -123,7 +120,7 @@ public class FsEntryServiceImplTest extends TestCase {
     public void testUpdateFSEntry() {
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntry());
         Mockito.when(fsEntryRepo.save(Mockito.any())).thenReturn(getFSEntry());
-        assertEquals(getFSEntry(), fsEntryService.updateFSEntry("12345", new FSEntryUpdateDto()));
+        assertEquals(getFSEntry(), fsEntryService.updateFSEntry(new FSEntryUpdateDto("", "")));
     }
 
     @Test
@@ -169,6 +166,30 @@ public class FsEntryServiceImplTest extends TestCase {
         Mockito.when(fsEntryRepo.getFSEntriesBySiteId(Mockito.anyString(), Mockito.anyList())).thenReturn(getFSEntries());
         Mockito.when(accountingClient.getGLAccountList(Mockito.any())).thenReturn(getGlAccountESResponse());
         assertEquals(getFsMappingInfosResponseDto(), fsEntryService.getFSEntriesBySiteId(siteIds));
+    }
+
+    @Test
+    public void testMigrateFSName(){
+        List<FSEntry> fsEntries = Collections.singletonList(FSEntry.builder().oemId("GM").fsType("OEM").build());
+        Mockito.when(fsEntryRepo.getFSEntries(Mockito.anyString())).
+                thenReturn(fsEntries);
+
+        doAnswer(invocation -> {
+            List<FSEntry> arg0 = invocation.getArgument(0);
+            assertEquals("GM-OEM", arg0.get(0).getName());
+            return null;
+        }).when(fsEntryRepo).bulkUpsert(Mockito.anyList());
+        fsEntryService.migrateFSName();
+    }
+
+    @Test
+    public void updateFSEntry(){
+        FSEntry fsEntry = FSEntry.builder().oemId("GM").fsType("OEM").build();
+        String name = RandomStringUtils.randomAlphanumeric(FSEntry.NAME_MAX_LENGTH+2);
+        Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString())).thenReturn(fsEntry);
+        fsEntryService.updateFSEntry(new FSEntryUpdateDto("123",  name));
+        verify(fsEntryRepo, times(1)).save(fsEntryArgumentCaptor.capture());
+        assertEquals(fsEntryArgumentCaptor.getValue().getName(), name.substring(0, FSEntry.NAME_MAX_LENGTH));
     }
 
     @Test

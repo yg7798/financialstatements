@@ -22,7 +22,7 @@ public interface FsEntryService {
 
   List<FSEntry> findFsEntriesForYear(String siteId, Integer year);
 
-  FSEntry updateFSEntry(String fsMappingId, FSEntryUpdateDto FSEntryUpdateDto);
+  FSEntry updateFSEntry(FSEntryUpdateDto FSEntryUpdateDto);
 
   FSEntry deleteFsEntryById(String fsIdsToDelete);
 
@@ -32,4 +32,5 @@ public interface FsEntryService {
 
   FsMappingInfosResponseDto getFSEntriesBySiteId(List<String> siteIds);
 
+  void migrateFSName();
 }
