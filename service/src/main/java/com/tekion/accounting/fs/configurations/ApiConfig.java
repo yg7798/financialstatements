@@ -10,7 +10,7 @@ import com.tekion.clients.excelGeneration.client.helpers.v2.ExcelReportApiV2;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackageClasses ={ExcelReportApi.class, ExcelReportApiV2.class}, basePackages={"com.tekion.accounting.fs.api", "com.tekion.accounting.fs.api_migration"})
+@ComponentScan(basePackageClasses ={ExcelReportApi.class, ExcelReportApiV2.class}, basePackages={"com.tekion.accounting.fs.api"})
 @EnableAspectJAutoProxy
 public class ApiConfig implements WebMvcConfigurer {
 

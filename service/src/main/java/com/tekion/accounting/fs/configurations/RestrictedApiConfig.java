@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.tekion.accounting.fs.api_restricted")
+@ComponentScan(basePackages = {"com.tekion.accounting.fs.api_restricted", "com.tekion.accounting.fs.api_migration"})
 @EnableAspectJAutoProxy
 public class RestrictedApiConfig implements WebMvcConfigurer {
 
