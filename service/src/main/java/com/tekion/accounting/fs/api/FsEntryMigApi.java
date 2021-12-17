@@ -1,4 +1,4 @@
-package com.tekion.accounting.fs.api_migration;
+package com.tekion.accounting.fs.api;
 
 import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
