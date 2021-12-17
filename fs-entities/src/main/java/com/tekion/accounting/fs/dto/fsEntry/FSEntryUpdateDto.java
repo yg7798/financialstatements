@@ -16,6 +16,6 @@ public class FSEntryUpdateDto {
     @NotEmpty
     private String id;
     @NotEmpty
-    @Size(max = FSEntry.NAME_MAX_LENGTH, message = "{validation.name.size.too_long}")
+    @Size(max = FSEntry.NAME_MAX_LENGTH, message = "name size cannot exceed 64 characters")
     private String name;
 }
