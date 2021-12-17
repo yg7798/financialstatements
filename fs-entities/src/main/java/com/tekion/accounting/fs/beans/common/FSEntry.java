@@ -29,7 +29,7 @@ public class FSEntry extends TBaseMongoBean {
 	public static final String VERSION = "version";
 	public static final String FS_TYPE = "fsType";
 	public static final String FS_ID = "fsId";
-	public static final Integer NAME_MAX_LENGTH = 64;
+	public static final int NAME_MAX_LENGTH = 64;
 
 	private String oemId;
 	private Integer year;

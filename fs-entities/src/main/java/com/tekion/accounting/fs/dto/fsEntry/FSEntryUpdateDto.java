@@ -1,18 +1,21 @@
 package com.tekion.accounting.fs.dto.fsEntry;
 
+import com.tekion.accounting.fs.beans.common.FSEntry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class FSEntryUpdateDto {
 
-    @NotNull
+    @NotEmpty
     private String id;
-    @NotNull
+    @NotEmpty
+    @Size(max = FSEntry.NAME_MAX_LENGTH, message = "{validation.name.size.too_long}")
     private String name;
 }

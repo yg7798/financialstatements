@@ -56,9 +56,9 @@ public class FsEntryApi {
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity updateFSEntry(@RequestBody FSEntryUpdateDto FSEntryUpdateDto){
-		validator.validate(FSEntryUpdateDto);
-		return TResponseEntityBuilder.okResponseEntity(fsEntryService.updateFSEntry(FSEntryUpdateDto));
+	public ResponseEntity updateFSEntry(@RequestBody FSEntryUpdateDto updateDto){
+		validator.validate(updateDto);
+		return TResponseEntityBuilder.okResponseEntity(fsEntryService.updateFSEntry(updateDto));
 	}
 
 	/**
