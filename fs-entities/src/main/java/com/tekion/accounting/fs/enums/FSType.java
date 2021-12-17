@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.enums;
 
 public enum FSType {
-	OEM("Oem"),
+	OEM("OEM"),
 	INTERNAL("Internal"),
 	CONSOLIDATED ("Consolidated");
 

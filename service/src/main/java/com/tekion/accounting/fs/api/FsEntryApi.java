@@ -55,10 +55,10 @@ public class FsEntryApi {
 		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntriesBySiteId(siteIds));
 	}
 
-	@PutMapping("/{fsId}")
-	public ResponseEntity updateFSEntry(@PathVariable("fsId") String fsId, @RequestBody FSEntryUpdateDto FSEntryUpdateDto){
+	@PutMapping("/update")
+	public ResponseEntity updateFSEntry(@RequestBody FSEntryUpdateDto FSEntryUpdateDto){
 		validator.validate(FSEntryUpdateDto);
-		return TResponseEntityBuilder.okResponseEntity(fsEntryService.updateFSEntry(fsId, FSEntryUpdateDto));
+		return TResponseEntityBuilder.okResponseEntity(fsEntryService.updateFSEntry(FSEntryUpdateDto));
 	}
 
 	/**
@@ -76,10 +76,4 @@ public class FsEntryApi {
 	public ResponseEntity getAllDealersDetails(@PathVariable @NotBlank String fsId){
 		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getDealersDetailForConsolidatedFS(fsId));
 	}
-
-	@PutMapping("/updateName/fsId/{fsId}")
-	public ResponseEntity updateFsEntryForName(@PathVariable @NotNull String  fsId, @RequestParam(required = false, name = "name") String name) {
-		return TResponseEntityBuilder.okResponseEntity(fsEntryService.updateFSEntryName(fsId,name));
-	}
-
 }

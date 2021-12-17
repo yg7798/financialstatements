@@ -179,9 +179,10 @@ public class FsEntryServiceImpl implements FsEntryService {
   }
 
   @Override
-  public FSEntry updateFSEntry(String fsId, FSEntryUpdateDto FSEntryUpdateDto){
-    FSEntry fsEntry = fsEntryRepo.findByIdAndDealerIdWithNullCheck(fsId, UserContextProvider.getCurrentDealerId());
-    fsEntry = FSEntryUpdateDto.updateFsMappingInfo(fsEntry);
+  public FSEntry updateFSEntry(FSEntryUpdateDto updateDto){
+    FSEntry fsEntry = fsEntryRepo.findByIdAndDealerIdWithNullCheck(updateDto.getId(), UserContextProvider.getCurrentDealerId());
+    fsEntry.setName(updateDto.getName());
+    fsEntry.updateNameIfEmpty();
     return fsEntryRepo.save(fsEntry);
   }
 
@@ -283,13 +284,5 @@ public class FsEntryServiceImpl implements FsEntryService {
       fsEntry.updateNameToDefault();
     }
     fsEntryRepo.bulkUpsert(fsEntries);
-  }
-
-  @Override
-  public FSEntry updateFSEntryName(String fsId, String name) {
-    FSEntry fsEntry = fsEntryRepo.findByIdAndDealerIdWithNullCheck(fsId, UserContextProvider.getCurrentDealerId());
-    fsEntry.setName(name);
-    fsEntry.updateNameIfEmpty();
-    return fsEntryRepo.save(fsEntry);
   }
 }

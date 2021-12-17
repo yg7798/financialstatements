@@ -2,7 +2,7 @@ package com.tekion.accounting.fs.service.fsEntry;
 
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
-import com.tekion.accounting.fs.common.GlobalService;
+import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.fsEntry.FSEntryUpdateDto;
@@ -50,15 +50,13 @@ public class FsEntryServiceImplTest extends TestCase {
     @Mock
     FSEntryRepo fsEntryRepo;
     @Mock
-    AccountingInfoService accountingInfoService;
-    @Mock
     OemFSMappingRepo oemFSMappingRepo;
-    @Mock
-    GlobalService globalService;
     @Mock
     PreferenceClient preferenceClient;
     @Mock
     AccountingClient accountingClient;
+    @Mock
+    AccountingInfoService accountingService;
 
     @Captor
     ArgumentCaptor<FSEntry> fsEntryArgumentCaptor;
@@ -75,6 +73,8 @@ public class FsEntryServiceImplTest extends TestCase {
     public void testCreateFSEntry() {
         Mockito.when(fsEntryRepo.find(Mockito.anyString(), Mockito.anyInt(),
                 Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntries());
+        Mockito.when(fsEntryRepo.find(Mockito.anyString(), Mockito.anyInt(),
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntries1());
         Mockito.when(fsEntryRepo.save(Mockito.any())).thenReturn(getFSEntry());
         FsEntryCreateDto fsEntryCreateDto = new FsEntryCreateDto();
         List<String> dealerIds = new ArrayList<>();
@@ -91,6 +91,7 @@ public class FsEntryServiceImplTest extends TestCase {
     @Test
     public void testGetAllFSEntries() {
         Mockito.when(fsEntryRepo.getFSEntries(Mockito.anyString())).thenReturn(getFSEntries());
+        Mockito.when(oemFSMappingRepo.findMappingsByFsId(Mockito.anyString(), Mockito.anyString())).thenReturn(getOemFsMappingList());
         Mockito.when(fsEntryRepo.fetchAllByDealerIdAndSiteId(Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntries());
         Mockito.when(accountingClient.getGLAccountList(Mockito.any())).thenReturn(getGlAccountESResponse());
         assertEquals(getFsMappingInfosResponseDto(), fsEntryService.getAllFSEntries());
@@ -119,15 +120,21 @@ public class FsEntryServiceImplTest extends TestCase {
     public void testUpdateFSEntry() {
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntry());
         Mockito.when(fsEntryRepo.save(Mockito.any())).thenReturn(getFSEntry());
-        assertEquals(getFSEntry(), fsEntryService.updateFSEntry("12345", new FSEntryUpdateDto()));
+        assertEquals(getFSEntry(), fsEntryService.updateFSEntry(new FSEntryUpdateDto("", "")));
     }
 
     @Test
-    public void testDeleteFsEntryById() {
+    public void testDeleteFsEntryById1() {
         Mockito.when(fsEntryRepo.findByIdAndDealerId(Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntry());
-        Mockito.when(fsEntryRepo.findFSEntriesByOem(Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntries());
+        Mockito.when(fsEntryRepo.findFSEntriesByOem(Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntries2());
         Mockito.when(fsEntryRepo.save(Mockito.any())).thenReturn(getFSEntry());
         assertEquals(getFSEntry(), fsEntryService.deleteFsEntryById("12345"));
+    }
+
+    @Test
+    public void testDeleteFsEntryById2() {
+        Mockito.when(fsEntryRepo.findByIdAndDealerId(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+        assertEquals(null, fsEntryService.deleteFsEntryById("12345"));
     }
 
     @Test
@@ -169,23 +176,32 @@ public class FsEntryServiceImplTest extends TestCase {
 
         doAnswer(invocation -> {
             List<FSEntry> arg0 = invocation.getArgument(0);
-            assertEquals("GM-Oem", arg0.get(0).getName());
+            assertEquals("GM-OEM", arg0.get(0).getName());
             return null;
         }).when(fsEntryRepo).bulkUpsert(Mockito.anyList());
         fsEntryService.migrateFSName();
     }
 
     @Test
-    public void updateFSEntryName(){
+    public void updateFSEntry(){
         FSEntry fsEntry = FSEntry.builder().oemId("GM").fsType("OEM").build();
         String name = RandomStringUtils.randomAlphanumeric(FSEntry.NAME_MAX_LENGTH+2);
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString())).thenReturn(fsEntry);
-        fsEntryService.updateFSEntryName("", name);
+        fsEntryService.updateFSEntry(new FSEntryUpdateDto("123",  name));
         verify(fsEntryRepo, times(1)).save(fsEntryArgumentCaptor.capture());
         assertEquals(fsEntryArgumentCaptor.getValue().getName(), name.substring(0, FSEntry.NAME_MAX_LENGTH));
     }
 
+    @Test
+    public void testGetFSEntries() {
+        Mockito.when(fsEntryRepo.fetchAllByDealerIdNonDeleted(Mockito.anyString())).thenReturn(getFSEntries());
+        assertEquals(getFSEntries(), fsEntryService.getFSEntries());
+    }
+
     private FsMappingInfosResponseDto getFsMappingInfosResponseDto() {
+        List<String> dealerIds = new ArrayList<>();
+        dealerIds.add("1");
+        dealerIds.add("5");
         FsMappingInfosResponseDto fsMappingInfosResponseDto = new FsMappingInfosResponseDto();
         FsMappingInfo fsMappingInfo1 = new FsMappingInfo();
         fsMappingInfo1.setId("6155a7d8b3cb1f0006868cd6");
@@ -193,6 +209,8 @@ public class FsEntryServiceImplTest extends TestCase {
         fsMappingInfo1.setVersion(1);
         fsMappingInfo1.setOemId("Acura");
         fsMappingInfo1.setSiteId("-1_5");
+        fsMappingInfo1.setFsType(FSType.CONSOLIDATED.name());
+        fsMappingInfo1.setDealerIds(dealerIds);
         fsMappingInfo1.setUnmappedAccounts(0);
         fsMappingInfo1.setMappedAccounts(0);
 
@@ -213,13 +231,18 @@ public class FsEntryServiceImplTest extends TestCase {
     }
 
     private List<FSEntry> getFSEntries() {
+        List<String> dealerIds = new ArrayList<>();
+        dealerIds.add("1");
+        dealerIds.add("5");
         FSEntry fsEntry1 = new FSEntry();
         fsEntry1.setDealerId("5");
+        fsEntry1.setDealerIds(dealerIds);
         fsEntry1.setYear(2021);
         fsEntry1.setVersion(1);
         fsEntry1.setOemId("Acura");
         fsEntry1.setId("6155a7d8b3cb1f0006868cd6");
         fsEntry1.setSiteId("-1_5");
+        fsEntry1.setFsType(FSType.CONSOLIDATED.name());
 
         FSEntry fsEntry2 = new FSEntry();
         fsEntry2.setDealerId("5");
@@ -232,6 +255,11 @@ public class FsEntryServiceImplTest extends TestCase {
         List<FSEntry> fsEntries = new ArrayList<>();
         fsEntries.add(fsEntry1);
         fsEntries.add(fsEntry2);
+        return fsEntries;
+    }
+
+    private List<FSEntry> getFSEntries1() {
+        List<FSEntry> fsEntries = new ArrayList<>();
         return fsEntries;
     }
 
@@ -249,5 +277,41 @@ public class FsEntryServiceImplTest extends TestCase {
         fsEntry.setId("6155a7d8b3cb1f0006868cd6");
         fsEntry.setSiteId("-1_5");
         return fsEntry;
+    }
+
+    private List<OemFsMapping> getOemFsMappingList() {
+        OemFsMapping oemFsMapping1 = new OemFsMapping();
+        oemFsMapping1.setFsId("6155a7d8b3cb1f0006868cd6");
+        oemFsMapping1.setDealerId("5");
+        oemFsMapping1.setYear(2021);
+        oemFsMapping1.setVersion(1);
+        oemFsMapping1.setGlAccountId("xyz");
+        oemFsMapping1.setGlAccountDealerId("abc");
+
+        OemFsMapping oemFsMapping2 = new OemFsMapping();
+        oemFsMapping2.setFsId("6155a7d8b3cb1f0006868cd4");
+        oemFsMapping2.setDealerId("5");
+        oemFsMapping2.setYear(2021);
+        oemFsMapping2.setVersion(1);
+        oemFsMapping2.setGlAccountId("xyz");
+        oemFsMapping2.setGlAccountDealerId("abc");
+
+        List<OemFsMapping> oemFsMappingList = new ArrayList<>();
+        oemFsMappingList.add(oemFsMapping1);
+        oemFsMappingList.add(oemFsMapping2);
+        return oemFsMappingList;
+    }
+
+    private List<FSEntry> getFSEntries2() {
+        FSEntry fsEntry = new FSEntry();
+        fsEntry.setDealerId("5");
+        fsEntry.setYear(2021);
+        fsEntry.setVersion(1);
+        fsEntry.setOemId("Acura");
+        fsEntry.setId("6155a7d8b3cb1f0006868cd6");
+        fsEntry.setSiteId("-1_5");
+        List<FSEntry> fsEntries = new ArrayList<>();
+        fsEntries.add(fsEntry);
+        return fsEntries;
     }
 }

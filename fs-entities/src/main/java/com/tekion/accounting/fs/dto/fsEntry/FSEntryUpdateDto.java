@@ -1,21 +1,18 @@
 package com.tekion.accounting.fs.dto.fsEntry;
 
-import com.tekion.accounting.fs.beans.common.FSEntry;
-import com.tekion.core.utils.UserContextProvider;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class FSEntryUpdateDto {
 
     @NotNull
-    private Integer year;
-
-    public FSEntry updateFsMappingInfo(FSEntry fsEntry) {
-        fsEntry.setYear(year);
-        fsEntry.setModifiedTime(System.currentTimeMillis());
-        fsEntry.setModifiedByUserId(UserContextProvider.getCurrentUserId());
-        return fsEntry;
-    }
+    private String id;
+    @NotNull
+    private String name;
 }
