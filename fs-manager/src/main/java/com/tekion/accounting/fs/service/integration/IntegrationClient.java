@@ -30,7 +30,7 @@ public class IntegrationClient {
 
 	private static final String OEM = "oem";
 	private static final String BRAND = "brand";
-	private static final String SITE = "tek-siteId";
+	private static final String SITE = "tek-siteid";
 
 	@PostConstruct
 	public void init(){
