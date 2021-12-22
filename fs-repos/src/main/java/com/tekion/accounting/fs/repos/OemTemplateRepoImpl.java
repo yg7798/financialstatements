@@ -13,6 +13,7 @@ import com.tekion.core.utils.TStringUtils;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -85,5 +86,13 @@ public class OemTemplateRepoImpl extends BaseGlobalMongoRepository<OemTemplate> 
         update.set(MODIFIED_TIME, System.currentTimeMillis());
         update.set(MODIFIED_BY_USER_ID, UserContextProvider.getCurrentUserId());
         getMongoTemplate().updateMulti(q, update, OemTemplate.class);
+    }
+
+    @Override
+    public List<OemTemplate> findAllOemDetails() {
+        Query query = new Query();
+        query.fields().include(COUNTRY).include(OemTemplate.OEM_ID).include(OemTemplate.YEAR).exclude("_id");
+        query.with(new Sort(Sort.Direction.DESC, COUNTRY));
+        return this.getMongoTemplate().find(query, OemTemplate.class);
     }
 }

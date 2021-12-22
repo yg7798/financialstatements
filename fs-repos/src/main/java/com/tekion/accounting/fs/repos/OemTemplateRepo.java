@@ -15,4 +15,6 @@ public interface OemTemplateRepo {
     void updateTemplatesAsInactive(String oemId, Integer year, String country);
 
     void addCountryInOemTemplate();
+
+    List<OemTemplate> findAllOemDetails();
 }

@@ -54,5 +54,19 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean {
 	private String automatePcl;
 	private String pbsPcl;
 	private String oemAccountNumber;
+	private String dealerTrackPcl;
 	private FsCellCodeSource source;
+
+	public void updateGroupCodes(AccountingOemFsCellGroup toUpdate) {
+		this.setAutomatePcl(toUpdate.getAutomatePcl());
+		this.setAutosoftPcl(toUpdate.getAutosoftPcl());
+		this.setCdkPcl(toUpdate.getCdkPcl());
+		this.setDbPcl(toUpdate.getDbPcl());
+		this.setDealerTrackPcl(toUpdate.getDealerTrackPcl());
+		this.setDominionPcl(toUpdate.getDominionPcl());
+		this.setPbsPcl(toUpdate.getPbsPcl());
+		this.setQuorumPcl(toUpdate.getQuorumPcl());
+		this.setRrPcl(toUpdate.getRrPcl());
+		this.setModifiedTime(System.currentTimeMillis());
+	}
 }

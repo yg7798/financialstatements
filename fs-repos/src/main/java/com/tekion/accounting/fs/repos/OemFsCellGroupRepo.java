@@ -36,4 +36,5 @@ public interface OemFsCellGroupRepo {
 
     void addCountryInOemFsCellGroupCodes();
 
+    AccountingOemFsCellGroup findByGroupCode(String oemId, Integer year, String groupCode, String country);
 }

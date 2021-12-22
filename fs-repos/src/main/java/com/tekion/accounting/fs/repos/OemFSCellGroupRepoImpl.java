@@ -73,6 +73,16 @@ public class OemFSCellGroupRepoImpl extends BaseGlobalMongoRepository<Accounting
     }
 
     @Override
+    public AccountingOemFsCellGroup findByGroupCode(String oemId, Integer year, String groupCode, String country) {
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(AccountingOemFsCellGroup.OEM_ID).is(oemId);
+        criteria.and(AccountingOemFsCellGroup.YEAR).is(year);
+        criteria.and(AccountingOemFsCellGroup.GROUP_CODE).is(groupCode);
+        criteria.and(COUNTRY).is(country);
+        return this.getMongoTemplate().findOne(Query.query(criteria), AccountingOemFsCellGroup.class);
+    }
+
+    @Override
     public List<AccountingOemFsCellGroup> findByOemId(String oemId, int year, String country) {
         Criteria criteria = criteriaForNonDeleted();
         criteria.and(OemTemplate.OEM_ID).is(oemId);
