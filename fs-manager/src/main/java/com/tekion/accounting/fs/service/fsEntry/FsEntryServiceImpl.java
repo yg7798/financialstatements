@@ -145,6 +145,7 @@ public class FsEntryServiceImpl implements FsEntryService {
 
       FsMappingInfo fsMappingInfo = FsMappingInfo.builder()
               .id(fsEntry.getId())
+              .name(fsEntry.getName())
               .oemId(fsEntry.getOemId())
               .year(fsEntry.getYear())
               .version(fsEntry.getVersion())

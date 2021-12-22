@@ -19,6 +19,7 @@ public class FsMappingInfo {
     private Integer version;
     private String fsType;
     private String siteId;
+    private String name;
     private Integer mappedAccounts;
     private Integer unmappedAccounts;
     private String modifiedByUserId;
