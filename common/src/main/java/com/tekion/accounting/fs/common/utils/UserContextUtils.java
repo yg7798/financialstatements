@@ -22,8 +22,6 @@ import static com.tekion.core.utils.TGlobalConstants.TEK_SITE_ID_PRESENT_KEY;
 @UtilityClass
 public class UserContextUtils {
 
-	private static final boolean isStage = System.getenv("CLUSTER_TYPE").contains("stage");
-
 	public static UserContext buildUserContext(String dealerId,String tenantId,String userId){
 		return new UserContext(userId,tenantId,dealerId);
 	}
@@ -143,7 +141,7 @@ public class UserContextUtils {
 		return getDefaultSiteId();
 	}
 
-	public static String getTenantId(String tenantId){
+	public static String getTenantId(String tenantId, Boolean isStage){
 		if(isStage && TStringUtils.isNotBlank(tenantId) && !tenantId.startsWith("stg-")){
 			return "stg-"+ tenantId;
 		}

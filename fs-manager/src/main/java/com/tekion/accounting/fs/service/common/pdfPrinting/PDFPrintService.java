@@ -87,7 +87,7 @@ public class PDFPrintService {
         String logMsg=  " requestId : " +pdfRequest.getId () + " callbackUrl: " + pdfRequest.getCallbackUrl ();
         try{
             HttpHeaders headers = buildHeaders();
-            headers.set(TGlobalConstants.TENANT_NAME_KEY, UserContextUtils.getTenantId(context.getDseUserContext ().getTenantName ()));
+            headers.set(TGlobalConstants.TENANT_NAME_KEY, UserContextUtils.getTenantId(context.getDseUserContext ().getTenantName (), isStage()));
             String exportUrl = exportBulkPdfUrl();
 
             HttpEntity<BulkPdfRequest> httpEntity = new HttpEntity <> ( pdfRequest, headers );
@@ -789,4 +789,8 @@ public class PDFPrintService {
 		headers.addAll(TRequestUtils.userCallHttpHeaders());
 		return headers;
 	}
+
+	private boolean isStage(){
+        return System.getenv("CLUSTER_TYPE").contains("stage");
+    }
 }

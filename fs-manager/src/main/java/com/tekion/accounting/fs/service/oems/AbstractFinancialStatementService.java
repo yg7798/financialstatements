@@ -1,36 +1,32 @@
 package com.tekion.accounting.fs.service.oems;
 
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
+import com.tekion.accounting.fs.beans.accountingInfo.FsOemPayloadInfo;
+import com.tekion.accounting.fs.beans.common.*;
 import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.enums.Month;
-import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
-import com.tekion.accounting.fs.beans.accountingInfo.FsOemPayloadInfo;
-import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
-import com.tekion.accounting.fs.beans.common.FSEntry;
-import com.tekion.accounting.fs.beans.common.OemConfig;
-import com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo;
+import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
+import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
-import com.tekion.accounting.fs.integration.*;
-import com.tekion.accounting.fs.beans.common.CellAddressMapping;
 import com.tekion.accounting.fs.dto.cellcode.FsCellCodeDetailsResponseDto;
 import com.tekion.accounting.fs.dto.cellcode.FsCodeDetail;
 import com.tekion.accounting.fs.dto.integration.FSIntegrationRequest;
 import com.tekion.accounting.fs.dto.integration.FSSubmitResponse;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.*;
+import com.tekion.accounting.fs.integration.*;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemConfigRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
+import com.tekion.accounting.fs.service.common.slackAlert.FsSlackMessageDto;
+import com.tekion.accounting.fs.service.common.slackAlert.SlackService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
+import com.tekion.accounting.fs.service.external.nct.FillDetailContext;
 import com.tekion.accounting.fs.service.fsMetaData.OemFSMetadataMappingService;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
-import com.tekion.accounting.fs.service.external.nct.FillDetailContext;
-import com.tekion.accounting.fs.service.common.slackAlert.SlackService;
-import com.tekion.accounting.fs.service.common.slackAlert.FsSlackMessageDto;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
-import com.tekion.accounting.fs.common.utils.JsonUtil;
-import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.admin.beans.FindBrandRequest;
 import com.tekion.admin.beans.dealersetting.DealerMaster;
@@ -114,28 +110,27 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
         OEM oem = OEM.valueOf(fsEntry.getOemId());
         List<String> brands = getBrandFromMakes(Arrays.asList(oem.getMake()));
         String brand = (brands.size() != 0 && !"Others".equals(brands.get(0))) ? brands.get(0) : oem.getBrand();
-        FSSubmitResponse response = new FSSubmitResponse();
+        FSSubmitResponse response = null;
         try {
             response =  integrationClient.submitFS(fsIntegrationRequest, OEMInfo.builder().oem(oem.getOem()).brand(brand).build(), fsEntry.getSiteId());
-        }
-        finally {
-            if(Objects.isNull(response.getResponse())){
-                Map<String, String> idVsDealerNameForTenant = UserContextUtils.getDealerIdVsDealerNameForTenant(UserContextProvider.getCurrentTenantId(), globalService);
-                Map<String, String> siteIdVsNameMap = UserContextUtils.getSiteIdVsNameForCurrentDealer(globalService);
-                FsSlackMessageDto slackMessageDto = FsSlackMessageDto.builder()
-                        .dealerId(UserContextProvider.getCurrentDealerId())
-                        .dealerName(idVsDealerNameForTenant.get(UserContextProvider.getCurrentDealerId()))
-                        .siteName(siteIdVsNameMap.get(UserContextUtils.getSiteIdFromUserContext()))
-                        .tenantId(UserContextProvider.getCurrentTenantId())
-                        .oemId(fsEntry.getOemId())
-                        .status(FAILED)
-                        .build();
-                try {
-                    slackService.sendAlertForFSSubmission(slackMessageDto);
-                } catch (Exception e) {
-                    log.error("Exception while sending FS slack alert message {}", e.getMessage());
-                }
+        }catch (Exception submissionException){
+            log.error("error for submission {}: {}", oem.name(),  submissionException.getMessage());
+            Map<String, String> idVsDealerNameForTenant = UserContextUtils.getDealerIdVsDealerNameForTenant(UserContextProvider.getCurrentTenantId(), globalService);
+            Map<String, String> siteIdVsNameMap = UserContextUtils.getSiteIdVsNameForCurrentDealer(globalService);
+            FsSlackMessageDto slackMessageDto = FsSlackMessageDto.builder()
+                    .dealerId(UserContextProvider.getCurrentDealerId())
+                    .dealerName(idVsDealerNameForTenant.get(UserContextProvider.getCurrentDealerId()))
+                    .siteName(siteIdVsNameMap.get(UserContextUtils.getSiteIdFromUserContext()))
+                    .tenantId(UserContextProvider.getCurrentTenantId())
+                    .oemId(fsEntry.getOemId())
+                    .status(FAILED)
+                    .build();
+            try {
+                slackService.sendAlertForFSSubmission(slackMessageDto);
+            } catch (Exception e1) {
+                log.error("Exception while sending FS slack alert message {}", e1.getMessage());
             }
+            throw new TBaseRuntimeException(submissionException);
         }
         return response;
     }
