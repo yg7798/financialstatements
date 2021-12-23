@@ -3,6 +3,7 @@ package com.tekion.accounting.fs.beans.common;
 import com.tekion.accounting.fs.enums.FsCellCodeSource;
 import com.tekion.core.beans.TBaseMongoBean;
 import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,7 +25,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountingOemFsCellGroup extends TBaseMongoBean {
+public class AccountingOemFsCellGroup extends TBaseMongoBean implements Cloneable {
 
 	public static final String OEM_ID = "oemId";
 	public static final String YEAR = "year";
@@ -68,5 +69,15 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean {
 		this.setQuorumPcl(toUpdate.getQuorumPcl());
 		this.setRrPcl(toUpdate.getRrPcl());
 		this.setModifiedTime(System.currentTimeMillis());
+	}
+
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	public static void updateInfoForClonedCellGroup(AccountingOemFsCellGroup group){
+		group.setId(new ObjectId().toHexString());
+		group.setCreatedTime(System.currentTimeMillis());
+		group.setModifiedTime(System.currentTimeMillis());
 	}
 }

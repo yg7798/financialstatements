@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.dto.oemConfig;
 
 
+import com.tekion.accounting.fs.beans.accountingInfo.FSPreferences;
 import com.tekion.accounting.fs.beans.common.OemConfig;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.core.utils.UserContextProvider;
@@ -29,6 +30,7 @@ public class OemConfigRequestDto {
     private boolean downloadFileFromIntegration;
     private boolean enableRoundOff;
     private boolean enableRoundOffOffset;
+    private FSPreferences fsPreferences;
 
     private List<OemConfig.SupportedFileFormats> supportedFileFormats = new ArrayList<>();
 

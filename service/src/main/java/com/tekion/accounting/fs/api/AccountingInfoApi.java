@@ -1,8 +1,12 @@
 package com.tekion.accounting.fs.api;
 
+import com.tekion.accounting.commons.annotations.DataUpdateApiForFeature;
+import com.tekion.accounting.commons.annotations.PodGlobalApi;
+import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.dto.accountingInfo.AccountingInfoDto;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
+import com.tekion.accounting.fs.util.ApiHelperUtils;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,7 @@ import javax.validation.constraints.NotBlank;
 public class AccountingInfoApi {
 
 	private final AccountingInfoService service;
+	private final GlobalService globalService;
 
 	@GetMapping("/")
 	public ResponseEntity getAccountingInfo(){
@@ -57,5 +62,21 @@ public class AccountingInfoApi {
 	public ResponseEntity migrateFsRoundOffOffset() {
 		service.migrateFsRoundOffOffset();
 		return TResponseEntityBuilder.okResponseEntity("success");
+	}
+
+
+	@DataUpdateApiForFeature
+	@PodGlobalApi
+	@PostMapping("/populateOEMFields/all")
+	public ResponseEntity populateOEMFields(@RequestParam(required = false) Integer parallelism){
+		globalService.executeTaskForAllDealers(service::populateOEMFields, ApiHelperUtils.getDefaultParallelism(parallelism));
+		return TResponseEntityBuilder.okResponseEntity("Success");
+	}
+
+	@PodGlobalApi
+	@PostMapping("/accountingInfo/migrateFsRoundOffOffset/all")
+	public ResponseEntity migrateFsRoundOffOffset(@RequestParam(required = false) Integer parallelism){
+		globalService.executeTaskForAllDealers(service::migrateFsRoundOffOffset, ApiHelperUtils.getDefaultParallelism(parallelism));
+		return TResponseEntityBuilder.okResponseEntity("Success");
 	}
 }

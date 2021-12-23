@@ -16,11 +16,10 @@ public interface MemoWorksheetService {
 	List<MemoWorksheet> bulkUpdate(MemoBulkUpdateDto memoBulkUpdateDtos);
 	void migrateIfNotPresentFromTemplate(FSEntry fsEntry);
 	List<MemoWorksheet> remigrateFromTemplate(String fsId);
-	List<MemoWorksheet> migrateMemoKeysForAllSites(OEM oemId, Integer year, Integer version, Set<String> memoTemplateKeys);
 	List<MemoWorksheet> migrateMemoWorksheetsForKeys(String fsId, Set<String> memoTemplateKeys);
 	List<MemoWorksheet> migrateFieldTypeInMemoWorkSheet(String fsId, WorksheetRequestDto requestDto);
 	List<MemoWorksheet> copyValues(CopyMemoValuesDto dto);
-	List<MemoWorksheet> deleteMemoWorksheetsByKey(OEM oem, int year, int version, Set<String> keys, String siteId);
+	List<MemoWorksheet> deleteMemoWorksheetsByKey(Set<String> keys, String fsId);
 	List<MemoWorksheet> updateActiveFieldsFromPreviousWorksheets(OEM oem, int fromYear, int updatingYear, int version, String siteId);
 	void migrateMemoWorksheetFromOemToFSLevel(String dealerId);
 	List<MemoWorksheet> getMemoWorksheetsForExcel(String fsId,int month,boolean showEmptyValues);

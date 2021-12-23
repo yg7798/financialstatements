@@ -36,6 +36,7 @@ import com.tekion.core.utils.UserContextProvider;
 import com.tekion.formprintingservice.common.ESUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -55,27 +56,34 @@ public class FsEntryServiceImpl implements FsEntryService {
   private final GlobalService globalService;
   private final DealerConfig dealerConfig;
   private final PreferenceClient preferenceClient;
-  //private final GLAccountSearchService glAccountSearchService;
   private final AccountingClient accountingClient;
 
   public static final String ACCOUNT_TYPE_ID = "accountTypeId";
 
-
   @Override
   public FSEntry createFSEntry(FsEntryCreateDto reqDto) {
     FSEntry newFSEntry = reqDto.createFSEntry();
+    newFSEntry.setParentFsEntryRef(new ObjectId().toHexString());
     if (FSType.CONSOLIDATED.equals(reqDto.getFsType())) {
-      if (!UserContextUtils.areDealerIdsBelongsToSameTenant(reqDto.getDealerIds(), dealerConfig.getDealerMaster().getTenantId(), globalService)) {
+      if (!UserContextUtils.areDealerIdsBelongsToSameTenant(
+          reqDto.getDealerIds(), dealerConfig.getDealerMaster().getTenantId(), globalService)) {
         throw new TBaseRuntimeException("DealerIds should belong to same tenant");
       }
     }
     List<FSEntry> existingEntries = new ArrayList<>();
     if (FSType.OEM.equals(reqDto.getFsType())) {
-      existingEntries = fsEntryRepo.find(reqDto.getOemId().name(), reqDto.getYear(),
-              UserContextProvider.getCurrentDealerId(), reqDto.getSiteId(), reqDto.getFsType().name());
+
+      existingEntries =
+          fsEntryRepo.find(
+              reqDto.getOemId().name(),
+              reqDto.getYear(),
+              UserContextProvider.getCurrentDealerId(),
+              reqDto.getSiteId(),
+              reqDto.getFsType().name());
     }
     if (existingEntries.size() > 0) {
       log.warn("OemMappingInfo already exists for {} {}!", reqDto.getOemId(), reqDto.getYear());
+
       return existingEntries.get(0);
     }
     FSEntry mappingInfo = fsEntryRepo.save(newFSEntry);
@@ -97,7 +105,7 @@ public class FsEntryServiceImpl implements FsEntryService {
   }
 
   @Override
-  public List<FSEntry> getFSEntries(){
+  public List<FSEntry> getFSEntries() {
     return fsEntryRepo.fetchAllByDealerIdNonDeleted(UserContextProvider.getCurrentDealerId());
   }
 
@@ -228,6 +236,35 @@ public class FsEntryServiceImpl implements FsEntryService {
     return getFSResponseInfo(fsEntriesFromDb);
   }
 
+  @Override
+  public void migrateFsEntriesFromYearToYear(Integer fromYear, Integer toYear) {
+    List<FSEntry> fsEntries =
+        fsEntryRepo.findFsEntriesForDealer(toYear, UserContextProvider.getCurrentDealerId());
+    if (TCollectionUtils.isNotEmpty(fsEntries)) {
+      log.warn(
+          "not generating fsEntries for dealer {} for {}",
+          UserContextProvider.getCurrentDealerId(),
+          toYear);
+      return;
+    }
+
+    fsEntries =
+        fsEntryRepo.findFsEntriesForDealer(fromYear, UserContextProvider.getCurrentDealerId());
+    List<FSEntry> fsEntriesToUpsert = new ArrayList<>();
+    for (FSEntry fsEntry : fsEntries) {
+      try {
+        FSEntry clonedFSEntry = (FSEntry) fsEntry.clone();
+        clonedFSEntry.setYear(toYear);
+        FSEntry.updateInfoForClonedFsEntry(clonedFSEntry);
+        fsEntriesToUpsert.add(clonedFSEntry);
+      } catch (CloneNotSupportedException unHandledException) {
+      }
+    }
+
+    log.info("FsEntries created for {} for {}", UserContextProvider.getCurrentDealerId(), toYear);
+    fsEntryRepo.bulkUpsert(fsEntriesToUpsert);
+  }
+
   private Map<String, Set<String>> getGlAccountMapForDealers(Set<String> dealerIds) {
     Map<String,Set<String>> dealerVsGlAccountCountMap = Maps.newHashMap();
     if(dealerIds.size() == 1){// Assumption is: it is for current dealer
@@ -279,11 +316,21 @@ public class FsEntryServiceImpl implements FsEntryService {
 
   @Override
   public void migrateFSName() {
-    List<FSEntry> fsEntries;
-    fsEntries = fsEntryRepo.getFSEntries(getCurrentDealerId());
+    List<FSEntry> fsEntries = fsEntryRepo.getFSEntries(getCurrentDealerId());
     for (FSEntry fsEntry : fsEntries) {
       fsEntry.updateNameToDefault();
     }
+    fsEntryRepo.bulkUpsert(fsEntries);
+  }
+
+  @Override
+  public void migrateParentRef(Integer year){
+    List<FSEntry> fsEntries = fsEntryRepo.findFsEntriesForDealer(year, getCurrentDealerId());
+    fsEntries.forEach(x -> {
+      if(Objects.isNull(x.getParentFsEntryRef())){
+        x.setParentFsEntryRef(new ObjectId().toHexString());
+      }
+    });
     fsEntryRepo.bulkUpsert(fsEntries);
   }
 }

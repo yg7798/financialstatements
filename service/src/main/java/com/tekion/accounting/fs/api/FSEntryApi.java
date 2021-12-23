@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/fsEntry")
-public class FsEntryApi {
+public class FSEntryApi {
 
 	private final FsEntryService fsEntryService;
 	private final TValidator validator;

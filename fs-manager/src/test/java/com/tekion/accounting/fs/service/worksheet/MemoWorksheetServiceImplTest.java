@@ -16,7 +16,6 @@ import com.tekion.accounting.fs.enums.OemCellDurationType;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetRepo;
 import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetTemplateRepo;
-import com.tekion.accounting.fs.service.worksheet.MemoWorksheetServiceImpl;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import junit.framework.TestCase;
@@ -165,16 +164,6 @@ public class MemoWorksheetServiceImplTest extends TestCase {
        memoWorksheetService.migrateMemoWorksheetFromOemToFSLevel("2");
     }
 
-    @Test
-    public void testMigrateMemoKeysForAllSites() {
-        reset(fsEntryRepo);
-        Mockito.when(fsEntryRepo.findByOemYearVersionAndSite(anyString(), anyInt(), anyInt(), anyString(), any()))
-                .thenReturn(Arrays.asList(getFsEntry()), null);
-        memoWorksheetService.migrateMemoKeysForAllSites(OEM.GM, 2021, 1, new HashSet<>());
-        assertNull(memoWorksheetService.migrateMemoKeysForAllSites(OEM.GM, 2021, 1, new HashSet<>()));
-        Mockito.verify(fsEntryRepo, times(2)).findByOemYearVersionAndSite(anyString(), anyInt(), anyInt(), anyString(), any());
-    }
-
 
     @Test
     public void testMigrateFieldTypeInMemoWorkSheet() {
@@ -189,16 +178,16 @@ public class MemoWorksheetServiceImplTest extends TestCase {
 
     @Test
     public void testDeleteMemoWorksheetsByKey() {
-        assertEquals(0, memoWorksheetService.deleteMemoWorksheetsByKey(OEM.GM, 2021, 1, new HashSet<>(), "1").size());
+        assertEquals(0, memoWorksheetService.deleteMemoWorksheetsByKey(new HashSet<>(), null).size());
 
-        Mockito.when(fsEntryRepo.findDefaultType(anyString(), anyInt(), anyString(), anyString()))
-                .thenReturn(getFsEntry());
+        Mockito.when(fsEntryRepo.findByIds(any(), anyString()))
+                .thenReturn(Collections.singletonList(getFsEntry()));
         Mockito.when(memoWorksheetRepo.findByKeys(anyString(), any(), anyString()))
                 .thenReturn(memoWorksheets(Arrays.asList("1","2")));
-        Mockito.doNothing().when(memoWorksheetRepo).deleteMemoWorksheetsByKeys(anyString(), any(), anyString());
+        Mockito.doNothing().when(memoWorksheetRepo).deleteMemoWorksheetsByKeys(any(), any(), anyString());
         Set<String> keys = Sets.newHashSet();
         keys.add("dummyKey");
-        memoWorksheetService.deleteMemoWorksheetsByKey(OEM.GM, 2021, 1, keys, "1");
+        memoWorksheetService.deleteMemoWorksheetsByKey(keys, null);
     }
 
     @Test

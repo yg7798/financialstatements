@@ -5,9 +5,9 @@ import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
 import com.mongodb.bulk.BulkWriteUpsert;
 import com.mongodb.client.result.UpdateResult;
-import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
+import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.beans.TBaseMongoBean;
@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.tekion.accounting.fs.common.TConstants.*;
 import static com.tekion.accounting.fs.beans.common.FSEntry.FS_ID;
 import static com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo.OEM_ID;
+import static com.tekion.accounting.fs.common.TConstants.*;
 import static com.tekion.accounting.fs.common.utils.UserContextUtils.getDefaultSiteId;
 
 @Slf4j
@@ -288,4 +288,10 @@ public class OemFSMappingRepoImpl extends BaseDealerLevelMongoRepository<OemFsMa
         return this.getMongoTemplate().find(Query.query(criteria), OemFsMapping.class);
     }
 
+
+    @Override
+    public void hardDeleteMappings(Collection<String> fsIds) {
+        Criteria criteria =  Criteria.where(FS_ID).in(fsIds);
+        this.getMongoTemplate().remove(Query.query(criteria), OemFsMapping.class);
+    }
 }

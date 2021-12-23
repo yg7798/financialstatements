@@ -13,5 +13,14 @@ public interface FsMappingService {
 
     List<OemFsMapping> getMappingsByGLAccounts(String fsId, List<String> glAccounts);
 
+    List<OemFsMapping>  getOemFsMapping(String fsId);
+
+    List<OemFsMapping> copyFsMappings(String fromFsId, String toFsId);
+
+    void migrateFsMappingsFromYearToYear(Integer fromYear, Integer toYear, List<String> oemIds);
+
     List<OemFsMapping> getFsMappingsByOemIdAndGroupCodes(Integer year, List<String> groupCodes, List<String> oemIds);
+
+	void hardDeleteMappings(String fsId);
+
 }

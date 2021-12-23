@@ -546,18 +546,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 		return fsEntryService.createFSEntry(FsEntryCreateDto.builder().oemId(oem).year(year).version(version).build());
 	}
 
-	@Override
-	public List<OemFsMapping> deleteFSMappings(OEM oem, int year, int version, Set<String> groupCodes){
-		if(TCollectionUtils.isEmpty(groupCodes)) return Lists.newArrayList();
-		FSMappingDeleteDto dto = FSMappingDeleteDto.builder().oemId(oem).year(year)
-				.groupDisplayNames(groupCodes).version(version).build();
-		List<OemFsMapping> deletedMappings  = deleteFSMappings(dto);
-		log.info("{} mappings deleted for {} {}, dealerId {} siteId {}",
-				deletedMappings.size(), oem.name(), year, UserContextProvider.getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext());
-		return Lists.newArrayList();
-	}
-
-
 	private Map<String, TrialBalanceRow> getCumulativeTrialBalance(int fiscalStartMonth, Calendar tillDate) {
 
 		int requestedMoth = tillDate.get(Calendar.MONTH);
@@ -2030,21 +2018,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 	}
 
 	@Override
-	public List<OemFsMapping> deleteFSMappings(FSMappingDeleteDto dto){
-		if(StringUtils.isBlank(dto.getSiteId())){
-			dto.setSiteId(UserContextUtils.getSiteIdFromUserContext());
-		}
-		String dealerId = getCurrentDealerId();
-		List<String> groupCodes = dto.getGroupDisplayNames().stream().map(OemFSUtils::createGroupCode).collect(Collectors.toList());
-		List<OemFsMapping> mappingsToDelete = oemFsMappingRepo
-				.findMappingByGroupCodes(dto.getOemId().name(), dto.getYear(), dto.getVersion(), dealerId, groupCodes,dto.getSiteId() );
-		oemFsMappingRepo.delete(dto.getOemId().name(), dto.getYear(), dto.getVersion(), mappingsToDelete, dealerId, dto.getSiteId());
-		mappingsToDelete.forEach(e -> e.setDeleted(true));
-
-		return mappingsToDelete;
-	}
-
-	@Override
 	public List<AccountingOemFsCellCode> migrateCellCodesToYear(String oemId, int fromYear, int toYear, String country){
 
 		List<AccountingOemFsCellCode> cellCodes1 = fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(oemId, toYear, 1, country);
@@ -2068,56 +2041,31 @@ public class FsComputeServiceImpl implements FsComputeService {
 	}
 
 	@Override
-	public List<AccountingOemFsCellGroup> migrateGroupsCodesToYear(String oemId, int fromYear, int toYear){
-		List<AccountingOemFsCellGroup> groupCodes1 = oemFsCellGroupRepo.findByOemId(oemId, toYear, dealerConfig.getDealerCountryCode());
+	public List<AccountingOemFsCellGroup> migrateGroupsCodesToYear(String oemId, int fromYear, int toYear, String country){
+		List<AccountingOemFsCellGroup> groupCodes1 = oemFsCellGroupRepo.findByOemId(oemId, toYear, country);
 
 		if(TCollectionUtils.isNotEmpty(groupCodes1)){
 			throw new TBaseRuntimeException(AccountingError.valuesExistForRequestedYear);
 		}
 
-		List<AccountingOemFsCellGroup> groupCodes = oemFsCellGroupRepo.findByOemId(oemId, fromYear, dealerConfig.getDealerCountryCode());
+		List<AccountingOemFsCellGroup> groupCodes = oemFsCellGroupRepo.findByOemId(oemId, fromYear, country);
 
 		if(TCollectionUtils.isEmpty(groupCodes)) return new ArrayList<>();
 
 		for(AccountingOemFsCellGroup group: groupCodes){
-			group.setId(new ObjectId().toHexString());
-			group.setCreatedTime(System.currentTimeMillis());
-			group.setModifiedTime(System.currentTimeMillis());
-			group.setYear(toYear);
+			AccountingOemFsCellGroup clonedCellGroup = null;
+			try {
+				clonedCellGroup = (AccountingOemFsCellGroup) group.clone();
+				AccountingOemFsCellGroup.updateInfoForClonedCellGroup(clonedCellGroup);
+				clonedCellGroup.setYear(toYear);
+				groupCodes.add(clonedCellGroup);
+			} catch (CloneNotSupportedException e) {
+				log.error(e.getMessage());
+			}
 		}
 		oemFsCellGroupRepo.insertBulk(groupCodes);
 
 		return oemFsCellGroupRepo.findByOemId(oemId, toYear, dealerConfig.getDealerCountryCode());
-	}
-
-	@Override
-	public List<OemFsMapping> migrateMappingsToYear(String oemId, int fromYear, int toYear, int version){
-		FSEntry fsEntry = fsEntryRepo.findDefaultType(oemId, toYear, getCurrentDealerId(),UserContextUtils.getSiteIdFromUserContext());
-		FSEntry fsEntry1 = fsEntryRepo.findDefaultType(oemId, fromYear, getCurrentDealerId(),UserContextUtils.getSiteIdFromUserContext());
-
-		String fsId1 = fsEntry.getOemId();
-		String fsId2 = fsEntry1.getOemId();
-
-		List<OemFsMapping> mappings1 = oemFsMappingRepo.findMappingsByFsId(fsId1, getCurrentDealerId());
-
-		if(TCollectionUtils.isNotEmpty(mappings1)){
-			throw new TBaseRuntimeException(AccountingError.valuesExistForRequestedYear);
-		}
-
-		List<OemFsMapping> mappings = oemFsMappingRepo.findMappingsByFsId(fsId2, getCurrentDealerId());
-
-		if(TCollectionUtils.isEmpty(mappings)) return new ArrayList<>();
-		for(OemFsMapping mapping: mappings){
-			mapping.setYear(toYear);
-			mapping.setId(new ObjectId().toHexString());
-			mapping.setCreatedByUserId(UserContextProvider.getCurrentUserId());
-			mapping.setCreatedTime(System.currentTimeMillis());
-			mapping.setModifiedTime(System.currentTimeMillis());
-		}
-		oemFsMappingRepo.insertBulk(mappings);
-
-		return oemFsMappingRepo
-				.findMappingsByFsId(fsId1, getCurrentDealerId());
 	}
 
 	@Override
@@ -2156,30 +2104,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 		List<AccountingOemFsCellGroup> codesToRemove = cellGroups.stream().filter(x -> groupDisplayNames.contains(x.getGroupDisplayName())).collect(Collectors.toList());
 		oemFsCellGroupRepo.delete(codesToRemove);
 		return codesToRemove;
-	}
-
-	/**
-	 * Creates Mapping if GLAccountNo and CellGroup Display Name is name
-	 * */
-	@Override
-	public List<OemFsMapping> createMappingsFromGlAccounts(String oemId, Integer year, Integer version, String country){
-		List<AccountingOemFsCellGroup> cellGroups = oemFsCellGroupRepo.findNonDeletedByOemIdYearVersionAndCountry(oemId, year, version, country);
-		FSEntry fsEntry = fsEntryRepo.findDefaultType(oemId, year, getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext());
-		List<OemFsMapping> mappingsInDb = oemFsMappingRepo.findMappingsByFsId(fsEntry.getId(), UserContextProvider.getCurrentDealerId());
-		List<String> cellCodes = mappingsInDb.stream().map(OemFsMapping::getFsCellGroupCode).collect(Collectors.toList());
-		List<String> groupDisplayNames = cellGroups.stream().filter(x -> !cellCodes.contains(x.getGroupCode()))
-				.map(AccountingOemFsCellGroup::getGroupDisplayName).collect(Collectors.toList());
-		List<GLAccount> glAccounts = accountingService.getGLAccounts(UserContextProvider.getCurrentDealerId()).stream().filter(x -> (groupDisplayNames).contains(x.getAccountName())).collect(Collectors.toList());
-		//List<GLAccount> glAccounts = glAccountRepository.findByAccountNosAndDealerId(groupDisplayNames);
-		List<OemFsMapping> mappingsToCreate = new ArrayList<>();
-		glAccounts.forEach(x -> {
-			OemFsMapping m  = OemFsMapping.builder().fsCellGroupCode(OemFSUtils.createGroupCode(x.getAccountNumber())).glAccountId(x.getId())
-					.createdByUserId(UserContextProvider.getCurrentUserId()).dealerId(UserContextProvider.getCurrentDealerId()).oemId(oemId)
-					.version(version).year(year).build();
-			mappingsToCreate.add(m);
-		});
-		oemFsMappingRepo.insertBulk(mappingsToCreate);
-		return mappingsToCreate;
 	}
 
 

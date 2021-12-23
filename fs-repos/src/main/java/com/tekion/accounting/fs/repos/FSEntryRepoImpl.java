@@ -3,13 +3,14 @@ package com.tekion.accounting.fs.repos;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
-import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.FSType;
-import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
+import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -19,8 +20,11 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
 
 import static com.tekion.accounting.fs.beans.common.FSEntry.OEM_ID;
 import static com.tekion.accounting.fs.common.TConstants.*;
@@ -102,10 +106,16 @@ public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> imp
 
     @Override
     public FSEntry findByIdAndDealerId(String id, String dealerId) {
+        List<FSEntry> fsEntries = findByIds(Collections.singleton(id), dealerId);
+        return TCollectionUtils.isNotEmpty(fsEntries) ?  fsEntries.get(0) : null;
+    }
+
+    @Override
+    public List<FSEntry> findByIds(Collection<String> id, String dealerId){
         Criteria criteria = this.criteriaForNonDeleted();
-        criteria.and(ID).is(id);
+        criteria.and(ID).in(id);
         criteria.and(TConstants.DEALER_ID).is(dealerId);
-        return this.findOne(criteria, this.getBeanClass(), this.getMongoTemplate());
+        return this.findAll(criteria, this.getBeanClass(), this.getMongoTemplate());
     }
 
     @Override
@@ -228,9 +238,23 @@ public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> imp
 
     @Override
     public List<FSEntry> findFsEntriesForDealer(Integer year, String dealerId){
+        return findFsEntriesForDealer(Collections.singletonList(year), dealerId);
+    }
+
+    @Override
+    public List<FSEntry> findFsEntriesForDealer(List<Integer> years, String dealerId){
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(DEALER_ID).is(dealerId);
+        criteria.and(FSEntry.YEAR).in(years);
+        return this.findAll(criteria, this.getBeanClass(), this.getMongoTemplate());
+    }
+
+    @Override
+    public List<FSEntry> findDefaultTypeFsEntriesForYear(String fsType, Integer year, String dealerId){
         Criteria criteria = criteriaForNonDeleted();
         criteria.and(DEALER_ID).is(dealerId);
         criteria.and(FSEntry.YEAR).is(year);
+        criteria.and(FS_TYPE).is(fsType);
         return this.findAll(criteria, this.getBeanClass(), this.getMongoTemplate());
     }
 

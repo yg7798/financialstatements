@@ -4,6 +4,7 @@ import com.tekion.accounting.fs.beans.common.MigrationMetaDataForFsEntry;
 import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,7 +31,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 })
-public class OemFsMapping extends TBaseMongoBean {
+public class OemFsMapping extends TBaseMongoBean implements Cloneable{
 
 	public static final String GL_ACCT_ID = "glAccountId";
 	public static final String FS_CELL_GROUP_CODE = "fsCellGroupCode";
@@ -71,5 +72,18 @@ public class OemFsMapping extends TBaseMongoBean {
 		snapshot.setModifiedTime(System.currentTimeMillis());
 		snapshot.setCreatedByUserId(UserContextProvider.getCurrentUserId());
 		return snapshot;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	public static void updateInfoForClonedMapping(OemFsMapping fsMapping){
+		fsMapping.setId(new ObjectId().toHexString());
+		fsMapping.setCreatedTime(System.currentTimeMillis());
+		fsMapping.setModifiedTime(System.currentTimeMillis());
+		fsMapping.setCreatedByUserId(UserContextProvider.getCurrentUserId());
+		fsMapping.setModifiedByUserId(UserContextProvider.getCurrentUserId());
 	}
 }

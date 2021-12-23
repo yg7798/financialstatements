@@ -108,13 +108,9 @@ public interface FsComputeService {
 
 	List<OemFsMapping> deleteMemoFSMappings(String oem, int year, int version);
 
-	List<OemFsMapping> deleteFSMappings(FSMappingDeleteDto reqDto);
-
 	List<AccountingOemFsCellCode> migrateCellCodesToYear(String oemId, int fromYear, int toYear, String country);
 
-	List<AccountingOemFsCellGroup> migrateGroupsCodesToYear(String oemId, int fromYear, int toYear);
-
-	List<OemFsMapping> migrateMappingsToYear(String OemId, int fromYear, int toYear, int version);
+	List<AccountingOemFsCellGroup> migrateGroupsCodesToYear(String oemId, int fromYear, int toYear, String country);
 
 	void createSnapshotsForMapping(MappingSnapshotDto dto);
 
@@ -122,15 +118,11 @@ public interface FsComputeService {
 
 	List<AccountingOemFsCellGroup> deleteGroupCodes(String oemId, int year, List<String> groupCodes, int version, String country);
 
-	List<OemFsMapping> createMappingsFromGlAccounts(String oemId, Integer year, Integer version, String country);
-
 	Map<Integer, Map<String, Set<String>>> getDependentGlAccounts(OEM oem, int year, int version, Set<String> cellCodes, Long epoch);
 
 	FsCellCodeDetailsResponseDto computeFsDetails(String oemId, Integer oemFsYear, Integer oemFsVersion, long tillEpoch, boolean includeM13, boolean addM13BalInDecBalances);
 
 	FSEntry createFsmInfoIfPresent(OEM oem, int year, int version);
-
-	List<OemFsMapping> deleteFSMappings(OEM oem, int year, int version, Set<String> groupCodes);
 
 	boolean isFutureMonth(MonthInfo activeMonthInfo, int year, int month);
 

@@ -109,7 +109,7 @@ public class IntegrationClientTest extends TestCase {
         headers1.put("userid", "-1");
         headers1.put("oem", "Acura");
         headers1.put("brand", "abc");
-        headers1.put("tek-siteId", "-1_5");
+        headers1.put("tek-siteid", "-1_5");
         return headers1;
     }
 

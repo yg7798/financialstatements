@@ -32,5 +32,10 @@ public interface FsEntryService {
 
   FsMappingInfosResponseDto getFSEntriesBySiteId(List<String> siteIds);
 
+
+  void migrateFsEntriesFromYearToYear(Integer fromYear, Integer toYear);
+
   void migrateFSName();
+
+  void migrateParentRef(Integer year);
 }

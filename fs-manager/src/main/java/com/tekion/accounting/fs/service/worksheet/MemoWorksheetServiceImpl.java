@@ -152,16 +152,6 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 		return migrateWorksheetsForSelectedMemoKeys(fsEntry, memoTemplateKeys);
 	}
 
-	@Override
-	public List<MemoWorksheet> migrateMemoKeysForAllSites(OEM oemId, Integer year, Integer version, Set<String> memoTemplateKeys){
-		List<FSEntry> fsEntries = fsEntryRepo.findByOemYearVersionAndSite(oemId.name(), year, version, UserContextProvider.getCurrentDealerId(), null);
-		for(FSEntry fsEntry : TCollectionUtils.nullSafeList(fsEntries)){
-			migrateWorksheetsForSelectedMemoKeys(fsEntry, memoTemplateKeys);
-		}
-		return null;
-	}
-
-
 	private List<MemoWorksheet> migrateMemoWorksheetsFromTemplate(FSEntry fsEntry) {
 		List<MemoWorksheet> memoWorksheets;
 		synchronized (this){
@@ -253,11 +243,11 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 	}
 
 	@Override
-	public List<MemoWorksheet> deleteMemoWorksheetsByKey(OEM oem, int year, int version, Set<String> keys, String siteId) {
+	public List<MemoWorksheet> deleteMemoWorksheetsByKey(Set<String> keys, String fsId) {
 		if(TCollectionUtils.isEmpty(keys)){
 			return Collections.emptyList();
 		}
-		FSEntry fsEntry = fsEntryRepo.findDefaultType(oem.name(), year, UserContextProvider.getCurrentDealerId(), siteId);
+		FSEntry fsEntry = fsEntryRepo.findByIds(Collections.singletonList(fsId), UserContextProvider.getCurrentDealerId()).get(0);
 		List<MemoWorksheet> memoWorksheetsToDelete = memoWorksheetRepo.findByKeys(fsEntry.getId(), keys, UserContextProvider.getCurrentDealerId());
 		memoWorksheetRepo.deleteMemoWorksheetsByKeys(fsEntry.getId(), keys, UserContextProvider.getCurrentDealerId());
 		return memoWorksheetsToDelete;

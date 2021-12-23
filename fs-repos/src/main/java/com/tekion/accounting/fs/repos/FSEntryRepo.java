@@ -3,6 +3,7 @@ package com.tekion.accounting.fs.repos;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.enums.FSType;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface FSEntryRepo {
@@ -24,6 +25,8 @@ public interface FSEntryRepo {
     FSEntry findByOem(String oemId, int version, String dealerId);
 
     FSEntry findByIdAndDealerId(String id, String dealerId);
+
+    List<FSEntry> findByIds(Collection<String> id, String dealerId);
 
     FSEntry findByIdAndDealerIdWithNullCheck(String id, String dealerId);
 
@@ -49,9 +52,15 @@ public interface FSEntryRepo {
 
     List<FSEntry> findFsEntriesForDealer(Integer year, String dealerId);
 
+    List<FSEntry> findDefaultTypeFsEntriesForYear(String fsType, Integer year, String dealerId);
+
     List<FSEntry> findByOemFsTypeDealerIdAndSiteId(String oemId, String fsType, String dealerId, String siteId);
 
     List<FSEntry> getFSEntriesBySiteId(String dealerId, List<String> siteIds);
 
+
+    List<FSEntry> findFsEntriesForDealer(List<Integer> year, String dealerId);
+
     List<FSEntry> getFsEntriesByOemIds(FSType fsType, List<String> oemIds, Integer year, String dealerId);
+
 }

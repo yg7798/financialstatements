@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.api;
 
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
+import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.memo.MemoBulkUpdateDto;
 import com.tekion.accounting.fs.dto.memo.MemoWorksheetTemplateBulkRequest;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @RestController
@@ -25,6 +27,7 @@ public class MemoWorksheetApi {
 	private final TValidator validator;
 	private final MemoWorksheetService memoWorksheetService;
 	private final MemoWorksheetTemplateService memoWorksheetTemplateService;
+	private final GlobalService globalService;
 
 	@PostMapping("/templates")
 	public ResponseEntity saveMWTemplates(@RequestBody MemoWorksheetTemplateBulkRequest memoWorksheetTemplateBulkRequest){
@@ -91,30 +94,13 @@ public class MemoWorksheetApi {
 		return TResponseEntityBuilder.okResponseEntity(memoWorksheetService.updateActiveFieldsFromPreviousWorksheets(oem, fromYear, yearToUpdate, version, UserContextUtils.getSiteIdFromUserContext()));
 	}
 
-//    @PostMapping("/migrateFieldTypeToMemoWorksheet/site/{siteId}/{oemId}/{year}/v/{version}")
-//    public ResponseEntity migrateFromTemplateSelectedKeysBySite(@PathVariable @NotBlank String siteId,@PathVariable OEM oemId,
-//                                                                @PathVariable @NotBlank Integer year, @PathVariable @NotBlank Integer version){
-//        return TResponseEntityBuilder.okResponseEntity(memoWorksheetService.migrateFieldTypeInMemoWorkSheet(oemId, year,version, siteId));
-//    }
+	@DeleteMapping("/deleteMemoWorksheets/fsId/{fsId}")
+	public ResponseEntity deleteMemoWorksheets(@PathVariable @NotNull String fsId,
+											   @RequestParam(required = false) Integer parallelism,
+											   @RequestBody Set<String> memoKeys
+	){
 
-//    @PostMapping("/migrateActiveFields/site/{siteId}/{oem}/fromYear/{fromYear}/toYear/{yearToUpdate}/v/{version}")
-//    public ResponseEntity migrateActiveFieldsBySite(@PathVariable @NotBlank String siteId,
-//                                              @PathVariable OEM oem, @PathVariable @NotBlank Integer fromYear,
-//                                              @PathVariable @NotBlank Integer version,
-//                                              @PathVariable @NotBlank Integer yearToUpdate){
-//        return TResponseEntityBuilder.okResponseEntity(memoWorksheetService.updateActiveFieldsFromPreviousWorksheets(oem, fromYear, yearToUpdate, version, siteId));
-//    }
-
-//    @PostMapping("/migrateFromTemplate/site/{siteId}/{oemId}/{year}/v/{version}/keys")
-//    public ResponseEntity migrateFromTemplateSelectedKeysBySite(@PathVariable @NotBlank String siteId, @PathVariable OEM oemId,
-//                                                                @PathVariable @NotBlank Integer year, @PathVariable @NotBlank Integer version,
-//                                                                @RequestBody Set<String> keys){
-//        return TResponseEntityBuilder.okResponseEntity(memoWorksheetService.migrateWorksheetsForSelectedTemplates(oemId,year,version,keys, siteId));
-//    }
-
-//    @PutMapping("/migrateFromTemplate/site/{siteId}/{oemId}/{year}/v/{version}")
-//    public ResponseEntity migrateFromTemplateBySite(@PathVariable @NotBlank String siteId, @PathVariable OEM oemId,
-//                                                    @PathVariable @NotBlank Integer year, @PathVariable @NotBlank Integer version){
-//        return TResponseEntityBuilder.okResponseEntity(memoWorksheetService.remigrateFromTemplate(oemId, year, version,siteId));
-//    }
+		memoWorksheetService.deleteMemoWorksheetsByKey(memoKeys, fsId);
+		return TResponseEntityBuilder.okResponseEntity("Success");
+	}
 }
