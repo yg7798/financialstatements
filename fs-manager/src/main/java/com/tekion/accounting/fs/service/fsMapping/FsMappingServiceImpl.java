@@ -153,6 +153,7 @@ public class FsMappingServiceImpl implements FsMappingService {
 
             if(TCollectionUtils.isEmpty(fromFSMappings1) || TCollectionUtils.isNotEmpty(toFSMappings1)) {
                 log.warn("Not copying mappings for parentRef {}", fromFsEntry.getParentFsEntryRef());
+                continue;
             }
 
             for(OemFsMapping fsMapping: fromFSMappings1){
