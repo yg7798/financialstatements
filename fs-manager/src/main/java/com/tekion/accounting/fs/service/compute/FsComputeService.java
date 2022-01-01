@@ -29,8 +29,6 @@ public interface FsComputeService {
 
 	List<OemFsMapping> updateOemFsMapping(OemFsMappingUpdateDto requestDto);
 
-//  FSResponseDto getOemFsMappingDetailed(String oemId, Integer year);
-
 	AccountingOemFsCellCode saveFsCellCode(FSCellCodeCreateDto reqDto);
 
 	List<AccountingOemFsCellCode> saveFsCellCodes(FSCellCodeListCreateDto reqDto);
@@ -105,8 +103,6 @@ public interface FsComputeService {
 	void invalidateCache();
 
 	List<AccountingOemFsCellCode> deleteCellCodes(FsCellCodeDeleteDto dto);
-
-	List<OemFsMapping> deleteMemoFSMappings(String oem, int year, int version);
 
 	List<AccountingOemFsCellCode> migrateCellCodesToYear(String oemId, int fromYear, int toYear, String country);
 

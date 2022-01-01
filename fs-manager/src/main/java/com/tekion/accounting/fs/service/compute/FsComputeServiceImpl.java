@@ -1995,29 +1995,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 	}
 
 	@Override
-	public List<OemFsMapping> deleteMemoFSMappings(String oem, int year, int version){
-
-		String dealerId = getCurrentDealerId();
-		List<OemFsMapping> allMappings = oemFsMappingRepo
-				.findNonDeletedMappingsForOEMYearVersionByDealerIdAndSite(oem, year, version, dealerId,UserContextUtils.getSiteIdFromUserContext());
-		if(TCollectionUtils.isEmpty(allMappings)){
-			return allMappings;
-		}
-
-		//TODO: check
-		List<GLAccount> glAccounts = accountingService.getGLAccounts(dealerId).stream().filter(x -> (allMappings.stream().map(OemFsMapping::getGlAccountId).collect(Collectors.toList()).contains(x.getId()))).collect(Collectors.toList());
-		Set<String> memoIds = glAccounts.stream()
-				.filter(e -> e.getAccountTypeId().equals(AccountType.MEMO.name()))
-				.map(GLAccount::getId).collect(Collectors.toSet());
-		List<OemFsMapping> memoMappings = allMappings.stream()
-				.filter(e -> memoIds.contains(e.getGlAccountId())).collect(Collectors.toList());
-		oemFsMappingRepo.delete(oem, year, version, memoMappings, dealerId, UserContextUtils.getSiteIdFromUserContext());
-		memoMappings.forEach(e -> e.setDeleted(true));
-
-		return memoMappings;
-	}
-
-	@Override
 	public List<AccountingOemFsCellCode> migrateCellCodesToYear(String oemId, int fromYear, int toYear, String country){
 
 		List<AccountingOemFsCellCode> cellCodes1 = fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(oemId, toYear, 1, country);
@@ -2138,44 +2115,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 			return BigDecimal.ZERO;
 		}
 	}
-
-//    @Override
-//    public List<OEMFinancialMapping> saveMappingsForGl(String glAccountId, List<OEMFinancialMapping> mappings) {
-//        TPreConditions.notBlank(glAccountId, "oemMapping.glAccountId.cant.be.null");
-//        List<OEMFinancialMapping> mappingsToDelete = Lists.newArrayList();
-//        List<OEMFinancialMapping> upsertList = Lists.newArrayList();
-//
-//        for(OEMFinancialMapping m : TCollectionUtils.nullSafeList(mappings)){
-//            if(m.getOemAccountNumber() == null) {
-//                if (m.getId() != null) {
-//                    mappingsToDelete.add(m);
-//                }
-//            } else {
-//                upsertList.add(mappingToSave(m, glAccountId));
-//            }
-//        }
-//
-//        if(TCollectionUtils.isNotEmpty(mappingsToDelete)){
-//            oemFSMappingRepo.deleteMappings(mappingsToDelete);
-//        }
-//
-//        if(TCollectionUtils.isNotEmpty(upsertList)) {
-//            oemFSMappingRepo.upsertMappings(upsertList);
-//        }
-//
-//        return upsertList;
-//    }
-
-//    private OEMFinancialMapping mappingToSave(OEMFinancialMapping mapping, String glAccountId){
-//        if(mapping.getId() == null){
-//            mapping.setId(UUID.randomUUID().toString());
-//            mapping.setDealerId(UserContextProvider.getCurrentDealerId());
-//            mapping.setCreatedTime(System.currentTimeMillis());
-//        }
-//        mapping.setGlAccountId(glAccountId);
-//        mapping.setModifiedTime(System.currentTimeMillis());
-//        return mapping;
-//    }
 
 	private OEMFinancialMapping fromDto(OEMMappingDto dto, OemMappingRequestDto mappingRequest){
 		OEMFinancialMapping mapping = OEMFinancialMapping.builder()
