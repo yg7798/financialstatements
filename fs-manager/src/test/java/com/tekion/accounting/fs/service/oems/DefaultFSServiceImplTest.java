@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.service.oems;
 
+import com.google.common.collect.Lists;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.OemConfig;
@@ -26,128 +27,150 @@ import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import junit.framework.TestCase;
-import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.context.event.annotation.AfterTestMethod;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultFSServiceImplTest extends TestCase {
 
-	@Mock FsComputeService oemMappingService;
-	@Mock DealerConfig dealerConfig;
-	@Mock IntegrationClient integrationClient;
-	@Mock FSEntryRepo fsEntryRepo;
-	@Mock PreferenceClient preferenceClient;
-	@Mock GlobalService globalService;
-	@Mock IntegrationService integrationService;
-	@Mock AccountingInfoService accountingInfoService;
+    @InjectMocks
+    DefaultFSServiceImpl defaultFSService;
+    @InjectMocks
+    TimeUtils timeUtils;
 
-	@InjectMocks TimeUtils timeUtils;
-	@InjectMocks DefaultFSServiceImpl defaultFSService;
+    @Mock
+    DealerConfig dealerConfig;
+    @Mock
+    AbstractFinancialStatementService financialStatementService;
+    @Mock
+    FsComputeService oemMappingService;
+    @Mock
+    IntegrationClient integrationClient;
+    @Mock
+    FSEntryRepo fsEntryRepo;
+    @Mock
+    PreferenceClient preferenceClient;
+    @Mock
+    GlobalService globalService;
+    @Mock
+    IntegrationService integrationService;
+    @Mock
+    AccountingInfoService accountingInfoService;
 
-	@Before
-	public void setUp(){
-		UserContextProvider.setContext(new UserContext("-1","ca","4"));
-		when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString())).thenReturn(getFsEntry());
-		when(dealerConfig.getDealerTimeZone()).thenReturn(TimeZone.getTimeZone("America/Los_Angeles"));
-	}
+    @Before
+    public void setUp() {
+        UserContextProvider.setContext(new UserContext("-1", "ca", "4"));
+        when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString())).thenReturn(getFsEntry());
+        when(dealerConfig.getDealerTimeZone()).thenReturn(TimeZone.getTimeZone("America/Los_Angeles"));
+    }
 
-	@Test
-	public void testSubmit(){
-		when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
-		when(oemMappingService.getOemConfig(anyString())).thenReturn(getOemConfig("GM"));
-		when(preferenceClient.findBrandForMake(any(FindBrandRequest.class))).thenReturn(getBrandMappingResponse());
-		when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean()))
-				.thenReturn(getCellCodeDetails());
-		defaultFSService.submit(getFSRequestDto());
-	}
+    @Test(expected = TBaseRuntimeException.class)
+    public void testGenerateXML() {
+        assertNotNull(defaultFSService.generateXML(getFinancialStatementRequestDto()));
+    }
 
-	@Test(expected = TBaseRuntimeException.class)
-	public void testException(){
-		when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
-		when(oemMappingService.getOemConfig(anyString())).thenReturn(getOemConfig("GM"));
-		when(preferenceClient.findBrandForMake(any(FindBrandRequest.class))).thenReturn(getBrandMappingResponse());
-		when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean()))
-				.thenReturn(getCellCodeDetails());
-		when(globalService.getAllDealerDetailsForTenant(anyString())).thenReturn(new ArrayList<>());
-		when(integrationClient.submitFS(any(FSIntegrationRequest.class), any(OEMInfo.class),
-				any())).thenThrow(TBaseRuntimeException.class);
-		com.tekion.admin.beans.dealersetting.DealerMaster dm = DealerMaster.builder().id("gsfgs").dealerName("bhshs").build();
-		when(globalService.getAllDealerDetailsForTenant(anyString())).thenReturn(Collections.singletonList(dm));
-		OemSiteDetailsDto dto = new OemSiteDetailsDto();
-		dto.setName("");
-		dto.setSiteId("");
-		when(globalService.getOemSiteDetails()).thenReturn(Collections.singletonList(dto));
-		defaultFSService.submit(getFSRequestDto());
-	}
+    @Test
+    public void testSubmit(){
+        when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
+        when(oemMappingService.getOemConfig(anyString())).thenReturn(getOemConfig("GM"));
+        when(preferenceClient.findBrandForMake(any(FindBrandRequest.class))).thenReturn(getBrandMappingResponse());
+        when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean()))
+                .thenReturn(getCellCodeDetails());
+        defaultFSService.submit(getFSRequestDto());
+    }
 
-	FSEntry getFsEntry(){
-		return FSEntry.builder()
-				.fsType("OEM").dealerId("1")
-				.oemId("GM").year(2021).build();
-	}
+    @Test(expected = TBaseRuntimeException.class)
+    public void testException(){
+        when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
+        when(oemMappingService.getOemConfig(anyString())).thenReturn(getOemConfig("GM"));
+        when(preferenceClient.findBrandForMake(any(FindBrandRequest.class))).thenReturn(getBrandMappingResponse());
+        when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
+        when(globalService.getAllDealerDetailsForTenant(anyString())).thenReturn(new ArrayList<>());
+        when(integrationClient.submitFS(any(FSIntegrationRequest.class), any(OEMInfo.class), any())).thenThrow(TBaseRuntimeException.class);
+        com.tekion.admin.beans.dealersetting.DealerMaster dm = DealerMaster.builder().id("gsfgs").dealerName("bhshs").build();
+        when(globalService.getAllDealerDetailsForTenant(anyString())).thenReturn(Collections.singletonList(dm));
+        OemSiteDetailsDto dto = new OemSiteDetailsDto();
+        dto.setName("");
+        dto.setSiteId("");
+        when(globalService.getOemSiteDetails()).thenReturn(Collections.singletonList(dto));
+        defaultFSService.submit(getFSRequestDto());
+    }
 
-	FsCellCodeDetailsResponseDto getCellCodeDetails(){
-		FsCellCodeDetailsResponseDto dto = new FsCellCodeDetailsResponseDto();
-		dto.setAccountingOemFsCellCodes(Collections.singletonList(getCellCode("c1", "c1", "")));
-		dto.setCodeVsDetailsMap(getCodeVsDetailsMap());
-		return dto;
-	}
+    private FinancialStatementRequestDto getFinancialStatementRequestDto() {
+        FinancialStatementRequestDto financialStatementRequestDto = new FinancialStatementRequestDto();
+        financialStatementRequestDto.setFsId("1234");
+        financialStatementRequestDto.setFinancialYearType(FinancialYearType.FISCAL_YEAR);
+        return financialStatementRequestDto;
+    }
 
-	FsCodeDetail getFsCodeDetail(){
-		return FsCodeDetail.builder().value(BigDecimal.ZERO).stringValue("0").build();
-	}
+     FSEntry getFsEntry() {
+        return FSEntry.builder()
+                .fsType("OEM").dealerId("1")
+                .oemId("GM").year(2021).build();
+    }
 
-	AccountingOemFsCellCode getCellCode(String code, String oemCode, String durationType){
-		return AccountingOemFsCellCode.builder().code(code).durationType(durationType)
-				.additionalInfo(new HashMap<>()).oemCode(oemCode).build();
-	}
+    FsCellCodeDetailsResponseDto getCellCodeDetails(){
+        FsCellCodeDetailsResponseDto dto = new FsCellCodeDetailsResponseDto();
+        dto.setAccountingOemFsCellCodes(Collections.singletonList(getCellCode("c1", "c1", "")));
+        dto.setCodeVsDetailsMap(getCodeVsDetailsMap());
+        return dto;
+    }
 
-	OemConfig getOemConfig(String oem){
-		return OemConfig.builder().oemId(oem).build();
-	}
+    FsCodeDetail getFsCodeDetail(){
+        return FsCodeDetail.builder().value(BigDecimal.ZERO).stringValue("0").build();
+    }
 
-	Map<String, FsCodeDetail> getCodeVsDetailsMap(){
-		Map<String, FsCodeDetail> map = new HashMap<>();
-		map.put("c1", getFsCodeDetail());
-		return map;
-	}
+    AccountingOemFsCellCode getCellCode(String code, String oemCode, String durationType){
+        return AccountingOemFsCellCode.builder().code(code).durationType(durationType)
+                .additionalInfo(new HashMap<>()).oemCode(oemCode).build();
+    }
 
+    OemConfig getOemConfig(String oem){
+        return OemConfig.builder().oemId(oem).build();
+    }
 
-	FinancialStatementRequestDto getFSRequestDto(){
-		return FinancialStatementRequestDto.builder().fsId("1").addM13BalInDecBalances(false)
-				.financialYearType(FinancialYearType.CALENDAR_YEAR).tillEpoch(123).build();
-	}
+    Map<String, FsCodeDetail> getCodeVsDetailsMap(){
+        Map<String, FsCodeDetail> map = new HashMap<>();
+        map.put("c1", getFsCodeDetail());
+        return map;
+    }
 
-	DealerMaster getDealerMaster() {
-		return DealerMaster.builder().oemDealerId("1").build();
-	}
+    FinancialStatementRequestDto getFSRequestDto(){
+        return FinancialStatementRequestDto.builder().fsId("1").addM13BalInDecBalances(false)
+                .financialYearType(FinancialYearType.CALENDAR_YEAR).tillEpoch(123).build();
+    }
 
-	TekionResponse<List<BrandMappingResponse>> getBrandMappingResponse(){
-		BrandMappingResponse brandMappingResponse = new BrandMappingResponse();
-		brandMappingResponse.setActualBrand("gm");
-		return new TekionResponse<>(Collections.singletonList(brandMappingResponse), "success");
-	}
+    DealerMaster getDealerMaster() {
+        return DealerMaster.builder().oemDealerId("1").build();
+    }
 
-	public static List<DealerInfoWithOEMDetails> getSingleDealerInfoList(){
-		DealerInfoWithOEMDetails exampleDealerInfo = getExampleDealerInfo();
-		return Lists.newArrayList(exampleDealerInfo);
-	}
+    TekionResponse<List<BrandMappingResponse>> getBrandMappingResponse(){
+        BrandMappingResponse brandMappingResponse = new BrandMappingResponse();
+        brandMappingResponse.setActualBrand("gm");
+        return new TekionResponse<>(Collections.singletonList(brandMappingResponse), "success");
+    }
 
-	public static DealerInfoWithOEMDetails getExampleDealerInfo(){
-		DealerInfoWithOEMDetails dealerInfoWithOEMDetails = new DealerInfoWithOEMDetails();
-		dealerInfoWithOEMDetails.setDealerId("4");
-		dealerInfoWithOEMDetails.setTenantId("cacargroup");
-		return dealerInfoWithOEMDetails;
-	}
+    public static List<DealerInfoWithOEMDetails> getSingleDealerInfoList(){
+        DealerInfoWithOEMDetails exampleDealerInfo = getExampleDealerInfo();
+        return Lists.newArrayList(exampleDealerInfo);
+    }
 
+    public static DealerInfoWithOEMDetails getExampleDealerInfo(){
+        DealerInfoWithOEMDetails dealerInfoWithOEMDetails = new DealerInfoWithOEMDetails();
+        dealerInfoWithOEMDetails.setDealerId("4");
+        dealerInfoWithOEMDetails.setTenantId("cacargroup");
+        return dealerInfoWithOEMDetails;
+    }
 }
