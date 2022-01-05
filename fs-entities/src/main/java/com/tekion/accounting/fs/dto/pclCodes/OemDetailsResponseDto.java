@@ -1,14 +1,12 @@
 package com.tekion.accounting.fs.dto.pclCodes;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class OemDetailsResponseDto {
     private String oemId;
     private Integer year;

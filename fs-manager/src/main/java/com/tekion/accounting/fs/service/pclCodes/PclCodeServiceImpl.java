@@ -32,14 +32,13 @@ public class PclCodeServiceImpl implements PclCodeService{
         List<OemTemplate> oemTemplateList = TCollectionUtils.nullSafeList(oemTemplateRepo.findAllOemDetails());
         List<OemDetailsResponseDto> oemDetailsDtoList = new ArrayList<>();
         oemTemplateList.parallelStream().forEach(oemTemplate -> {
-            if(Boolean.FALSE.equals(oemTemplate.isDeleted())) {
-                OemDetailsResponseDto oemDetailsDto = new OemDetailsResponseDto();
-                oemDetailsDto.setOemId(oemTemplate.getOemId());
-                oemDetailsDto.setYear(oemTemplate.getYear());
-                oemDetailsDto.setCountry(oemTemplate.getCountry());
+            OemDetailsResponseDto oemDetailsDto = new OemDetailsResponseDto();
+            oemDetailsDto.setOemId(oemTemplate.getOemId());
+            oemDetailsDto.setYear(oemTemplate.getYear());
+            oemDetailsDto.setCountry(oemTemplate.getCountry());
+            if(!oemDetailsDtoList.contains(oemDetailsDto))
                 oemDetailsDtoList.add(oemDetailsDto);
-            }
-        });
+            });
         return oemDetailsDtoList;
     }
 
