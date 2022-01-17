@@ -38,4 +38,6 @@ public interface FsEntryService {
   void migrateFSName();
 
   void migrateParentRef(Integer year);
+
+  FSEntry updateSiteId(String fsId, String siteId);
 }

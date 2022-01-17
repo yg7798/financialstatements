@@ -333,4 +333,17 @@ public class FsEntryServiceImpl implements FsEntryService {
     });
     fsEntryRepo.bulkUpsert(fsEntries);
   }
+
+  @Override
+  public FSEntry updateSiteId(String fsId, String siteId){
+    List<FSEntry> entries = fsEntryRepo.findByIds(Collections.singletonList(fsId), UserContextProvider.getCurrentDealerId());
+    if(entries.size() <= 0){
+      throw new TBaseRuntimeException("please provide valid fs entry");
+    }
+    FSEntry entry = entries.get(0);
+    entry.setSiteId(siteId);
+    entry.setModifiedTime(System.currentTimeMillis());
+    entry.setModifiedByUserId(UserContextProvider.getCurrentUserId());
+    return fsEntryRepo.save(entry);
+  }
 }

@@ -198,6 +198,20 @@ public class FsEntryServiceImplTest extends TestCase {
         assertEquals(getFSEntries(), fsEntryService.getFSEntries());
     }
 
+    @Test
+    public void testUpdateSiteId() {
+        String siteId = "s1";
+        String id = "id";
+        FSEntry fsEntry  =FSEntry.builder().siteId("-1").build();
+        fsEntry.setId(id);
+        Mockito.when(fsEntryRepo.findByIds(anyCollection(), anyString())).thenReturn(Collections.singletonList(fsEntry));
+        fsEntryService.updateSiteId("123", siteId);
+        ArgumentCaptor<FSEntry> argumentCaptor = ArgumentCaptor.forClass(FSEntry.class);
+        Mockito.verify(fsEntryRepo, times(1)).save(argumentCaptor.capture());
+        assertEquals(argumentCaptor.getValue().getSiteId(), siteId);
+        assertEquals(argumentCaptor.getValue().getId(), id);
+    }
+
     private FsMappingInfosResponseDto getFsMappingInfosResponseDto() {
         List<String> dealerIds = new ArrayList<>();
         dealerIds.add("1");

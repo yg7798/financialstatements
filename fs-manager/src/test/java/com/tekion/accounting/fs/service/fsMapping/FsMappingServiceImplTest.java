@@ -15,16 +15,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -49,6 +43,9 @@ public class FsMappingServiceImplTest {
 
     @Mock
     FSEntryRepo fsEntryRepo;
+
+    @Captor
+    private ArgumentCaptor<ArrayList<OemFsMapping>> captor;
 
     @Before
     public void setUp() throws ExecutionException {
@@ -136,9 +133,55 @@ public class FsMappingServiceImplTest {
                 .thenReturn(Arrays.asList(getFsEntry()));
         Mockito.when(oemFSMappingRepo.findMappingsByGroupCodeAndFsIds(Mockito.anyList(), Mockito.anySet(), Mockito.anyString()))
                         .thenReturn(Arrays.asList());
-        fsMappingService.getFsMappingsByOemIdAndGroupCodes(2021, Arrays.asList("_220"), Arrays.asList("GM"));
+        fsMappingService.getFsMappingsByOemIdAndGroupCodes(2021, Arrays.asList("_220"), Arrays.asList("GM"), false);
         Mockito.verify(fsEntryRepo, Mockito.times(1)).getFsEntriesByOemIds(Mockito.any(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyString());
         Mockito.verify(oemFSMappingRepo, Mockito.times(1)).findMappingsByGroupCodeAndFsIds(Mockito.anyList(), Mockito.anySet(), Mockito.anyString());
+    }
+
+    @Test
+    public void testDeleteMappingsByGroupCodes() {
+        Mockito.when(oemFSMappingRepo.findMappingsByGroupCodeAndFsIds(Mockito.anyList(), Mockito.anySet(), Mockito.anyString()))
+                .thenReturn(mappingsToUpdate());
+        fsMappingService.deleteMappingsByGroupCodes(Collections.singletonList("200"), "GM", 2021, "US");
+        Mockito.verify(oemFSMappingRepo,
+                Mockito.times(1)).
+                findMappingsByGroupCodeAndFsIds(eq(Collections.singletonList("_200")), anySet(), eq("4"));
+        Mockito.verify(oemFSMappingRepo, Mockito.times(1)).updateBulk(captor.capture());
+        List<OemFsMapping> capturedArgument = captor.getValue();
+        Assert.assertEquals(capturedArgument.size(), 2);
+        Assert.assertTrue(capturedArgument.get(0).isDeleted());
+        Assert.assertEquals(capturedArgument.get(0).getId(), mappingsToUpdate().get(0).getId());
+    }
+
+    @Test
+    public void testReplaceGroupCodesInMappings() {
+        Map<String, String> map = new HashMap<>();
+        map.put("300", null);
+        map.put("200", "300");
+        Mockito.when(oemFSMappingRepo.findMappingsByGroupCodeAndFsIds(Mockito.anyList(), Mockito.anySet(), Mockito.anyString()))
+                .thenReturn(mappingsToUpdate());
+        fsMappingService.replaceGroupCodesInMappings(map, "GM", 2021, "US");
+        Mockito.verify(oemFSMappingRepo, Mockito.times(1)).updateBulk(captor.capture());
+        List<OemFsMapping> capturedArgument = captor.getValue();
+        Assert.assertEquals(capturedArgument.size(), 2);
+        Assert.assertEquals(capturedArgument.get(0).getFsCellGroupCode(), "_300");
+        Assert.assertEquals(capturedArgument.get(0).getId(), mappingsToUpdate().get(0).getId());
+    }
+
+    List<OemFsMapping> mappingsToUpdate(){
+        List<OemFsMapping> mappings = new ArrayList<>();
+        OemFsMapping oemFsMapping = new OemFsMapping();
+        oemFsMapping.setFsCellGroupCode("_200");
+        oemFsMapping.setId("1");
+        oemFsMapping.setDeleted(false);
+        mappings.add(oemFsMapping);
+
+        OemFsMapping oemFsMapping1 = new OemFsMapping();
+        oemFsMapping1.setFsCellGroupCode("_300");
+        oemFsMapping1.setId("2");
+        oemFsMapping1.setDeleted(false);
+        mappings.add(oemFsMapping1);
+        return mappings;
     }
 
     private FSEntry getFsEntry()

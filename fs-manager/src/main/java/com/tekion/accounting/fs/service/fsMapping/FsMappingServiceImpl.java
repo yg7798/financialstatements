@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.common.utils.OemFSUtils;
 import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
@@ -180,10 +181,18 @@ public class FsMappingServiceImpl implements FsMappingService {
     }
 
 
-    public List<OemFsMapping> getFsMappingsByOemIdAndGroupCodes(Integer year, List<String> groupCodes, List<String> oemIds) {
-        List<FSEntry> fsEntries = TCollectionUtils.nullSafeList(fsEntryRepo.getFsEntriesByOemIds(FSType.OEM, oemIds, year, UserContextProvider.getCurrentDealerId()));
+    @Override
+    public List<OemFsMapping> getFsMappingsByOemIdAndGroupCodes(Integer year, List<String> groupCodes, List<String> oemIds, boolean ignoreFsType) {
+
+        List<FSEntry> fsEntries;
+
+        if(ignoreFsType){
+            fsEntries = fsEntryRepo.getFsEntriesByOemIds(oemIds, year, UserContextProvider.getCurrentDealerId());
+        }else{
+            fsEntries = fsEntryRepo.getFsEntriesByOemIds(FSType.OEM, oemIds, year, UserContextProvider.getCurrentDealerId());
+        }
         log.info("Request received for FsMapping year {}, groupCodes {} and oemIds {}", year, groupCodes, oemIds);
-        Set<String> fsIds = fsEntries.stream().map(m -> m.getId()).collect(Collectors.toSet());
+        Set<String> fsIds = fsEntries.stream().map(TBaseMongoBean::getId).collect(Collectors.toSet());
         return oemFsMappingRepo.findMappingsByGroupCodeAndFsIds(groupCodes, fsIds, UserContextProvider.getCurrentDealerId());
     }
 
@@ -191,5 +200,48 @@ public class FsMappingServiceImpl implements FsMappingService {
     public void hardDeleteMappings(String fsId) {
         log.warn("hard deleting mappings for {}", fsId);
         oemFsMappingRepo.hardDeleteMappings(Collections.singletonList(fsId));
+    }
+
+    @Override
+    public void deleteMappingsByGroupCodes(List<String> groupDisplayNames, String oemId, Integer year, String country){
+        if(!country.equalsIgnoreCase(dealerConfig.getDealerCountryCode())){
+            log.info("dealer country {}, country from api {}", dealerConfig.getDealerCountryCode(), country);
+            return;
+        }
+        List<OemFsMapping> mappingsToDelete = getMappingsByGroupDisplayNames(groupDisplayNames, oemId, year);
+        mappingsToDelete.forEach(x -> {
+            x.setModifiedTime(System.currentTimeMillis());
+            x.setModifiedByUserId(UserContextProvider.getCurrentUserId());
+            x.setDeleted(true);
+        });
+
+        oemFsMappingRepo.updateBulk(mappingsToDelete);
+        log.info("{} mappings deleted for {} {} dealer {}", mappingsToDelete.size(), oemId, year, UserContextProvider.getCurrentDealerId());
+    }
+
+    @Override
+    public void replaceGroupCodesInMappings(Map<String, String> groupDisplayNamesMap, String oemId, Integer year, String country){
+        if(!country.equalsIgnoreCase(dealerConfig.getDealerCountryCode())){
+            log.info("dealer country {}, country from api {}", dealerConfig.getDealerCountryCode(), country);
+            return;
+        }
+        List<OemFsMapping> mappings = getMappingsByGroupDisplayNames(groupDisplayNamesMap.keySet(), oemId, year);
+        Map<String, String> groupCodeVsDisplayName = groupDisplayNamesMap.keySet().stream().filter(Objects::nonNull).collect(Collectors.toMap(OemFSUtils::createGroupCode, x -> x ));
+        mappings.forEach(x -> {
+            String valGroupCode = groupDisplayNamesMap.get(groupCodeVsDisplayName.get(x.getFsCellGroupCode()));
+            if(Objects.isNull(valGroupCode)) return;
+            x.setFsCellGroupCode(OemFSUtils.createGroupCode(valGroupCode));
+            x.setModifiedTime(System.currentTimeMillis());
+            x.setModifiedByUserId(UserContextProvider.getCurrentUserId());
+        });
+        oemFsMappingRepo.updateBulk(mappings);
+        log.info("{} mappings updated through replacing group codes for {} {} dealer {}",
+                mappings.size(), oemId, year, UserContextProvider.getCurrentDealerId());
+
+    }
+
+    private List<OemFsMapping> getMappingsByGroupDisplayNames(Collection<String> groupDisplayNames, String oemId, Integer year){
+        List<String> groupCodes = groupDisplayNames.stream().map(OemFSUtils::createGroupCode).collect(Collectors.toList());
+        return getFsMappingsByOemIdAndGroupCodes(year, groupCodes, Collections.singletonList(oemId), true);
     }
 }
