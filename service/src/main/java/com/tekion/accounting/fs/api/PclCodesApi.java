@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.api;
 
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
+import com.tekion.accounting.fs.dto.pclCodes.MediaRequestDto;
 import com.tekion.accounting.fs.service.pclCodes.PclCodeService;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Slf4j
 @RestController
@@ -34,5 +36,11 @@ public class PclCodesApi {
     public ResponseEntity updatePclCodesDetails(@RequestBody AccountingOemFsCellGroup pclDetailsDto) {
         pclCodeService.updatePclCodeDetails(pclDetailsDto);
         return TResponseEntityBuilder.okCreatedResponseEntity("done");
+    }
+
+    @PutMapping("/bulkUpdate")
+    public ResponseEntity updatePclCodesInBulk(@NotNull @RequestBody MediaRequestDto requestDto) {
+        pclCodeService.updatePclCodesInBulk(requestDto);
+        return TResponseEntityBuilder.okResponseEntity("success");
     }
 }

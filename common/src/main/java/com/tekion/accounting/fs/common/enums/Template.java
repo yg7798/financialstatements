@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum  Template {
-	POWER_POSTING("Power posting", "Power_posting.xlsx");
+	PCL_CODES_UPDATE("Pcl code bulk update", "pclCodes_update.xlsx");
 
 	private Template(String displayName, String fileName) {
 		this.displayName = displayName;

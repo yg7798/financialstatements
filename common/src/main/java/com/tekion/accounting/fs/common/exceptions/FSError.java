@@ -355,6 +355,7 @@ public enum FSError implements TekionError {
 	dailyDepositRequestInvalid("A436", "daily.deposit.request.invalid"),
 	negativePaymentAmount("A437", "negative.payment.amount"),
 	invoiceAmountPaymentAmountDoNotMatch("A438", "invoice.amount.payment.amount.do.not.match"),
+	uploadValidPclCodesFile("A439","upload.valid.PclCodes.file")
 	;
 
 	FSError(String code, String key) {

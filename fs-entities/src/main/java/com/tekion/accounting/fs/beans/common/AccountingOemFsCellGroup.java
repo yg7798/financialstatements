@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.beans.common;
 
+import com.tekion.accounting.fs.dto.pclCodes.PclDetailsInExcel;
 import com.tekion.accounting.fs.enums.FsCellCodeSource;
 import com.tekion.core.beans.TBaseMongoBean;
 import lombok.*;
@@ -7,6 +8,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @CompoundIndexes({
 		@CompoundIndex(
@@ -68,6 +71,19 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean implements Cloneabl
 		this.setPbsPcl(toUpdate.getPbsPcl());
 		this.setQuorumPcl(toUpdate.getQuorumPcl());
 		this.setRrPcl(toUpdate.getRrPcl());
+		this.setModifiedTime(System.currentTimeMillis());
+	}
+
+	public void updateGroupCodes(PclDetailsInExcel toUpdate) {
+		this.setCdkPcl(toUpdate.getCDK_PCL());
+		this.setDbPcl(toUpdate.getDB_PCL());
+		this.setRrPcl(toUpdate.getRR_PCL());
+		this.setDominionPcl(toUpdate.getDOMINION_PCL());
+		this.setQuorumPcl(toUpdate.getQUORUM_PCL());
+		this.setAutosoftPcl(toUpdate.getAUTO_SOFT_PCL());
+		this.setAutomatePcl(toUpdate.getAUTOMATE_PCL());
+		this.setPbsPcl(toUpdate.getPBS_PCL());
+		this.setDealerTrackPcl(toUpdate.getDEALER_TRACK_PCL());
 		this.setModifiedTime(System.currentTimeMillis());
 	}
 

@@ -32,4 +32,5 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile('com.tekion.sdk:mongosupport:2.0.11-SNAPSHOT')
     compile project(':common')
+    compile('com.github.ozlerhakan:poiji:3.1.1')
 }

@@ -168,4 +168,14 @@ public class OemFSCellGroupRepoImpl extends BaseGlobalMongoRepository<Accounting
         });
         return bulkOperations.execute().getUpserts();
     }
+
+    @Override
+    public List<AccountingOemFsCellGroup> findByGroupCode(Set<String> oemIds, Set<Integer> years, Set<String> countries, Set<String> groupCodes) {
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(AccountingOemFsCellGroup.OEM_ID).in(oemIds);
+        criteria.and(AccountingOemFsCellGroup.YEAR).in(years);
+        criteria.and(AccountingOemFsCellGroup.GROUP_CODE).in(groupCodes);
+        criteria.and(COUNTRY).in(countries);
+        return this.getMongoTemplate().find(Query.query(criteria), AccountingOemFsCellGroup.class);
+    }
 }

@@ -37,3 +37,4 @@ public class OemTemplate extends TBaseMongoBean {
 	private String createdByUserId;
 	private String modifiedByUserId;
 }
+
