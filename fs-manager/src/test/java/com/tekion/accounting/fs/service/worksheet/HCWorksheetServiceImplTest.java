@@ -104,7 +104,7 @@ public class HCWorksheetServiceImplTest extends TestCase {
 
     @Test
     public void testBulkUpdate() {
-        Mockito.when(hcWorksheetRepo.findByIds(Mockito.anyList(), Mockito.anyString(),Mockito.anyString())).
+        Mockito.when(hcWorksheetRepo.findByIds(Mockito.anyList(), Mockito.anyString())).
                 thenReturn(Stream.of(getHCWorksheet1(),getHCWorksheet2()).collect(Collectors.toList()));
         List <HCWorksheet> hcWorksheetList = hcWorksheetService.bulkUpdate(getHCBulkUpdateDto());
         assertEquals(2,hcWorksheetList.size());

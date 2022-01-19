@@ -88,7 +88,7 @@ public class HCWorksheetServiceImpl implements HCWorksheetService{
 			ids.add(hcUpdateDto.getId());
 			hcUpdateDtoMap.put(hcUpdateDto.getId(),hcUpdateDto);
 		}
-		List<HCWorksheet> toUpdate = hcWorksheetRepo.findByIds(ids, UserContextProvider.getCurrentDealerId(), hcBulkUpdateDto.getSiteId());
+		List<HCWorksheet> toUpdate = hcWorksheetRepo.findByIds(ids, UserContextProvider.getCurrentDealerId());
 		TCollectionUtils.nullSafeList(toUpdate).forEach(hcWorksheet -> {
 			if(hcUpdateDtoMap.containsKey(hcWorksheet.getId())){
 				Map<Integer, HCValue> monthToValueMap = TCollectionUtils.transformToMap(hcWorksheet.getValues(),HCValue::getMonth);

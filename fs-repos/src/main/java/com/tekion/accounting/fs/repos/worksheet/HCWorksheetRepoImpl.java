@@ -45,13 +45,12 @@ public class HCWorksheetRepoImpl extends BaseDealerLevelMongoRepository<HCWorksh
     }
 
     @Override
-    public List<HCWorksheet> findByIds(Collection<String> ids, String dealerId, String siteId) {
+    public List<HCWorksheet> findByIds(Collection<String> ids, String dealerId) {
         if(TCollectionUtils.isEmpty(ids)){
             return Lists.newArrayList();
         }
         Criteria criteria = criteriaForNonDeleted();
         criteria.and(DEALER_ID).is(dealerId);
-        criteria.and(SITE_ID).is(siteId);
         criteria.and(TConstants.ID).in(ids);
         return this.getMongoTemplate().find(Query.query(criteria),HCWorksheet.class);
     }
