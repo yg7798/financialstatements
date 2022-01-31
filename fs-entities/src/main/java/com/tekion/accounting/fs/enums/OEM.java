@@ -33,6 +33,7 @@ public enum OEM {
 	Bentley("volkswagen", "volkswagen", "bentley"),
 	Volvo("Volvo","Volvo", "Volvo"),
 	Niada("Niada","Niada", "Niada"),
+	Subaru("subaru", "subaru", "subaru"),
 	@Deprecated
 	VW("Volkswagen","volkswagen", "Volkswagen");
 
