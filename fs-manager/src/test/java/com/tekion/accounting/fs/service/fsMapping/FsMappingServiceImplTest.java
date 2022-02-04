@@ -9,6 +9,7 @@ import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
 import com.tekion.as.models.beans.GLAccount;
+import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import org.junit.Assert;
@@ -168,18 +169,46 @@ public class FsMappingServiceImplTest {
         Assert.assertEquals(capturedArgument.get(0).getId(), mappingsToUpdate().get(0).getId());
     }
 
+    @Test
+    public void testCopyFsMapping_success(){
+        Mockito.when(fsEntryRepo.findByIdAndDealerId(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());
+        Mockito.when(oemFSMappingRepo.findMappingsByFsId(Mockito.anyString(), Mockito.any())).thenReturn(mappingsToUpdate());
+        fsMappingService.copyFsMappings("fromFsId", "toFsID");
+        Mockito.verify(fsEntryRepo, Mockito.times(1)).findByIdAndDealerId(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(oemFSMappingRepo, Mockito.times(2)).findMappingsByFsId(Mockito.anyString(), Mockito.any());
+    }
+
+    @Test(
+            expected = TBaseRuntimeException.class
+    )
+    public void testCopyFsMapping_targetFsIdInvalid(){
+        Mockito.when(fsEntryRepo.findByIdAndDealerId(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+        fsMappingService.copyFsMappings("fromFsId", "toFsID");
+    }
+
+    @Test(
+            expected = TBaseRuntimeException.class
+    )
+    public void testCopyFsMapping_toFsIdInvalid(){
+        Mockito.when(fsEntryRepo.findByIdAndDealerId(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());
+        Mockito.when(oemFSMappingRepo.findMappingsByFsId(Mockito.anyString(), Mockito.any())).thenReturn(null);
+        fsMappingService.copyFsMappings("fromFsId", "toFsID");
+    }
+
     List<OemFsMapping> mappingsToUpdate(){
         List<OemFsMapping> mappings = new ArrayList<>();
         OemFsMapping oemFsMapping = new OemFsMapping();
         oemFsMapping.setFsCellGroupCode("_200");
         oemFsMapping.setId("1");
         oemFsMapping.setDeleted(false);
+        oemFsMapping.setOemId("Acura");
         mappings.add(oemFsMapping);
 
         OemFsMapping oemFsMapping1 = new OemFsMapping();
         oemFsMapping1.setFsCellGroupCode("_300");
         oemFsMapping1.setId("2");
         oemFsMapping1.setDeleted(false);
+        oemFsMapping.setOemId("Acura");
         mappings.add(oemFsMapping1);
         return mappings;
     }

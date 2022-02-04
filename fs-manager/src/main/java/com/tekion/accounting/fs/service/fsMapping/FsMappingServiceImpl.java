@@ -97,16 +97,19 @@ public class FsMappingServiceImpl implements FsMappingService {
             throw new TBaseRuntimeException("{} is invalid fsId", toFsId);
         }
 
-        List<OemFsMapping> oemFsMappings = oemFsMappingRepo.findMappingsByFsId(fromFsId, getCurrentDealerId());
+        List<OemFsMapping> oemFsMappings = TCollectionUtils.nullSafeList(oemFsMappingRepo.findMappingsByFsId(fromFsId, getCurrentDealerId()));
+        if(oemFsMappings.isEmpty() || !oemFsMappings.get(0).getOemId().equalsIgnoreCase(targetFsEntry.getOemId())) {
+            throw new TBaseRuntimeException("FsIds {} and {} are not compatible or invalid", fromFsId, toFsId);
+        }
         List<OemFsMapping> copiedOemFsMappings = new ArrayList<>();
-        for(OemFsMapping oemFsMapping : TCollectionUtils.nullSafeList(oemFsMappings)){
+        for(OemFsMapping oemFsMapping : oemFsMappings){
             OemFsMapping newFsMapping;
             try {
                 newFsMapping = (OemFsMapping) oemFsMapping.clone();
                 OemFsMapping.updateInfoForClonedMapping(newFsMapping);
                 newFsMapping.setFsId(toFsId);
                 newFsMapping.setYear(targetFsEntry.getYear());
-                copiedOemFsMappings.add(oemFsMapping);
+                copiedOemFsMappings.add(newFsMapping);
             } catch (CloneNotSupportedException e){
                 log.error("Error while cloning OemFsMapping");
             }
