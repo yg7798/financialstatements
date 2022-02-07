@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.api;
 
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.dto.pclCodes.MediaRequestDto;
+import com.tekion.accounting.fs.dto.pclCodes.PclFilterRequestDto;
 import com.tekion.accounting.fs.service.pclCodes.PclCodeService;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +43,10 @@ public class PclCodesApi {
     public ResponseEntity updatePclCodesInBulk(@NotNull @RequestBody MediaRequestDto requestDto) {
         pclCodeService.updatePclCodesInBulk(requestDto);
         return TResponseEntityBuilder.okResponseEntity("success");
+    }
+
+    @PostMapping("/oemDetails/filter")
+    public ResponseEntity oemDetailsWithFilter(@RequestBody PclFilterRequestDto requestDto) {
+        return TResponseEntityBuilder.okResponseEntity(pclCodeService.getOemDetailsWithFilter(requestDto));
     }
 }

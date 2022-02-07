@@ -3,6 +3,7 @@ package com.tekion.accounting.fs.service.pclCodes;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.dto.pclCodes.MediaRequestDto;
 import com.tekion.accounting.fs.dto.pclCodes.OemDetailsResponseDto;
+import com.tekion.accounting.fs.dto.pclCodes.PclFilterRequestDto;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface PclCodeService {
     void updatePclCodeDetails(AccountingOemFsCellGroup pclDetailsDto);
 
     void updatePclCodesInBulk(MediaRequestDto requestDto);
+
+    List<AccountingOemFsCellGroup> getOemDetailsWithFilter(PclFilterRequestDto requestDto);
 }

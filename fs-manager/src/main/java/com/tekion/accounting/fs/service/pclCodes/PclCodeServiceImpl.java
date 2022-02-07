@@ -91,6 +91,36 @@ public class PclCodeServiceImpl implements PclCodeService{
         }
     }
 
+    @Override
+    public List<AccountingOemFsCellGroup> getOemDetailsWithFilter(PclFilterRequestDto requestDto) {
+        PclFilters pclFilters = requestDto.getFilters();
+        List<AccountingOemFsCellGroup> cellGroupList = TCollectionUtils.nullSafeList(getPclCodeDetails(requestDto.getOemId(), requestDto.getYear(), requestDto.getCountry()));
+        List<AccountingOemFsCellGroup> filteredList = new ArrayList<>();
+        cellGroupList.stream().forEach(cellGroup -> {
+
+            if(checkIfFilterTrue(pclFilters.getGroupCode(), cellGroup.getGroupCode())
+                    || checkIfFilterTrue(pclFilters.getAutomatePcl(), cellGroup.getAutomatePcl())
+                    || checkIfFilterTrue(pclFilters.getAutosoftPcl(), cellGroup.getAutosoftPcl())
+                    || checkIfFilterTrue(pclFilters.getCdkPcl(), cellGroup.getCdkPcl())
+                    || checkIfFilterTrue(pclFilters.getDbPcl(), cellGroup.getDbPcl())
+                    || checkIfFilterTrue(pclFilters.getDealerTrackPcl(), cellGroup.getDealerTrackPcl())
+                    || checkIfFilterTrue(pclFilters.getDominionPcl(), cellGroup.getDominionPcl())
+                    || checkIfFilterTrue(pclFilters.getGroupDisplayName(), cellGroup.getGroupDisplayName())
+                    || checkIfFilterTrue(pclFilters.getPbsPcl(), cellGroup.getPbsPcl())
+                    || checkIfFilterTrue(pclFilters.getQuorumPcl(), cellGroup.getQuorumPcl())
+                    || checkIfFilterTrue(pclFilters.getRrPcl(), cellGroup.getRrPcl())) {
+                filteredList.add(cellGroup);
+            }
+        });
+        return filteredList;
+    }
+
+    private boolean checkIfFilterTrue(Set<String> filterCodeList, String code) {
+        if(TCollectionUtils.isEmpty(filterCodeList))
+            return false;
+        return filterCodeList.contains(code);
+    }
+
     private String defaultCountryCode(String country) {
         return TStringUtils.isBlank(country) ? TConstants.COUNTRY_US : country;
     }

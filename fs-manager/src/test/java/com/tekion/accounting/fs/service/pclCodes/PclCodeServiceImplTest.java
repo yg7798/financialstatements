@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.beans.common.OemTemplate;
 import com.tekion.accounting.fs.dto.pclCodes.MediaRequestDto;
+import com.tekion.accounting.fs.dto.pclCodes.PclFilterRequestDto;
+import com.tekion.accounting.fs.dto.pclCodes.PclFilters;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.repos.OemTemplateRepo;
 import com.tekion.accounting.fs.service.common.FileCommons;
@@ -12,6 +14,7 @@ import com.tekion.core.utils.TCollectionUtils;
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -20,13 +23,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.internal.util.collections.Sets;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PclCodeServiceImplTest extends TestCase {
@@ -53,7 +54,7 @@ public class PclCodeServiceImplTest extends TestCase {
     public void testGetPclCodeDetails() {
         Mockito.when(oemFsCellGroupRepo.findByOemId(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString()))
                 .thenReturn(getAccountingOemFsCellGroupList());
-        assertEquals(1, pclCodeService.getPclCodeDetails("GM", 2021, "US").size());
+        assertEquals(2, pclCodeService.getPclCodeDetails("GM", 2021, "US").size());
         Mockito.verify(oemFsCellGroupRepo, Mockito.times(1))
                 .findByOemId(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString());
     }
@@ -106,9 +107,43 @@ public class PclCodeServiceImplTest extends TestCase {
         pclCodeService.updatePclCodesInBulk(mediaRequestDto);
     }
 
+    @Test
+    public void testGetOemDetailsWithFilter() {
+        Mockito.when(oemFsCellGroupRepo.findByOemId(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(getAccountingOemFsCellGroupList());
+        Set<String> rrPclSet = Sets.newSet();
+        rrPclSet.add("205A");
+        PclFilterRequestDto requestDto = PclFilterRequestDto.builder()
+                .oemId("GM")
+                .year(2021)
+                .country("US")
+                .filters(PclFilters.builder()
+                        .rrPcl(rrPclSet)
+                        .build())
+                .build();
+        Assert.assertEquals(1, pclCodeService.getOemDetailsWithFilter(requestDto).size());
+    }
+
+    @Test
+    public void testGetOemDetailsWithFilter_withNullInput() {
+        Mockito.when(oemFsCellGroupRepo.findByOemId(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(getAccountingOemFsCellGroupList());
+        Set<String> quorumPclSet = Sets.newSet();
+        quorumPclSet.add(null);
+        PclFilterRequestDto requestDto = PclFilterRequestDto.builder()
+                .oemId("GM")
+                .year(2021)
+                .country("US")
+                .filters(PclFilters.builder()
+                        .quorumPcl(quorumPclSet)
+                        .build())
+                .build();
+        Assert.assertEquals(1, pclCodeService.getOemDetailsWithFilter(requestDto).size());
+    }
+
     public static Workbook createExcel(Workbook workbook, List<String> headers, Map<String, List<String>> rowInformation){
         workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("testing");
+        Sheet sheet = workbook.createSheet( "testing");
         Row header = sheet.createRow(0);
         int i=0 ;
         for(String headerName : headers) {
@@ -170,10 +205,23 @@ public class PclCodeServiceImplTest extends TestCase {
                 .groupCode("_202")
                 .automatePcl("202A")
                 .autosoftPcl("0108A")
+                .rrPcl("205A")
                 .cdkPcl("1A08")
                 .groupDisplayName("202")
                 .build();
-        return Arrays.asList(accountingOemFsCellGroup);
+        AccountingOemFsCellGroup accountingOemFsCellGroup2 = AccountingOemFsCellGroup.builder()
+                .oemId("GM")
+                .year(2021)
+                .country("US")
+                .groupCode("_203")
+                .automatePcl("203A")
+                .autosoftPcl("0103A")
+                .rrPcl("203A")
+                .cdkPcl("1A03")
+                .quorumPcl("203B")
+                .groupDisplayName("203")
+                .build();
+        return Arrays.asList(accountingOemFsCellGroup,accountingOemFsCellGroup2);
     }
 
     private AccountingOemFsCellGroup getPclDetailsDto() {
