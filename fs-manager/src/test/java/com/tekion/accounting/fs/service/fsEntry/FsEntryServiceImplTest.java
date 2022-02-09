@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.service.fsEntry;
 
 
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
@@ -212,6 +213,31 @@ public class FsEntryServiceImplTest extends TestCase {
         assertEquals(argumentCaptor.getValue().getId(), id);
     }
 
+    @Test
+    public void testUpdateFsTypeForFsEntry(){
+        Mockito.when(fsEntryRepo.findByIdAndDealerId(Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntry());
+        fsEntryService.updateFsTypeForFsEntry("1234", FSType.OEM);
+        ArgumentCaptor<String> argumentCaptor1 = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> argumentCaptor2 = ArgumentCaptor.forClass(String.class);
+        verify(fsEntryRepo, times(1)).updateFsTypeForFsEntry(argumentCaptor1.capture(), argumentCaptor2.capture());
+        assertEquals(argumentCaptor2.getValue(), FSType.OEM.name());
+    }
+
+    @Test
+    public void testUpdateFsTypeForFsEntrySameType(){
+        Mockito.when(fsEntryRepo.findByIdAndDealerId(Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntry());
+        fsEntryService.updateFsTypeForFsEntry("1234", FSType.INTERNAL);
+        assertEquals(Long.valueOf(0), fsEntryService.updateFsTypeForFsEntry("1234", FSType.INTERNAL));
+    }
+
+    @Test
+    public void testUpdateFsTypeForFsEntryIfConsolidated(){
+        FSEntry fsEntry=getFSEntry();
+        fsEntry.setFsType(FSType.CONSOLIDATED.name());
+        Mockito.when(fsEntryRepo.findByIdAndDealerId(Mockito.anyString(), Mockito.anyString())).thenReturn(fsEntry);
+        assertEquals(Long.valueOf(0), fsEntryService.updateFsTypeForFsEntry("1234", FSType.OEM));
+    }
+
     private FsMappingInfosResponseDto getFsMappingInfosResponseDto() {
         List<String> dealerIds = new ArrayList<>();
         dealerIds.add("1");
@@ -290,6 +316,7 @@ public class FsEntryServiceImplTest extends TestCase {
         fsEntry.setOemId("Acura");
         fsEntry.setId("6155a7d8b3cb1f0006868cd6");
         fsEntry.setSiteId("-1_5");
+        fsEntry.setFsType(FSType.INTERNAL.name());
         return fsEntry;
     }
 

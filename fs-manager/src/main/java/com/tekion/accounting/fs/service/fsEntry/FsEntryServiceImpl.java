@@ -346,4 +346,21 @@ public class FsEntryServiceImpl implements FsEntryService {
     entry.setModifiedByUserId(UserContextProvider.getCurrentUserId());
     return fsEntryRepo.save(entry);
   }
+
+  @Override
+  public Long updateFsTypeForFsEntry(String fsId, FSType changedType) {
+    FSEntry fsEntry = getFSEntryById(fsId);
+    if (Objects.isNull(fsEntry)) {
+      log.error("Invalid fsId {}", fsId);
+      return Long.valueOf(0);
+    }
+    if (FSType.CONSOLIDATED.name().equals(fsEntry.getFsType())) {
+      log.info("FsType can not be changed for this fsId {} because its type is  {}", fsId, fsEntry.getFsType());
+      return Long.valueOf(0);
+    } else if (changedType.name().equals(fsEntry.getFsType())) {
+      log.info("FsType for this  fsId {} is already  {}", fsId, changedType);
+      return Long.valueOf(0);
+    }
+    return fsEntryRepo.updateFsTypeForFsEntry(fsId, changedType.name());
+  }
 }

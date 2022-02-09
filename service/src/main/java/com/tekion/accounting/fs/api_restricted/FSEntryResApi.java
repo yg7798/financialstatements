@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.api_restricted;
 
+import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import lombok.RequiredArgsConstructor;
@@ -20,5 +21,13 @@ public class FSEntryResApi {
 	@DeleteMapping("/{fsId}")
 	public ResponseEntity deleteMappingInfo(@PathVariable @NotBlank String fsId){
 		return TResponseEntityBuilder.okResponseEntity(fsEntryService.deleteFsEntryById(fsId));
+	}
+
+	/**
+	 * This is for changing FS type of FS_Entry
+	 */
+	@PutMapping("/updateFsType/{fsId}/type/{type}")
+	public ResponseEntity updateFsTypeOfFsEntry(@PathVariable @NotBlank String fsId, @PathVariable("type") @NotBlank FSType type) {
+		return TResponseEntityBuilder.okResponseEntity(fsEntryService.updateFsTypeForFsEntry(fsId, type));
 	}
 }

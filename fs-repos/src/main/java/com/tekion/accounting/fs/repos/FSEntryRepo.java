@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.repos;
 
+import com.amazonaws.services.dynamodbv2.xspec.S;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.enums.FSType;
 
@@ -65,5 +66,5 @@ public interface FSEntryRepo {
 
     List<FSEntry> getFsEntriesByOemIds(List<String> oemIds, Integer year, String dealerId);
 
-
+    Long updateFsTypeForFsEntry(String fsId, String changedType);
 }

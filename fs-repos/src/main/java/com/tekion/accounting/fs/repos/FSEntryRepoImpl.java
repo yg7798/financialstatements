@@ -278,7 +278,7 @@ public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> imp
 
     @Override
     public List<FSEntry> getFsEntriesByOemIds(FSType fsType, List<String> oemIds, Integer year, String dealerId) {
-        Criteria criteria = getFsEntriesByOemIdsCriteria( oemIds, year, dealerId);;
+        Criteria criteria = getFsEntriesByOemIdsCriteria( oemIds, year, dealerId);
         criteria.and(FS_TYPE).is(fsType);
         return this.findAll(criteria, this.getBeanClass(), this.getMongoTemplate());
     }
@@ -287,6 +287,16 @@ public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> imp
     public List<FSEntry> getFsEntriesByOemIds(List<String> oemIds, Integer year, String dealerId){
         Criteria criteria = getFsEntriesByOemIdsCriteria( oemIds, year, dealerId);
         return this.findAll(criteria, this.getBeanClass(), this.getMongoTemplate());
+    }
+
+    @Override
+    public Long updateFsTypeForFsEntry(String fsId, String changedType) {
+        Criteria criteria = criteriaForNonDeleted().and(ID).is(fsId);
+        Update update = new Update();
+        update.set(FS_TYPE, changedType);
+        update.set(TConstants.MODIFIED_TIME,System.currentTimeMillis());
+        update.set(TConstants.MODIFIED_BY_USER_ID, UserContextProvider.getCurrentUserId());
+        return getMongoTemplate().updateMulti(Query.query(criteria), update, FSEntry.class).getModifiedCount();
     }
 
     Criteria getFsEntriesByOemIdsCriteria(List<String> oemIds, Integer year, String dealerId){
