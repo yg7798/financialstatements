@@ -51,9 +51,10 @@ public class KiaFSServiceImpl extends AbstractFinancialStatementService {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; file=Kia.txt");
         try{
-            writeHeader(fsMap.get("YTD").getHeader(), response.getWriter(), requestDto.getTillEpoch());
+            writeHeader(fsMap.get("YTD").getHeader(), fsMap.get("MTD").getHeader(), response.getWriter(), requestDto.getTillEpoch());
             writeAccountDetails(fsMap.get("YTD"), response.getWriter());
-            writeExtras(response.getWriter(), fsMap.get("YTD").getHeader());
+            writeAccountDetails(fsMap.get("MTD"), response.getWriter());
+            writeExtras(response.getWriter(), fsMap.get("YTD").getHeader(), fsMap.get("MTD").getHeader());
         } catch (IOException e){
             log.error("Error while downloading Financial Statement", e);
             throw new TBaseRuntimeException(AccountingError.ioError);
@@ -74,7 +75,7 @@ public class KiaFSServiceImpl extends AbstractFinancialStatementService {
      * FS.HEADER:202009,YTD,1775
      * */
 
-    private void writeHeader(Header header, PrintWriter writer, long tillEpoch){
+    private void writeHeader(Header ytdHeader, Header mtdHeader, PrintWriter writer, long tillEpoch){
 
         Date date = new Date(tillEpoch);
         DateFormat format = new SimpleDateFormat("yyyyMMdd HHmmss");
@@ -82,17 +83,18 @@ public class KiaFSServiceImpl extends AbstractFinancialStatementService {
         String[] dateTime = format.format(date).split(" ");
 
         String firstLine = String.format("FS.IDENT:XX,XXX,XXX.XX,%s,%s,%s,11,01,KI,DCS,N,USA,,RR12345,00000000110000000001,Accounting,,,,"
-            ,dateTime[0], dateTime[1], header.getDealerCode());
+            ,dateTime[0], dateTime[1], ytdHeader.getDealerCode());
 
         writer.println(firstLine);
-        writer.println(String.format("FS.HEADER:%s,%s,%s", header.getAccountingDate().replace("-", ""), header.getAccountingTerm(), header.getCount()));
+        writer.println(String.format("FS.HEADER:%s,%s,%s", ytdHeader.getAccountingDate().replace("-", ""),
+                ytdHeader.getAccountingTerm(), ytdHeader.getCount()+mtdHeader.getCount()));
     }
 
     /**
      * FS.TRAILER:1776
      * */
-    private void writeExtras(PrintWriter writer, Header header){
-        String lastLine = String.format("FS.TRAILER: %d", Integer.parseInt(header.getCount())+1);
+    private void writeExtras(PrintWriter writer, Header ytdHeader, Header mtdHeader){
+        String lastLine = String.format("FS.TRAILER: %d", Integer.parseInt(ytdHeader.getCount()+mtdHeader)+1);
         writer.println(lastLine);
     }
 }
