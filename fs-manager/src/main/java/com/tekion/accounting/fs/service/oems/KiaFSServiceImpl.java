@@ -86,15 +86,17 @@ public class KiaFSServiceImpl extends AbstractFinancialStatementService {
             ,dateTime[0], dateTime[1], ytdHeader.getDealerCode());
 
         writer.println(firstLine);
+        int recordsCount = Integer.parseInt(ytdHeader.getCount()) + Integer.parseInt(mtdHeader.getCount());
         writer.println(String.format("FS.HEADER:%s,%s,%s", ytdHeader.getAccountingDate().replace("-", ""),
-                ytdHeader.getAccountingTerm(), ytdHeader.getCount()+mtdHeader.getCount()));
+                ytdHeader.getAccountingTerm(), recordsCount));
     }
 
     /**
      * FS.TRAILER:1776
      * */
     private void writeExtras(PrintWriter writer, Header ytdHeader, Header mtdHeader){
-        String lastLine = String.format("FS.TRAILER: %d", Integer.parseInt(ytdHeader.getCount()+mtdHeader)+1);
+        int count = Integer.parseInt(ytdHeader.getCount()) + Integer.parseInt(mtdHeader.getCount())+1;
+        String lastLine = String.format("FS.TRAILER: %d", count);
         writer.println(lastLine);
     }
 }
