@@ -23,5 +23,6 @@ public class HCWorksheet extends TBaseMongoBean {
     private String createdByUserId;
     private String modifiedByUserId;
     private String dealerId;
+    private String tenantId;
     private String siteId;
 }

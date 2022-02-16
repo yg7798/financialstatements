@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.beans.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tekion.core.beans.TBaseMongoBean;
+import com.tekion.core.utils.UserContextProvider;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class OEMFsCellCodeSnapshot extends TBaseMongoBean {
 	private String fsId;
 	private int version;
 	private String dealerId;
+	private String tenantId;
 	private String code;
 	private BigDecimal value;
 	private Long timestamp;
@@ -43,5 +45,6 @@ public class OEMFsCellCodeSnapshot extends TBaseMongoBean {
 		this.version = version;
 		this.siteId = siteId;
 		this.fsType = fsType;
+		this.tenantId= UserContextProvider.getCurrentTenantId();
 	}
 }

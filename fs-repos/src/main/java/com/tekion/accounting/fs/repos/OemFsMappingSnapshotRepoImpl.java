@@ -2,11 +2,13 @@ package com.tekion.accounting.fs.repos;
 
 import com.google.common.collect.Lists;
 import com.mongodb.bulk.BulkWriteUpsert;
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMappingSnapshot;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
@@ -178,5 +180,11 @@ public class OemFsMappingSnapshotRepoImpl  extends BaseDealerLevelMongoRepositor
             bulkOperations.upsert(query,update);
         });
         return bulkOperations.execute().getUpserts();
+    }
+
+    @Override
+    public Integer addTenantId(){
+        BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(),   OemFsMappingSnapshot.class);
+        return bulkOperations.execute().getModifiedCount();
     }
 }

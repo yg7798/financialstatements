@@ -30,4 +30,6 @@ public interface OemFsMappingSnapshotRepo {
 
     void updateFsIdInOemFsMappingSnapshots(FSEntry fsEntry);
     List<BulkWriteUpsert> updateSiteIdInBulk(Collection<OemFsMappingSnapshot> oemFsMappingSnapshots , String dealerId);
+
+    Integer addTenantId();
 }

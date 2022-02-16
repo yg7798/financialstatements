@@ -18,4 +18,5 @@ public interface HCWorksheetRepo {
     void updateDefaultSiteId(String dealerId);
     void updateFsIdInHCWorksheets(FSEntry fsEntry);
     List<HCWorksheet> findByOemIdYearVersion(String oemId, int year, int version);
+    Integer addTenantId();
 }

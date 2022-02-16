@@ -46,6 +46,7 @@ public class FSEntry extends TBaseMongoBean implements Cloneable{
 	 */
 	private List<String> dealerIds;
 	private String dealerId;
+	private String tenantId;
 	private String createdByUserId;
 	private String modifiedByUserId;
 	private String parentFsEntryRef;

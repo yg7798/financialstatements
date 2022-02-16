@@ -3,6 +3,7 @@ package com.tekion.accounting.fs.repos;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.bulk.BulkWriteResult;
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
@@ -95,5 +96,11 @@ public class OEMFinancialMappingRepositoryImpl extends BaseDealerLevelMongoRepos
         update.set(TConstants.MODIFIED_TIME,System.currentTimeMillis());
         update.set(TConstants.MODIFIED_BY_USER_ID, UserContextProvider.getCurrentUserId());
         getMongoTemplate().updateMulti(Query.query(criteria), update, OEMFinancialMapping.class);
+    }
+
+    @Override
+    public Integer addTenantId(){
+        BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(), OEMFinancialMapping.class);
+        return bulkOperations.execute().getModifiedCount();
     }
 }

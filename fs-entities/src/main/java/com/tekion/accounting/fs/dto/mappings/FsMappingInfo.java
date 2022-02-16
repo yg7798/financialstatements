@@ -25,4 +25,5 @@ public class FsMappingInfo {
     private String modifiedByUserId;
     private Long lastModifiedTime;
     private List<String> dealerIds;
+    private String tenantId;
 }

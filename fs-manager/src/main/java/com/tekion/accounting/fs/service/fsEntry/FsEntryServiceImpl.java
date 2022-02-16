@@ -164,6 +164,7 @@ public class FsEntryServiceImpl implements FsEntryService {
               .unmappedAccounts(validGLAccountIds.size() - ((int) count))
               .lastModifiedTime(fsEntry.getModifiedTime())
               .modifiedByUserId(fsEntry.getModifiedByUserId())
+              .tenantId(fsEntry.getTenantId())
               .build();
 
       if (TCollectionUtils.isNotEmpty(oemFsMappingList)) {
@@ -308,7 +309,7 @@ public class FsEntryServiceImpl implements FsEntryService {
     //TODO: Review
     ESResponse<GLAccount> glAccountESResponse = accountingClient.getGLAccountList(tekSearchRequest).getData();
     Set<String> glAccountIds = Sets.newLinkedHashSet();
-    if(glAccountESResponse != null){
+    if (glAccountESResponse != null) {
       glAccountESResponse.getHits().forEach(glAccount -> glAccountIds.add(glAccount.getId()));
     }
     return glAccountIds;

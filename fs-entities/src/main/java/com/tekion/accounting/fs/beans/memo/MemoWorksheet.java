@@ -29,6 +29,7 @@ public class MemoWorksheet extends TBaseMongoBean {
     private String fieldType;
 
     private String dealerId;
+    private String tenantId;
     private String siteId;
     private String createdByUserId;
     private String modifiedByUserId;

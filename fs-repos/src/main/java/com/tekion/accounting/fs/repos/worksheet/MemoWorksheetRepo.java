@@ -24,4 +24,5 @@ public interface MemoWorksheetRepo {
     void updateDefaultSiteId(String dealerId);
     void updateFsIdInMemoWorksheet(FSEntry fsEntry);
     List<MemoWorksheet> findForOemByYearOemIdVersion(String oemId, int year, int version);
+    Integer addTenantId();
 }

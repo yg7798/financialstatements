@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.repos.worksheet;
 
 import com.mongodb.bulk.BulkWriteUpsert;
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.OemTemplate;
@@ -164,5 +165,11 @@ public class MemoWorksheetRepoImpl extends BaseDealerLevelMongoRepository<MemoWo
         criteria.and(TConstants.YEAR).is(year);
         criteria.and(TConstants.VERSION).is(version);
         return this.getMongoTemplate().find(Query.query(criteria),MemoWorksheet.class);
+    }
+
+    @Override
+    public Integer addTenantId(){
+        BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(), MemoWorksheet.class);
+        return bulkOperations.execute().getModifiedCount();
     }
 }

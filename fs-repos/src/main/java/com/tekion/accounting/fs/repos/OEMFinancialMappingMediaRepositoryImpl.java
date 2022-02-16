@@ -1,9 +1,12 @@
 package com.tekion.accounting.fs.repos;
 
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
 import com.tekion.accounting.fs.beans.mappings.OEMFinancialMappingMedia;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -32,5 +35,11 @@ public class OEMFinancialMappingMediaRepositoryImpl extends
                 .and(OEMFinancialMapping.OEM_ID).is(oem)
                 .and(OEMFinancialMapping.YEAR).is(year);
         return this.getMongoTemplate().findOne(Query.query(criteria), OEMFinancialMappingMedia.class);
+    }
+
+    @Override
+    public Integer addTenantId(){
+        BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(), OEMFinancialMappingMedia.class);
+        return bulkOperations.execute().getModifiedCount();
     }
 }

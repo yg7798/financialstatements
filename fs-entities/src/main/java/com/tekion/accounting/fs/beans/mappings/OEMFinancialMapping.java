@@ -25,5 +25,6 @@ public class OEMFinancialMapping extends TBaseMongoBean {
 	private String glAccountDealerId;
 	private String oemAccountNumber;
 	private String dealerId;
+	private String tenantId;
 	private String siteId;
 }

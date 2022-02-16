@@ -4,6 +4,7 @@ import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.accountingInfo.FSPreferences;
 import com.tekion.accounting.fs.beans.accountingInfo.FsOemPayloadInfo;
 import com.tekion.core.utils.TCollectionUtils;
+import com.tekion.core.utils.UserContextProvider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ public class AccountingInfoDto {
         AccountingInfo info = new AccountingInfo();
         info.setBsdPresent(bsdPresent);
         info.setNodPresent(nodPresent);
+        info.setTenantId(UserContextProvider.getCurrentTenantId());
         info.setFsRoundOffOffset(fsRoundOffOffset);
         info.setSupportedOEMs(supportedOEMs);
         info.setPrimaryOEM(primaryOEM);

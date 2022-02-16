@@ -46,6 +46,7 @@ public class FsEntryCreateDto {
 				.version(version)
 				.dealerId(UserContextProvider.getCurrentDealerId())
 				.fsType(fsType.name())
+				.tenantId(UserContextProvider.getCurrentTenantId())
 				.dealerIds(dealerIds)
 				.siteId(siteId)
 				.migrationMetaDataForFsEntry(migrationMetaDataForFsEntry)

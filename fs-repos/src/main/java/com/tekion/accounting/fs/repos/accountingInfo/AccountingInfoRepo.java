@@ -11,4 +11,6 @@ public interface AccountingInfoRepo {
 	List<AccountingInfo> findByDealerIdNonDeleted(Collection<String> DealerIds);
 
 	AccountingInfo save(AccountingInfo info);
+
+	Integer addTenantId();
 }

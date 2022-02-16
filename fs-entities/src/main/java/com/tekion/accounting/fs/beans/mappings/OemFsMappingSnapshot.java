@@ -34,12 +34,14 @@ public class OemFsMappingSnapshot extends TBaseMongoBean {
 	private String siteId;
 
 	private String dealerId;
+	private String tenantId;
 	private String createdByUserId;
 
 	public static OemFsMappingSnapshot fromOemMapping(OemFsMapping oemFsMapping,int month, String fsId){
 		OemFsMappingSnapshot oemFsMappingSnapshot =  new OemFsMappingSnapshot();
 		oemFsMappingSnapshot.setFsId(fsId);
 		oemFsMappingSnapshot.setDealerId(oemFsMapping.getDealerId());
+		oemFsMappingSnapshot.setTenantId(oemFsMapping.getTenantId());
 		oemFsMappingSnapshot.setSiteId(oemFsMapping.getSiteId());
 		oemFsMappingSnapshot.setGlAccountId(oemFsMapping.getGlAccountId());
 		oemFsMappingSnapshot.setCreatedByUserId(UserContextProvider.getCurrentUserId());
@@ -59,6 +61,7 @@ public class OemFsMappingSnapshot extends TBaseMongoBean {
 		mapping.setGlAccountId(snapshot.getGlAccountId());
 		mapping.setYear(snapshot.getYear());
 		mapping.setDealerId(snapshot.getDealerId());
+		mapping.setTenantId(snapshot.getTenantId());
 		mapping.setSiteId(snapshot.getSiteId());
 		mapping.setOemId(snapshot.getOemId());
 		return mapping;

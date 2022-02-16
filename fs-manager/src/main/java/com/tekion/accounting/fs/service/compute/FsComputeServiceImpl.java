@@ -2062,6 +2062,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 				snapshot.setMonth(sMonth);
 				snapshot.setYear(dto.getSnapshotYear());
 				snapshot.setFsId(dto.getFsId());
+				snapshot.setTenantId(UserContextProvider.getCurrentTenantId());
 				fsMappingSnapshots.add(snapshot);
 			});
 		}
@@ -2123,6 +2124,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 				.oemAccountNumber(dto.getOemAccountNumber())
 				.fsId(mappingRequest.getFsId())
 				.dealerId(getCurrentDealerId())
+				.tenantId(UserContextProvider.getCurrentTenantId())
 				.build();
 
 		String id = dto.getId();

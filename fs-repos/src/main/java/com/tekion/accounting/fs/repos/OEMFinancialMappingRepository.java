@@ -16,4 +16,6 @@ public interface OEMFinancialMappingRepository {
     OemFsMapping save(OemFsMapping oemFsMapping);
 
     void updateDefaultSiteId(String dealerId);
+
+    Integer addTenantId();
 }

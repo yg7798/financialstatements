@@ -51,4 +51,6 @@ public interface OemFSMappingRepo {
     List<OemFsMapping> findMappingsByGroupCodeAndFsIds(List<String> groupCodes, Set<String> fsIds, String dealerId);
 
     void hardDeleteMappings(Collection<String> fsIds);
+
+    Integer addTenantId();
 }

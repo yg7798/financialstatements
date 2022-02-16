@@ -3,6 +3,7 @@ package com.tekion.accounting.fs.repos;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.utils.TMongoUtils;
@@ -307,4 +308,9 @@ public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> imp
         return criteria;
     }
 
+    @Override
+    public Integer addTenantId(){
+        BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(), FSEntry.class);
+        return bulkOperations.execute().getModifiedCount();
+    }
 }

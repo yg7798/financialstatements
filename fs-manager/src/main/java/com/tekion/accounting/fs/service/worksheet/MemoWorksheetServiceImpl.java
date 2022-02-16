@@ -95,6 +95,7 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 		MemoWorksheet saved = memoWorksheetRepo.findById(memoWorksheet.getId());
 		TPreConditions.notNull(saved, "memoWorksheet.not.found");
 		Collections.sort(memoWorksheet.getValues());
+		saved.setTenantId(UserContextProvider.getCurrentTenantId());
 		saved.setValues(memoWorksheet.getValues());
 		saved.setModifiedTime(System.currentTimeMillis());
 		saved.setModifiedByUserId(UserContextProvider.getCurrentUserId());

@@ -34,4 +34,5 @@ public interface OEMFsCellCodeSnapshotRepo {
 
     List<OEMFsCellCodeSnapshot> getFsCellCodeByTimestamp(long fromTimestamp, long toTimestamp, Set<String> codes,
                                                          String oemId, String dealerId, String siteId);
+    Integer addTenantId();
 }

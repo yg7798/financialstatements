@@ -21,4 +21,5 @@ public class OEMFinancialMappingMedia extends TBaseMongoBean {
 	private String oemId;
 	private String fsId;
 	private String dealerId;
+	private String tenantId;
 }

@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
 import com.mongodb.bulk.BulkWriteUpsert;
 import com.mongodb.client.result.UpdateResult;
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.common.TConstants;
@@ -293,5 +294,11 @@ public class OemFSMappingRepoImpl extends BaseDealerLevelMongoRepository<OemFsMa
     public void hardDeleteMappings(Collection<String> fsIds) {
         Criteria criteria =  Criteria.where(FS_ID).in(fsIds);
         this.getMongoTemplate().remove(Query.query(criteria), OemFsMapping.class);
+    }
+
+    @Override
+    public Integer addTenantId(){
+        BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(), OemFsMapping.class);
+        return bulkOperations.execute().getModifiedCount();
     }
 }

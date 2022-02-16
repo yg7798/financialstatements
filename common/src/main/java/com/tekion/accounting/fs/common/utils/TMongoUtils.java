@@ -7,6 +7,7 @@ import com.tekion.core.es.common.i.ITekSearchFilter;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 
 @Slf4j
 public class TMongoUtils {
@@ -133,6 +135,15 @@ public class TMongoUtils {
 			}
 		}
 		return update;
+	}
+
+	public static BulkOperations addTenantIdInMongoBean(MongoTemplate mongoTemplate, Class beanClass){
+		BulkOperations bulkOperations = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, beanClass);
+		Criteria criteria = Criteria.where(TConstants.DEALER_ID_KEY).is(UserContextProvider.getCurrentDealerId()).and(TConstants.TENANT_ID_KEY).is(null);
+		Update update = new Update();
+		update.set(TConstants.TENANT_ID_KEY, UserContextProvider.getCurrentTenantId());
+		bulkOperations.updateMulti(Query.query(criteria), update);
+		return bulkOperations;
 	}
 
 //	public static Query mongoQuery(TekSearchRequest request){

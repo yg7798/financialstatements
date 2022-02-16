@@ -22,6 +22,7 @@ public class AccountingInfo extends TBaseMongoBean {
     private boolean nodPresent; // New Other Dep
     private Boolean fsRoundOffOffset;
     private String dealerId;
+    private String tenantId;
     private String primaryOEM;
     private Set<String> supportedOEMs = new HashSet<>();
     private String createdByUserId;

@@ -1,7 +1,9 @@
 package com.tekion.accounting.fs.repos.accountingInfo;
 
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.mongo.BaseTenantLevelMongoRepository;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
@@ -35,5 +37,11 @@ public class AccountingInfoRepoImpl extends BaseTenantLevelMongoRepository<Accou
 	@Override
 	public AccountingInfo save(AccountingInfo info) {
 		return super.save(info);
+	}
+
+	@Override
+	public Integer addTenantId(){
+		BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(),AccountingInfo.class);
+		return bulkOperations.execute().getModifiedCount();
 	}
 }

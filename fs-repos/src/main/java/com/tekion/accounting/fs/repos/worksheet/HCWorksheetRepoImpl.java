@@ -2,10 +2,12 @@ package com.tekion.accounting.fs.repos.worksheet;
 
 import com.google.common.collect.Lists;
 import com.mongodb.bulk.BulkWriteUpsert;
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.memo.HCWorksheet;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import com.tekion.core.serverconfig.beans.ModuleName;
 import com.tekion.core.utils.TCollectionUtils;
@@ -120,5 +122,11 @@ public class HCWorksheetRepoImpl extends BaseDealerLevelMongoRepository<HCWorksh
         criteria.and(TConstants.YEAR).is(year);
         criteria.and(TConstants.VERSION).is(version);
         return this.getMongoTemplate().find(Query.query(criteria),HCWorksheet.class);
+    }
+
+    @Override
+    public Integer addTenantId(){
+        BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(), HCWorksheet.class);
+        return bulkOperations.execute().getModifiedCount();
     }
 }

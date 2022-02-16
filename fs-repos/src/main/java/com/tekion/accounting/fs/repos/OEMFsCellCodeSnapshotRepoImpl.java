@@ -1,11 +1,13 @@
 package com.tekion.accounting.fs.repos;
 
 import com.mongodb.bulk.BulkWriteUpsert;
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.OEMFsCellCodeSnapshot;
 import com.tekion.accounting.fs.beans.mappings.OEMFinancialMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
+import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import com.tekion.core.utils.TCollectionUtils;
@@ -215,5 +217,11 @@ public class OEMFsCellCodeSnapshotRepoImpl extends BaseDealerLevelMongoRepositor
                 .and(FS_TYPE).is(FSType.OEM.name());
 
         return this.getMongoTemplate().find(Query.query(criteria), OEMFsCellCodeSnapshot.class);
+    }
+
+    @Override
+    public Integer addTenantId(){
+        BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(), OEMFsCellCodeSnapshot.class);
+        return bulkOperations.execute().getModifiedCount();
     }
 }

@@ -50,6 +50,7 @@ public class OemFsMapping extends TBaseMongoBean implements Cloneable{
 	private MigrationMetaDataForFsEntry migrationMetaDataForFsEntry;
 
 	private String dealerId;
+	private String tenantId;
 	private String siteId;
 	private String createdByUserId;
 	private String modifiedByUserId;
@@ -67,6 +68,7 @@ public class OemFsMapping extends TBaseMongoBean implements Cloneable{
 		snapshot.setGlAccountId(glAccountId);
 		snapshot.setOemId(oemId);
 		snapshot.setDealerId(UserContextProvider.getCurrentDealerId());
+		snapshot.setTenantId(UserContextProvider.getCurrentTenantId());
 		snapshot.setSiteId(siteId);
 		snapshot.setCreatedTime(System.currentTimeMillis());
 		snapshot.setModifiedTime(System.currentTimeMillis());
