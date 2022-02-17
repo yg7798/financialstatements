@@ -26,6 +26,7 @@ import com.tekion.printerclient.PrinterClient;
 import com.tekion.printerclientv2.PrinterClientV2;
 import com.tekion.sdk.storage.s3.S3ObjectStorageService;
 import feign.codec.ErrorDecoder;
+import io.netty.util.concurrent.DefaultEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,10 +36,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
@@ -46,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -149,5 +153,10 @@ public class BeanFactory {
 	@Bean
 	public NotificationsV2Client createNotificationClient(NotificationsV2ClientFactory factory) {
 		return factory.createClient();
+	}
+
+	@Bean
+	public ExecutorService executorService() {
+		return new DefaultEventExecutor();
 	}
 }

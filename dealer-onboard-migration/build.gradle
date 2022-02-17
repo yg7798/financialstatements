@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+group 'com.tekion.accounting.fs'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://tkartifactory.tekioncloud.xyz/repository/tek-product-maven-snapshots'
+        credentials  {
+            username = "${mavenUser}"
+            password = "${mavenPassword}"
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    compile('com.tekion.sdk:migrationcommon:1.2.53-SNAPSHOT'){
+        exclude group: 'com.tekion.sdk', module: 'exportlib'
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+    }
+    compile( 'com.tekion.sdk:migrationsupport:2.0.10-SNAPSHOT')
+    compile project(':fs-manager')
+    compile('com.tekion.sdk:exportlib:0.0.39-SNAPSHOT')
+}
+
+test {
+    useJUnitPlatform()
+}

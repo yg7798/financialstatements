@@ -5,3 +5,5 @@ include 'client'
 include 'fs-entities'
 include 'fs-repos'
 include 'common'
+include 'dealer-onboard-migration'
+

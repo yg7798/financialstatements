@@ -44,7 +44,8 @@ List<String> exclusionList=[
         "**/com/tekion/accounting/fs/client/**",
         "**/common/**",
         "**/models/**",
-        "**/*Context.java"
+        "**/*Context.java",
+        "**/dealer-onboard-migration/**"
 ]
 
 

@@ -65,6 +65,7 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean implements Cloneabl
 	private String pbsPcl;
 	private String oemAccountNumber;
 	private String dealerTrackPcl;
+	private String disPcl;
 	private FsCellCodeSource source;
 
 	public void updateGroupCodes(AccountingOemFsCellGroup toUpdate) {
