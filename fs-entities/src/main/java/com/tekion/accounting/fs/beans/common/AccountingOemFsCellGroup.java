@@ -40,6 +40,12 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean implements Cloneabl
 	public static final String AUTOMATE_PCL_CODE = "automatePcl";
 	public static final String GROUP_DISPLAY_NAME = "groupDisplayName";
 	public static final String GROUP_CODE = "groupCode";
+	public static final String RR_PCL = "rrPcl";
+	public static final String DOMINION_PCL = "dominionPcl";
+	public static final String QUORUM_PCL = "quorumPcl";
+	public static final String AUTOSOFT_PCL = "autosoftPcl";
+	public static final String PBS_PCL = "pbsPcl";
+	public static final String DEALER_TRACK_PCL = "dealerTrackPcl";
 
 
 	private String oemId;

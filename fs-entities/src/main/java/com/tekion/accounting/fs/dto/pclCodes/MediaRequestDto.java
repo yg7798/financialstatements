@@ -8,6 +8,15 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 public class MediaRequestDto {
-    @NotNull
     String mediaId;
+    @NotNull
+    PclCodeEnum dmsType;
+    @NotNull
+    String oemId;
+    @NotNull
+    Integer year;
+    @NotNull
+    String country;
+    @NotNull
+    String preSignedUrl;
 }

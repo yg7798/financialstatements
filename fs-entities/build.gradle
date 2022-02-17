@@ -33,4 +33,5 @@ dependencies {
     compile('com.tekion.sdk:mongosupport:2.0.11-SNAPSHOT')
     compile project(':common')
     compile('com.github.ozlerhakan:poiji:3.1.1')
+    compile('com.tekion.sdk:exportlib:0.0.39-SNAPSHOT')
 }

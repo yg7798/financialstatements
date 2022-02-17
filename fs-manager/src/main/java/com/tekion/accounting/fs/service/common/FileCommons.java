@@ -47,4 +47,9 @@ public class FileCommons {
         return mediaResponse.getResponseMap().get("url");
     }
 
+    public File downloadFileUsingPresignedUrl(String url) throws IOException {
+        File file = File.createTempFile(FileNameUtils.getBaseName(UUID.randomUUID().toString()), TConstants.XLSX_FILE_EXTENSION);
+        downloadFileFromUrl(url, file);
+        return file;
+    }
 }

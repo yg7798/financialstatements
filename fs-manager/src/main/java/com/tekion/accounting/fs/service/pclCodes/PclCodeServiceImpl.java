@@ -10,6 +10,11 @@ import com.tekion.accounting.fs.dto.pclCodes.*;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.repos.OemTemplateRepo;
 import com.tekion.accounting.fs.service.common.FileCommons;
+import com.tekion.accounting.fs.service.common.pdfPrinting.PDFPrintService;
+import com.tekion.accounting.fs.service.common.pdfPrinting.dto.MediaItem;
+import com.tekion.accounting.fs.service.common.pdfPrinting.dto.MediaResponse;
+import com.tekion.accounting.fs.service.externalService.media.MediaInteractorService;
+import com.tekion.core.excelGeneration.models.model.MediaUploadResponse;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.TStringUtils;
@@ -35,6 +40,8 @@ public class PclCodeServiceImpl implements PclCodeService{
     private OemTemplateRepo oemTemplateRepo;
     private OemFsCellGroupRepo oemFsCellGroupRepo;
     private FileCommons fileCommons;
+    private final MediaInteractorService mediaInteractorService;
+    private final PDFPrintService pdfPrintService;
 
     @Override
     public List<OemDetailsResponseDto> getOemDetails() {
@@ -113,6 +120,83 @@ public class PclCodeServiceImpl implements PclCodeService{
             }
         });
         return filteredList;
+    }
+
+    @Override
+    public Map<String, String> downloadOemDetailsAndProvidePresignedUrl(PclDownloadRequestDto requestDto) {
+        List<AccountingOemFsCellGroup> accountingOemFsCellGroupList = oemFsCellGroupRepo.findByOemId(requestDto.getOemId(), requestDto.getYear(), requestDto.getCountry());
+        List<PclUpdateExcelDto> pclUpdateExcelDtoList = new ArrayList<>();
+
+        accountingOemFsCellGroupList.stream().forEach(oemFsCellGroup -> {
+            pclUpdateExcelDtoList.add(PclUpdateExcelDto.builder()
+                    .groupDisplayName(oemFsCellGroup.getGroupDisplayName())
+                    .pclCode(requestDto.getDmsType().getPclCode(oemFsCellGroup))
+                .build());
+        });
+        if(pclUpdateExcelDtoList.size()<=0)
+            throw new TBaseRuntimeException("Error while uploading media!");
+        MediaUploadResponse mediaUploadResponse = mediaInteractorService.getMediaUploadResponse(pclUpdateExcelDtoList, PclUpdateExcelDto.class);
+        if(Objects.isNull(mediaUploadResponse) || TStringUtils.isBlank(mediaUploadResponse.getMediaId())){
+            throw new TBaseRuntimeException("Error while uploading media!");
+        }
+        MediaItem mediaItem = MediaItem.builder()
+                .url(mediaUploadResponse.getObjectURL().toString())
+                .originalFileName(mediaUploadResponse.getOriginalFileName())
+                .id(mediaUploadResponse.getMediaId())
+                .contentType(mediaUploadResponse.getContentType())
+                .build();
+        List<MediaResponse> signedUrl = pdfPrintService.requestMediaServiceForSignedUrl(Arrays.asList(mediaItem));
+        if(Objects.isNull(signedUrl))
+            throw new TBaseRuntimeException("Error while getting preSigned URL!");
+        Map<String, String> responseMap = signedUrl.get(0).getResponseMap();
+        responseMap.put("oemId", requestDto.getOemId());
+        responseMap.put("year",  requestDto.getYear().toString());
+        responseMap.put("country", requestDto.getCountry());
+        responseMap.put("dmsType", requestDto.getDmsType().name());
+        return responseMap;
+    }
+
+    @Override
+    public String updatePclCodes(MediaRequestDto requestDto) {
+        File file = null;
+        try{
+            log.info("PCL bulk update requested for media id {} and dmsType {}", requestDto.getMediaId(), requestDto.getDmsType());
+            file = fileCommons.downloadFileUsingPresignedUrl(requestDto.getPreSignedUrl());
+            validatePclCodeUpdateFile(file);
+            updatePclDetailByGroupCodeAndOemDetails(file, requestDto);
+
+        }catch (Exception e){
+            log.error("Pcl update failed with error: {} ",e);
+            throw new TBaseRuntimeException(FSError.uploadValidPclCodesFile);
+        }finally {
+            if(Objects.nonNull(file)) {
+                file.delete();
+            }
+        }
+        return "success";
+    }
+
+    private void updatePclDetailByGroupCodeAndOemDetails(File file, MediaRequestDto requestDto) {
+        List<AccountingOemFsCellGroup> accountingOemFsCellGroupList = getPclCodeDetails(requestDto.getOemId(), requestDto.getYear(), requestDto.getCountry());
+        List<AccountingOemFsCellGroup> updateCellGroupsInDbList = new ArrayList<>();
+        try {
+            Map<String, AccountingOemFsCellGroup> groupCodeVsFsCellGroupDetailDBMap = TCollectionUtils.transformToMap(accountingOemFsCellGroupList, AccountingOemFsCellGroup::getGroupDisplayName);
+            List<PclUpdateExcelDto> pclUpdateDetails = TCollectionUtils.nullSafeList(Poiji.fromExcel(file, PclUpdateExcelDto.class));
+            Map<String, String> groupCodeVsPclDetailMap = new HashMap<>();
+            pclUpdateDetails.stream().forEach(pclUpdateDetail -> {
+                groupCodeVsPclDetailMap.put(pclUpdateDetail.getGroupDisplayName(), pclUpdateDetail.getPclCode());
+            });
+            for ( Map.Entry<String, String> groupCodeVsPclDetail: groupCodeVsPclDetailMap.entrySet()) {
+                if(groupCodeVsFsCellGroupDetailDBMap.containsKey(groupCodeVsPclDetail.getKey())){
+                    requestDto.getDmsType().setPclCode(groupCodeVsFsCellGroupDetailDBMap.get(groupCodeVsPclDetail.getKey()), groupCodeVsPclDetail.getValue());
+                    updateCellGroupsInDbList.add(groupCodeVsFsCellGroupDetailDBMap.get(groupCodeVsPclDetail.getKey()));
+                }
+            }
+            oemFsCellGroupRepo.upsertBulk(updateCellGroupsInDbList);
+            log.info("Pcl codes updated on db: {}", updateCellGroupsInDbList.size());
+        } catch (Exception e){
+            log.error("Error while updating pcl details {}", e);
+        }
     }
 
     private boolean checkIfFilterTrue(Set<String> filterCodeList, String code) {
