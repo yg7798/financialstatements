@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.repos;
 
+import com.amazonaws.services.guardduty.model.Country;
 import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
 import com.mongodb.bulk.BulkWriteUpsert;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 
+import static com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode.OEM_ID;
 import static com.tekion.accounting.fs.common.TConstants.*;
 
 @Component
@@ -33,20 +35,10 @@ public class FSCellCodeRepoImpl extends BaseGlobalMongoRepository<AccountingOemF
     @Override
     public List<AccountingOemFsCellCode> getFsCellCodesForOemYearAndCountry(String oemId, Integer year, Integer version, String country) {
         Criteria criteria = criteriaForNonDeleted();
-        criteria.and(AccountingOemFsCellCode.OEM_ID).is(oemId);
+        criteria.and(OEM_ID).is(oemId);
         criteria.and(AccountingOemFsCellCode.YEAR).is(year);
         criteria.and(AccountingOemFsCellCode.VERSION).is(version);
         criteria.and(COUNTRY).is(country);
-        return this.getMongoTemplate().find(Query.query(criteria), AccountingOemFsCellCode.class);
-    }
-
-    @Override
-    public List<AccountingOemFsCellCode> getNonDerivedFsCodesForOemByDealerId(String oemId, Integer year, Integer version) {
-        Criteria criteria = criteriaForNonDeleted();
-        criteria.and(AccountingOemFsCellCode.OEM_ID).is(oemId);
-        criteria.and(AccountingOemFsCellCode.YEAR).is(year);
-        criteria.and(AccountingOemFsCellCode.VERSION).is(version);
-        criteria.and(AccountingOemFsCellCode.DERIVED).is(false);
         return this.getMongoTemplate().find(Query.query(criteria), AccountingOemFsCellCode.class);
     }
 
@@ -55,7 +47,7 @@ public class FSCellCodeRepoImpl extends BaseGlobalMongoRepository<AccountingOemF
         Criteria criteria = this.criteriaForNonDeleted();
         criteria.and(AccountingOemFsCellCode.CODE).is(fsCellCode);
         criteria.and(AccountingOemFsCellCode.YEAR).is(year);
-        criteria.and(AccountingOemFsCellCode.OEM_ID).is(oemId);
+        criteria.and(OEM_ID).is(oemId);
         criteria.and(COUNTRY).is(country);
         return this.getMongoTemplate().findOne(Query.query(criteria), this.getBeanClass());
     }
@@ -65,7 +57,7 @@ public class FSCellCodeRepoImpl extends BaseGlobalMongoRepository<AccountingOemF
         Criteria criteria = this.criteriaForNonDeleted();
         criteria.and(AccountingOemFsCellCode.CODE).in(fsCellCodes);
         criteria.and(AccountingOemFsCellCode.YEAR).is(year);
-        criteria.and(AccountingOemFsCellCode.OEM_ID).is(oemId);
+        criteria.and(OEM_ID).is(oemId);
         criteria.and(COUNTRY).is(country);
         return this.getMongoTemplate().find(Query.query(criteria), this.getBeanClass());
     }
@@ -142,6 +134,16 @@ public class FSCellCodeRepoImpl extends BaseGlobalMongoRepository<AccountingOemF
         update.set(MODIFIED_TIME, System.currentTimeMillis());
         update.set(MODIFIED_BY_USER_ID, UserContextProvider.getCurrentUserId());
         getMongoTemplate().updateMulti(q, update, AccountingOemFsCellCode.class);
+    }
+
+    @Override
+    public void remove(String oem, Integer year, String country){
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(COUNTRY).is(country);
+        criteria.and(YEAR).is(year);
+        criteria.and(OEM_ID).is(oem);
+
+        getMongoTemplate().remove(Query.query(criteria), this.getBeanClass());
     }
 
     private String getTimeStampAppended(String code){

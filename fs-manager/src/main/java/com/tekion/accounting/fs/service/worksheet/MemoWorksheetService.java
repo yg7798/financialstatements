@@ -23,4 +23,6 @@ public interface MemoWorksheetService {
 	List<MemoWorksheet> updateActiveFieldsFromPreviousWorksheets(OEM oem, int fromYear, int updatingYear, int version, String siteId);
 	void migrateMemoWorksheetFromOemToFSLevel(String dealerId);
 	List<MemoWorksheet> getMemoWorksheetsForExcel(String fsId,int month,boolean showEmptyValues);
+	List<MemoWorksheet> migrateForMissingKeys(String fsId);
+	void migrateForMissingKeysForAll(String OemId, Integer year, String country);
 }

@@ -18,6 +18,7 @@ import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetTemplateRepo;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
+import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.TPreConditions;
@@ -153,6 +154,56 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 		return migrateWorksheetsForSelectedMemoKeys(fsEntry, memoTemplateKeys);
 	}
 
+	@Override
+	public List<MemoWorksheet> migrateForMissingKeys(String fsId){
+		FSEntry fsEntry = fsEntryRepo.findByIdAndDealerIdWithNullCheck(fsId, UserContextProvider.getCurrentDealerId());
+		Set<String> migratedKeys = memoWorksheetRepo.findByFSId(fsId).stream().map(MemoWorksheet::getKey).collect(Collectors.toSet());
+		List<MemoWorksheetTemplate> memoWorksheetTemplatesToMigrate = memoWorksheetTemplateRepo.findByOemYearAndCountry(fsEntry.getOemId(),
+				fsEntry.getYear(), 1, dealerConfig.getDealerCountryCode());
+
+		return migrateForMissingKeys(fsEntry, memoWorksheetTemplatesToMigrate, migratedKeys);
+	}
+
+	@Override
+	public void migrateForMissingKeysForAll(String oemId, Integer year, String country){
+		if(!country.equalsIgnoreCase(dealerConfig.getDealerCountryCode())){
+			log.info("not migrating {} {} memoWorksheet for missing keys for dealer {}", oemId, year, UserContextProvider.getCurrentDealerId());
+			return;
+		}
+		log.info("migrating {} {} memoWorksheet for missing keys for dealer {}", oemId, year, UserContextProvider.getCurrentDealerId());
+		List<FSEntry> fsEntries = fsEntryRepo.getFsEntriesByOemIds(Collections.singletonList(oemId), year, UserContextProvider.getCurrentDealerId());
+		List<MemoWorksheetTemplate> memoWorksheetTemplatesToMigrate = memoWorksheetTemplateRepo
+				.findByOemYearAndCountry(oemId, year, 1, dealerConfig.getDealerCountryCode());
+		List<MemoWorksheet> migratedWorksheets = memoWorksheetRepo.findByFsIds(fsEntries.stream().map(TBaseMongoBean::getId).collect(Collectors.toList()));
+
+		if(TCollectionUtils.isNotEmpty(fsEntries) && TCollectionUtils.isNotEmpty(memoWorksheetTemplatesToMigrate)){
+			for(FSEntry fsEntry: fsEntries){
+				Set<String> migratedKeys = migratedWorksheets.stream().filter(x -> fsEntry.getId().equals(x.getFsId()))
+						.map(MemoWorksheet::getKey).collect(Collectors.toSet());
+				migrateForMissingKeys(fsEntry, memoWorksheetTemplatesToMigrate, migratedKeys);
+			}
+		}
+	}
+
+
+	private List<MemoWorksheet> migrateForMissingKeys(FSEntry fsEntry,
+													  List<MemoWorksheetTemplate> memoWorksheetTemplatesToMigrate,
+													  Set<String> migratedKeys){
+
+		memoWorksheetTemplatesToMigrate = memoWorksheetTemplatesToMigrate.stream().filter(x-> !migratedKeys
+				.contains(x.getKey())).collect(Collectors.toList());
+
+		List<MemoWorksheet> memoWorksheets = Lists.newArrayList();
+		if(TCollectionUtils.isNotEmpty(memoWorksheetTemplatesToMigrate)){
+			memoWorksheetTemplatesToMigrate.forEach(memoWorksheetTemplate -> {
+				memoWorksheets.add(convertToMemoWorksheet(memoWorksheetTemplate, fsEntry.getId()));
+			});
+			memoWorksheetRepo.insertBulk(memoWorksheets);
+		}
+		return memoWorksheets;
+	}
+
+
 	private List<MemoWorksheet> migrateMemoWorksheetsFromTemplate(FSEntry fsEntry) {
 		List<MemoWorksheet> memoWorksheets;
 		synchronized (this){
@@ -163,7 +214,7 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 				log.info("Migration memo worksheet from template {} {}",fsEntry.getYear(),fsEntry.getVersion());
 				if(TCollectionUtils.isEmpty(memoWorksheetTemplates)) return null;
 				memoWorksheetTemplates.forEach(memoWorksheetTemplate -> {
-					memoWorksheets.add(covertToMemoWorksheet(memoWorksheetTemplate, fsEntry.getId()));
+					memoWorksheets.add(convertToMemoWorksheet(memoWorksheetTemplate, fsEntry.getId()));
 				});
 				FSEntry previousYearEntry = fsEntryRepo.findDefaultTypeWithoutNullCheck(fsEntry.getOemId(),fsEntry.getYear()-1, UserContextProvider.getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext());
 				if(Objects.nonNull(previousYearEntry)){
@@ -187,20 +238,19 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 		List<MemoWorksheet> memoWorksheets = Lists.newArrayList();
 		if(TCollectionUtils.isNotEmpty(memoWorksheetTemplatesToMigrate)){
 			memoWorksheetTemplatesToMigrate.forEach(memoWorksheetTemplate -> {
-				memoWorksheets.add(covertToMemoWorksheet(memoWorksheetTemplate, fsEntry.getId()));
+				memoWorksheets.add(convertToMemoWorksheet(memoWorksheetTemplate, fsEntry.getId()));
 			});
 			memoWorksheetRepo.insertBulk(memoWorksheets);
 		}
 		return memoWorksheets;
 	}
 
-	private MemoWorksheet covertToMemoWorksheet(MemoWorksheetTemplate memoWorksheetTemplate, String fsId) {
+	private MemoWorksheet convertToMemoWorksheet(MemoWorksheetTemplate memoWorksheetTemplate, String fsId) {
 		MemoWorksheet memoWorksheet = new MemoWorksheet();
 		memoWorksheet.setFsId(fsId);
 		memoWorksheet.setDealerId(UserContextProvider.getCurrentDealerId());
 		memoWorksheet.setSiteId(UserContextUtils.getSiteIdFromUserContext());
 		memoWorksheet.setKey(memoWorksheetTemplate.getKey());
-//        memoWorksheet.setName(memoWorksheetTemplate.getName());
 		memoWorksheet.setOemId(memoWorksheetTemplate.getOemId());
 		memoWorksheet.setYear(memoWorksheetTemplate.getYear());
 		memoWorksheet.setVersion(memoWorksheetTemplate.getVersion());
@@ -209,7 +259,6 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 		memoWorksheet.setCreatedByUserId(UserContextProvider.getCurrentUserId());
 		memoWorksheet.setModifiedByUserId(UserContextProvider.getCurrentUserId());
 		memoWorksheet.setFieldType(memoWorksheetTemplate.getFieldType().toString());
-//        memoWorksheet.setDurationTypes(memoWorksheetTemplate.getDurationTypes());
 		List<MemoValue> memoValues = Lists.newArrayList();
 		for(int i=1;i<=12;i++){
 			MemoValue defaultValue = new MemoValue();
@@ -316,7 +365,7 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 		}
 
 		List<MemoWorksheet> finalToMemoSheets = new ArrayList<>();
-		templates.forEach(memoWorksheetTemplate -> finalToMemoSheets.add(covertToMemoWorksheet(memoWorksheetTemplate, fsEntryToYear.getId())));
+		templates.forEach(memoWorksheetTemplate -> finalToMemoSheets.add(convertToMemoWorksheet(memoWorksheetTemplate, fsEntryToYear.getId())));
 		toMemoSheets = finalToMemoSheets;
 
 		copyFromMemoSheets(fromMemoSheets, toMemoSheets, fromMonth, toMonth, memoMap);

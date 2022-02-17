@@ -9,8 +9,6 @@ public interface FSCellCodeRepo {
 
     List<AccountingOemFsCellCode> getFsCellCodesForOemYearAndCountry(String oemId, Integer year, Integer version, String country);
 
-    List<AccountingOemFsCellCode> getNonDerivedFsCodesForOemByDealerId(String oemId, Integer year, Integer version);
-
     AccountingOemFsCellCode save(AccountingOemFsCellCode fsCellCode);
 
     void insertBulk(List<AccountingOemFsCellCode>beans);
@@ -26,4 +24,6 @@ public interface FSCellCodeRepo {
     List<BulkWriteUpsert> delete(List<AccountingOemFsCellCode> fsCellCodes);
 
     void addCountryInOemFsCellCodes();
+
+    void remove(String oem, Integer year, String country);
 }

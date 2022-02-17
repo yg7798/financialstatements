@@ -293,6 +293,31 @@ public class MemoWorksheetServiceImplTest extends TestCase {
         reset(memoWorksheetRepo);
     }
 
+    @Test
+    public void testMigrateForMissingKeys() {
+
+        Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(memoWorksheetRepo.findByFSId(anyString())).thenReturn(memoWorksheets(Arrays.asList("1","3")));
+        Mockito.when(memoWorksheetTemplateRepo.findByOemYearAndCountry(anyString(), anyInt(), anyInt(), anyString()))
+                .thenReturn(memoWorksheetTemplates(Arrays.asList("1", "2")));
+
+        assertEquals(1, memoWorksheetService.migrateForMissingKeys("6155a7d8b3cb1f0006868cd6").size());
+    }
+
+    @Test
+    public void testMigrateForMissingKeysAll() {
+        Mockito.when(fsEntryRepo.getFsEntriesByOemIds(anyList(), anyInt(), anyString())).thenReturn(Collections.singletonList(getFsEntry()));
+        Mockito.when(memoWorksheetTemplateRepo.findByOemYearAndCountry(anyString(), anyInt(), anyInt(), anyString()))
+                .thenReturn(memoWorksheetTemplates(Arrays.asList("1","3")));
+        Mockito.when(memoWorksheetRepo.findByFsIds(anyCollection())).thenReturn(memoWorksheets(Arrays.asList("1","2"), "6155a7d8b3cb1f0006868cd6"));
+        memoWorksheetService.migrateForMissingKeysForAll("Acura", 2021, "us");
+        final ArgumentCaptor<List<MemoWorksheet>> argumentCaptor = ArgumentCaptor.forClass((Class) List.class);
+        verify(memoWorksheetRepo).insertBulk(argumentCaptor.capture());
+        List<MemoWorksheet> capturedArgument = argumentCaptor.getValue();
+        assertEquals(1, capturedArgument.size());
+    }
+
 
 
     private MemoWorksheet getMemoWorksheet1(){
@@ -343,6 +368,11 @@ public class MemoWorksheetServiceImplTest extends TestCase {
 
     private List<MemoWorksheet> memoWorksheets(Collection<String> ids){
         return ids.stream().map(this::memoWorksheet).collect(Collectors.toList());
+    }
+    private List<MemoWorksheet> memoWorksheets(Collection<String> ids, String fsId){
+        List<MemoWorksheet> worksheets = memoWorksheets(ids);
+        worksheets.forEach(x -> x.setFsId(fsId));
+        return worksheets;
     }
 
     private MemoWorksheet getMemoWorksheet2(){

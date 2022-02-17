@@ -10,6 +10,7 @@ import com.tekion.accounting.fs.dto.memo.WorksheetRequestDto;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.service.worksheet.MemoWorksheetService;
 import com.tekion.accounting.fs.service.worksheet.MemoWorksheetTemplateService;
+import com.tekion.accounting.fs.util.ApiHelperUtils;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import com.tekion.core.validation.TValidator;
 import lombok.RequiredArgsConstructor;
@@ -101,6 +102,19 @@ public class MemoWorksheetApi {
 	){
 
 		memoWorksheetService.deleteMemoWorksheetsByKey(memoKeys, fsId);
+		return TResponseEntityBuilder.okResponseEntity("Success");
+	}
+
+	@PostMapping("/migrateForMissingKeys/{fsId}")
+	public ResponseEntity migrateForMissingKeys(@PathVariable String fsId){
+		return TResponseEntityBuilder.okResponseEntity(memoWorksheetService.migrateForMissingKeys(fsId));
+	}
+
+	@PostMapping("/migrateForMissingKeys/{oem}/{year}/{country}/all")
+	public ResponseEntity migrateForMissingKeys(@PathVariable OEM oem, @PathVariable Integer year,
+												@PathVariable String country, @RequestParam(required = false) Integer parallelism){
+		globalService.executeTaskForAllDealers(() -> memoWorksheetService.migrateForMissingKeysForAll(oem.name(), year, country),
+				ApiHelperUtils.getDefaultParallelism(parallelism));
 		return TResponseEntityBuilder.okResponseEntity("Success");
 	}
 }
