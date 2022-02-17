@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.common;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -20,6 +21,7 @@ import com.tekion.core.utils.TGlobalConstants;
 import com.tekion.core.utils.async.DynamicScalingExecutorService;
 import com.tekion.core.utils.async.ScalingThreadPoolExecutor;
 import com.tekion.core.utils.springasync.DelegatingUserContextExecutorServiceToAsyncTaskWrapper;
+import com.tekion.media.library.MediaClient;
 import com.tekion.notificationsv2.client.NotificationsV2Client;
 import com.tekion.notificationsv2.client.NotificationsV2ClientFactory;
 import com.tekion.printerclient.PrinterClient;
@@ -28,6 +30,7 @@ import com.tekion.sdk.storage.s3.S3ObjectStorageService;
 import feign.codec.ErrorDecoder;
 import io.netty.util.concurrent.DefaultEventExecutor;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -159,4 +162,11 @@ public class BeanFactory {
 	public ExecutorService executorService() {
 		return new DefaultEventExecutor();
 	}
+
+	@Bean
+	public MediaClient getMediaClient(ClientBuilder builder, AbstractServiceClientFactory clientFactory, TokenGenerator generator, OkHttpClient okHttpClient, ObjectMapper mapper){
+		return MediaClient.createClient(builder, clientFactory, generator, okHttpClient, mapper);
+	}
+
+
 }

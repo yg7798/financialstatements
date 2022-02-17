@@ -14,10 +14,13 @@ import com.tekion.accounting.fs.service.common.pdfPrinting.PDFPrintService;
 import com.tekion.accounting.fs.service.common.pdfPrinting.dto.MediaItem;
 import com.tekion.accounting.fs.service.common.pdfPrinting.dto.MediaResponse;
 import com.tekion.accounting.fs.service.externalService.media.MediaInteractorService;
+import com.tekion.core.beans.TResponse;
 import com.tekion.core.excelGeneration.models.model.MediaUploadResponse;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.TStringUtils;
+import com.tekion.media.beans.response.PreSignedV2Response;
+import com.tekion.media.library.MediaClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -41,7 +44,7 @@ public class PclCodeServiceImpl implements PclCodeService{
     private OemFsCellGroupRepo oemFsCellGroupRepo;
     private FileCommons fileCommons;
     private final MediaInteractorService mediaInteractorService;
-    private final PDFPrintService pdfPrintService;
+    private final MediaClient mediaClient;
 
     @Override
     public List<OemDetailsResponseDto> getOemDetails() {
@@ -139,16 +142,13 @@ public class PclCodeServiceImpl implements PclCodeService{
         if(Objects.isNull(mediaUploadResponse) || TStringUtils.isBlank(mediaUploadResponse.getMediaId())){
             throw new TBaseRuntimeException("Error while uploading media!");
         }
-        MediaItem mediaItem = MediaItem.builder()
-                .url(mediaUploadResponse.getObjectURL().toString())
-                .originalFileName(mediaUploadResponse.getOriginalFileName())
-                .id(mediaUploadResponse.getMediaId())
-                .contentType(mediaUploadResponse.getContentType())
-                .build();
-        List<MediaResponse> signedUrl = pdfPrintService.requestMediaServiceForSignedUrl(Arrays.asList(mediaItem));
-        if(Objects.isNull(signedUrl))
+        Set<String> mediaIds = new HashSet<>();
+        mediaIds.add(mediaUploadResponse.getMediaId());
+        TResponse<List<PreSignedV2Response>> signedUrl = mediaClient.bulkPreSignedUrlsV2(mediaIds);
+        if(Objects.isNull(signedUrl) || Objects.isNull(signedUrl.getData()))
             throw new TBaseRuntimeException("Error while getting preSigned URL!");
-        Map<String, String> responseMap = signedUrl.get(0).getResponseMap();
+        Map<String, String> responseMap = new HashMap<>();
+        responseMap.put("preSignedUrl", signedUrl.getData().get(0).getNormal().getUrl());
         responseMap.put("oemId", requestDto.getOemId());
         responseMap.put("year",  requestDto.getYear().toString());
         responseMap.put("country", requestDto.getCountry());

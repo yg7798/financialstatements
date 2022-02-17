@@ -39,5 +39,6 @@ dependencies {
     compile("com.tekion.sdk:tmysqllib:2.0.7-SNAPSHOT")
     compile('org.apache.poi:poi:5.0.0')
     compile('com.tekion.sdk:mysqlsupport:2.0.11-SNAPSHOT')
+    compile('com.tekion.sdk:medialibraryclient:0.0.16-SNAPSHOT')
 
 }
