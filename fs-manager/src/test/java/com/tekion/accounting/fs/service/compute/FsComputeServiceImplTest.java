@@ -155,6 +155,8 @@ public class FsComputeServiceImplTest extends TestCase {
                 thenReturn(getTrialBalance());
         Mockito.when(fsEntryRepo.findFsEntriesByYearRange(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                         .thenReturn(Arrays.asList(getFsEntry()));
+        Mockito.when(memoWorksheetRepo.findForOemByYearOptimized(anyString(), anyString())).
+                thenReturn(getMemoWorksheetList());
         mockStatic(DpUtils.class);
         PowerMockito.when(DpUtils.doUseTbGeneratorV2VersionForFsInOem()).thenReturn(false);
     }
@@ -186,8 +188,6 @@ public class FsComputeServiceImplTest extends TestCase {
                 thenReturn(getMonthInfo());
         Mockito.when(oemFsMappingSnapshotRepo.findAllSnapshotByYearAndMonth(anyString(), Mockito.anyInt(), anyString())).
                 thenReturn(getOemFsMappingSnapshotList());
-        Mockito.when(memoWorksheetRepo.findForOemByYearOptimized(anyString(), anyString())).
-                thenReturn(getMemoWorksheetList());
         Mockito.when(hcWorksheetRepo.findByFsId(anyString()))
                 .thenReturn(getHCWorksheetList());
         Mockito.when(accountingService.getGlBalCntInfoForFS(Mockito.any()))
@@ -267,8 +267,167 @@ public class FsComputeServiceImplTest extends TestCase {
                 .thenReturn(getMonthInfo(), monthInfo);
         Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
         Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2021, 1, 2021, 3, true, "_1-4", true));
+    }
 
-        oemMappingService.computeFsCellCodeDetails("GM", 2021, 1, 2021, 3, true, "_1-4", true);
+    @Test
+    public void testComputeFsCellCodeDetails_memoWorksheet() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(getAccountingOemFsCellCodes_memoWorksheet());
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
+    }
+
+    @Test
+    public void testComputeFsCellCodeDetails_dealerConfig() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        List<AccountingOemFsCellCode> accountingOemFsCellCodeList = getAccountingOemFsCellCodes_memoWorksheet();
+        accountingOemFsCellCodeList.get(0).setSource(FsCellCodeSource.DEALER_CONFIG);
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(accountingOemFsCellCodeList);
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
+    }
+
+    @Test
+    public void testComputeFsCellCodeDetails_dealerConfigSource() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        List<AccountingOemFsCellCode> accountingOemFsCellCodeList = getAccountingOemFsCellCodes_memoWorksheet();
+        accountingOemFsCellCodeList.get(0).setSource(FsCellCodeSource.CUSTOM_SOURCE);
+        accountingOemFsCellCodeList.get(0).getAdditionalInfo().put("sourceType", "CITY_STATE");
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(accountingOemFsCellCodeList);
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
+    }
+
+    @Test
+    public void testComputeFsCellCodeDetails_dealerConfigAddress() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        List<AccountingOemFsCellCode> accountingOemFsCellCodeList = getAccountingOemFsCellCodes_memoWorksheet();
+        accountingOemFsCellCodeList.get(0).setSource(FsCellCodeSource.CUSTOM_SOURCE);
+        accountingOemFsCellCodeList.get(0).getAdditionalInfo().put("sourceType", "ADDRESS");
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(accountingOemFsCellCodeList);
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
+    }
+
+    @Test
+    public void testComputeFsCellCodeDetails_dealerConfigName() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        List<AccountingOemFsCellCode> accountingOemFsCellCodeList = getAccountingOemFsCellCodes_memoWorksheet();
+        accountingOemFsCellCodeList.get(0).setSource(FsCellCodeSource.CUSTOM_SOURCE);
+        accountingOemFsCellCodeList.get(0).getAdditionalInfo().put("sourceType", "DEALER_NAME");
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(accountingOemFsCellCodeList);
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
+    }
+
+    @Test
+    public void testComputeFsCellCodeDetails_dealerConfigFromDate() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        List<AccountingOemFsCellCode> accountingOemFsCellCodeList = getAccountingOemFsCellCodes_memoWorksheet();
+        accountingOemFsCellCodeList.get(0).setSource(FsCellCodeSource.CUSTOM_SOURCE);
+        accountingOemFsCellCodeList.get(0).getAdditionalInfo().put("sourceType", "FROM_DATE");
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(accountingOemFsCellCodeList);
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
+    }
+
+    @Test
+    public void testComputeFsCellCodeDetails_dealerConfigToDate() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        List<AccountingOemFsCellCode> accountingOemFsCellCodeList = getAccountingOemFsCellCodes_memoWorksheet();
+        accountingOemFsCellCodeList.get(0).setSource(FsCellCodeSource.CUSTOM_SOURCE);
+        accountingOemFsCellCodeList.get(0).getAdditionalInfo().put("sourceType", "TO_DATE");
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(accountingOemFsCellCodeList);
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
+    }
+
+    @Test
+    public void testComputeFsCellCodeDetails_dateMonth() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        List<AccountingOemFsCellCode> accountingOemFsCellCodeList = getAccountingOemFsCellCodes_memoWorksheet();
+        accountingOemFsCellCodeList.get(0).setSource(FsCellCodeSource.DATE_MONTH);
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(accountingOemFsCellCodeList);
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
+    }
+
+    @Test
+    public void testComputeFsCellCodeDetails_customSource() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        List<AccountingOemFsCellCode> accountingOemFsCellCodeList = getAccountingOemFsCellCodes_memoWorksheet();
+        accountingOemFsCellCodeList.get(0).setSource(FsCellCodeSource.CUSTOM_SOURCE);
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(accountingOemFsCellCodeList);
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
+    }
+
+    @Test
+    public void testComputeFsCellCodeDetails_hcWorksheet() {
+        MonthInfo monthInfo = getMonthInfo();
+        monthInfo.setYear(2022);
+        Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getFsEntry());
+        Mockito.when(accountingService.getActiveMonthInfo())
+                .thenReturn(getMonthInfo(), monthInfo);
+        Mockito.when(dealerConfig.getDealerCountryCode()).thenReturn("US");
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
+                thenReturn(getAccountingOemFsCellCodes_hcWorksheet());
+        Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
     }
 
 
@@ -592,6 +751,43 @@ public class FsComputeServiceImplTest extends TestCase {
     }
 
 
+    @Test(
+            expected = TBaseRuntimeException.class
+    )
+    public void testMigrateGroupsCodesToYear_whenExists() {
+        Mockito.when(oemFsCellGroupRepo.findByOemId(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(getAccountingOemFsGroupCode());
+        oemMappingService.migrateGroupsCodesToYear("GM", 2019, 2021, "US");
+    }
+
+    @Test
+    public void testMigrateGroupsCodesToYear_whenFromYearDoesNotExists() {
+        Mockito.when(oemFsCellGroupRepo.findByOemId(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(null);
+       Assert.assertEquals(0, oemMappingService.migrateGroupsCodesToYear("GM", 2019, 2021, "US").size());
+    }
+
+
+    @Test
+    public void testDeleteCellCodes() {
+        Mockito.when(oemFsCellGroupRepo.findByOemId(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(null);
+        FsCellCodeDeleteDto dto = new FsCellCodeDeleteDto();
+        dto.setCountry("US");
+        dto.setYear(2021);
+        dto.setOemId(OEM.GM);
+        dto.setCellCodes(Arrays.asList("1","2"));
+        Assert.assertEquals(3,oemMappingService.deleteCellCodes(dto).size());
+    }
+
+    @Test
+    public void testPopulateGroupCodesInFsCell(){
+        Mockito.when(fsCellCodeRepo.updateBulk(Mockito.anyList()))
+                .thenReturn(null);
+        oemMappingService.populateGroupCodesInFsCell(OEM.GM, 2021, 1);
+        Mockito.verify(fsCellCodeRepo, Mockito.times(1)).updateBulk(Mockito.anyList());
+    }
+
     @Test
     public void testGetFsCellCodeSnapshots() {
         oemMappingService.getFsCellCodeSnapshots("1234", 1);
@@ -734,6 +930,32 @@ public class FsComputeServiceImplTest extends TestCase {
         oemMappingService.createFsMappingAndCellCodeSnapshot(2021, 2, true, "-1_4", true);
         Mockito.verify(oemFsMappingSnapshotRepo, Mockito.times(0))
                 .saveBulkSnapshot(Mockito.anyList());
+    }
+
+    @Test
+    public void testSaveFsCellCode_whenNotNull() {
+        FSCellCodeCreateDto dto = new FSCellCodeCreateDto();
+        dto.setCode("A");
+        dto.setCountry("US");
+        dto.setYear(2021);
+        dto.setOemId(OEM.GM);
+        Mockito.when(fsCellCodeRepo.findByCodeOemIdYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getAccountingOemFsCellCodes().get(0));
+        oemMappingService.saveFsCellCode(dto);
+        Mockito.verify(fsCellCodeRepo, Mockito.times(1)).save(Mockito.any());
+    }
+
+    @Test
+    public void testSaveFsCellCode_whenNull() {
+        FSCellCodeCreateDto dto = new FSCellCodeCreateDto();
+        dto.setCode("A");
+        dto.setCountry("US");
+        dto.setYear(2021);
+        dto.setOemId(OEM.GM);
+        Mockito.when(fsCellCodeRepo.findByCodeOemIdYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(null);
+        oemMappingService.saveFsCellCode(dto);
+        Mockito.verify(fsCellCodeRepo, Mockito.times(1)).save(Mockito.any());
     }
 
     @Test
@@ -1084,6 +1306,64 @@ public class FsComputeServiceImplTest extends TestCase {
         return Stream.of(accountingOemFsCellCode1, accountingOemFsCellCode2, accountingOemFsCellCode3).collect(Collectors.toList());
     }
 
+    private List<AccountingOemFsCellCode> getAccountingOemFsCellCodes_memoWorksheet() {
+        Map<String, String> additionalInfo = Maps.newHashMap();
+        additionalInfo.put("month", "10");
+        additionalInfo.put("minuendCellCode", "psPage");
+        additionalInfo.put("memoKey", "memoKey");
+        additionalInfo.put("sourceType", "random");
+        AccountingOemFsCellCode accountingOemFsCellCode1 = AccountingOemFsCellCode.builder()
+                .oemCode(OEM.GM.getOem())
+                .groupCode("_203")
+                .oemId(OEM.GM.getOem())
+                .derived(false)
+                .displayName("display")
+                .subType(OemCellSubType.MONTHLY.name())
+                .year(2021)
+                .version(1)
+                .code("203")
+                .additionalInfo(additionalInfo)
+                .source(FsCellCodeSource.MEMO_WRKSHT)
+                .valueType("BALANCE")
+                .subType("mtd")
+                .build();
+
+        List<String> dependentCellCode = Arrays.asList("203");
+        Map<String, String> additionalInfo1 = Maps.newHashMap();
+        additionalInfo1.put("month", "10");
+
+        return Stream.of(accountingOemFsCellCode1).collect(Collectors.toList());
+    }
+
+    private List<AccountingOemFsCellCode> getAccountingOemFsCellCodes_hcWorksheet() {
+        Map<String, String> additionalInfo = Maps.newHashMap();
+        additionalInfo.put("month", "10");
+        additionalInfo.put("minuendCellCode", "psPage");
+        additionalInfo.put("department", "department");
+        additionalInfo.put("position", "position");
+        AccountingOemFsCellCode accountingOemFsCellCode1 = AccountingOemFsCellCode.builder()
+                .oemCode(OEM.GM.getOem())
+                .groupCode("_203")
+                .oemId(OEM.GM.getOem())
+                .derived(false)
+                .displayName("display")
+                .subType(OemCellSubType.MONTHLY.name())
+                .year(2021)
+                .version(1)
+                .code("203")
+                .additionalInfo(additionalInfo)
+                .source(FsCellCodeSource.HEADCOUNT_WRKSHT)
+                .valueType("BALANCE")
+                .subType("mtd")
+                .build();
+
+        List<String> dependentCellCode = Arrays.asList("203");
+        Map<String, String> additionalInfo1 = Maps.newHashMap();
+        additionalInfo1.put("month", "10");
+
+        return Stream.of(accountingOemFsCellCode1).collect(Collectors.toList());
+    }
+
     private List<OemFsMappingSnapshot> getOemFsMappingSnapshotList() {
         OemFsMappingSnapshot oemFsMappingSnapshot1 = new OemFsMappingSnapshot();
         oemFsMappingSnapshot1.setDealerId("4");
@@ -1111,7 +1391,7 @@ public class FsComputeServiceImplTest extends TestCase {
 
         memoWorksheet.setId("id1");
         memoWorksheet.setDealerId("4");
-        memoWorksheet.setKey("key1");
+        memoWorksheet.setKey("memoKey");
         memoWorksheet.setOemId(OEM.GM.getOem());
         memoWorksheet.setFieldType(FieldType.COUNT.name());
         memoWorksheet.setVersion(1);
@@ -1172,11 +1452,11 @@ public class FsComputeServiceImplTest extends TestCase {
         hcWorksheet.setCreatedByUserId("user1");
         hcWorksheet.setModifiedByUserId("user2");
         hcWorksheet.setDealerId("4");
-        hcWorksheet.setDepartment("dep1");
+        hcWorksheet.setDepartment("department");
         hcWorksheet.setOemId(OEM.GM.getOem());
         hcWorksheet.setVersion(2);
         hcWorksheet.setYear(2020);
-        hcWorksheet.setPosition("s1");
+        hcWorksheet.setPosition("position");
 
         HCValue hcValue1 = new HCValue();
         hcValue1.setMonth(1);
@@ -1196,11 +1476,11 @@ public class FsComputeServiceImplTest extends TestCase {
         hcWorksheet.setCreatedByUserId("user3");
         hcWorksheet.setModifiedByUserId("user4");
         hcWorksheet.setDealerId("4");
-        hcWorksheet.setDepartment("dep2");
+        hcWorksheet.setDepartment("department");
         hcWorksheet.setOemId(OEM.GM.getOem());
         hcWorksheet.setVersion(3);
         hcWorksheet.setYear(2019);
-        hcWorksheet.setPosition("s2");
+        hcWorksheet.setPosition("position");
 
         HCValue hcValue1 = new HCValue();
         hcValue1.setMonth(1);

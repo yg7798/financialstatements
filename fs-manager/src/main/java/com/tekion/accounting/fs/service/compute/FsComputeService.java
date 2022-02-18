@@ -122,8 +122,6 @@ public interface FsComputeService {
 
 	boolean isFutureMonth(MonthInfo activeMonthInfo, int year, int month);
 
-	List<OemFsMappingSimilarToUI> internalExportApiForOemMapping(String oemId, Integer year, Integer version, Integer month, boolean includeM13, boolean addM13BalInDecBalances);
-
 	List<FSEntry> updateSiteIdInOemMappings(List<OemFsMappingSiteIdChangesReqDto> reqDtos);
 
 	void migrateOemFsMappingFromOemToFSLevel(String dealerId);

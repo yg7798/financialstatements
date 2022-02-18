@@ -334,17 +334,6 @@ public class  OEMMappingApi {
 		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.computeFsDetails(oemId.name(), oemFsYear, version, tillEpoch, includeM13, addM13BalInDecBalances));
 	}
 
-	@GetMapping("/enrichedFSMappings/{oemId}/{year}/{month}/{version}/toJSON")
-	public ResponseEntity internalExcelExportApiForOemMapping(@PathVariable @NotNull OEM oemId,
-															  @PathVariable @NotBlank Integer year,
-															  @PathVariable @NotBlank Integer month,
-															  @PathVariable @NotBlank Integer version,
-															  @RequestParam (required = false, defaultValue = "false") boolean includeM13,
-															  @RequestParam (name = "addM13BalInDecBalances" , required = false, defaultValue = "false") boolean addM13BalInDecBalances){
-		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.internalExportApiForOemMapping(oemId.name(), year, version, month, includeM13,addM13BalInDecBalances));
-	}
-
-
 	/************ Apis Used by Analytics *******************/
 
 	@GetMapping("/oemMappingInfo/{year}")

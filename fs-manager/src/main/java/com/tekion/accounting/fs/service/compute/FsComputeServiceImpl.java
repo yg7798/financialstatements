@@ -2317,46 +2317,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 		return value;
 	}
 
-	// Api is for developer use only
-	@Override
-	public List<OemFsMappingSimilarToUI> internalExportApiForOemMapping(String oemId, Integer year, Integer version, Integer month, boolean includeM13, boolean addM13BalInDecBalances){
-		FSEntry fsEntry = fsEntryRepo.findDefaultType(oemId, year, getCurrentDealerId(),UserContextUtils.getSiteIdFromUserContext());
-		List<OemFsMappingSimilarToUI> oemFsMappingSimilarToUIList = new ArrayList<>();
-		Map<String,GLAccount> idGLAccountMap = accountingService.getGLAccounts(UserContextProvider.getCurrentDealerId()).stream().filter(e -> !AccountType.MEMO.name().equals(e.getAccountTypeId()) &&
-				!AccountType.EXPENSE_ALLOCATION.name().equals(e.getAccountTypeId())).collect(Collectors.toMap(GLAccount::getId, a -> a));
-		Map<String,List<String>> glIdOemFsMappingsMap = new HashMap<>();
-		Map<String,String> oemFsGroupCodeMap = TCollectionUtils.nullSafeList(oemFsCellGroupRepo.findNonDeletedByOemIdYearVersionAndCountry(oemId, year, version, dealerConfig.getDealerCountryCode()))
-				.stream().collect(Collectors.toMap(AccountingOemFsCellGroup::getGroupCode, AccountingOemFsCellGroup::getGroupDisplayName));
-		List<OemFsMapping> oemFsMappingList = oemFsMappingRepo.findMappingsByFsId(fsEntry.getId(), getCurrentDealerId());
-		for(OemFsMapping oemFsMapping : oemFsMappingList){
-			String groupDisplayName = oemFsGroupCodeMap.get(oemFsMapping.getFsCellGroupCode());
-			if(glIdOemFsMappingsMap.containsKey(oemFsMapping.getGlAccountId())){
-				List<String> mappedGroupCodes = new ArrayList<>(glIdOemFsMappingsMap.get(oemFsMapping.getGlAccountId()));
-				mappedGroupCodes.add(groupDisplayName);
-				glIdOemFsMappingsMap.put(oemFsMapping.getGlAccountId(), mappedGroupCodes);
-			} else{
-				glIdOemFsMappingsMap.put(oemFsMapping.getGlAccountId(), Lists.newArrayList(groupDisplayName));
-			}
-		}
-		Map<CustomFieldType, Map<String, OptionMinimal>> keyToIdToOptionMap = customFieldConfig.getKeyToIdToOptionMap();
-		MonthInfo activeMonthInfo = getActiveMonthInfo();
-		FsReportContext fsReportContext = new FsReportContext();
-		fsReportContext.setActiveMonthInfo(activeMonthInfo);
-		fsReportContext.setRequestedYear(year);
-		fsReportContext.setRequestedMonth(month);
-		fsReportContext.setIncludeM13(includeM13);
-		fsReportContext.setAddM13BalInDecBalances(addM13BalInDecBalances);
-		Map<String, TrialBalanceRow> trialBalanceRowMap = fetchTrialBalanceRowForGlAccounts(fsReportContext, fsEntry);
-		for(Map.Entry<String,GLAccount> glAccountEntry : idGLAccountMap.entrySet()){
-			String glAccountId = glAccountEntry.getKey();
-			OemFsMappingSimilarToUI oemFsMappingSimilarToUI = new OemFsMappingSimilarToUI();
-			oemFsMappingSimilarToUI.toOemFsMappingBean(trialBalanceRowMap.get(glAccountId),glAccountEntry.getValue(),glIdOemFsMappingsMap);
-			oemFsMappingSimilarToUI.resolveDepartmentFromId(glAccountEntry.getValue(), keyToIdToOptionMap);
-			oemFsMappingSimilarToUIList.add(oemFsMappingSimilarToUI);
-		}
-		return oemFsMappingSimilarToUIList;
-	}
-
 	public List<FSEntry> updateSiteIdInOemMappings(List<OemFsMappingSiteIdChangesReqDto> reqDtos){
 		if(TCollectionUtils.isEmpty(reqDtos)){
 			log.info("request Dto is empty");
