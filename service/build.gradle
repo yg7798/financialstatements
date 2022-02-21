@@ -46,7 +46,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     compile('org.springframework.boot:spring-boot-starter-test')
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile('com.tekion.sdk:servicecommons:3.0.31-SNAPSHOT')
     compile project(':fs-manager')
     compile project(':dealer-onboard-migration')
     implementation( group: 'com.tekion.core', name: 'excel-generation-client', version: '0.0.91-SNAPSHOT')

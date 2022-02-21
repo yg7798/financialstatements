@@ -88,5 +88,4 @@ public class FsMappingApi {
                 getDefaultParallelism(parallelism));;
         return TResponseEntityBuilder.okResponseEntity("success");
     }
-
 }

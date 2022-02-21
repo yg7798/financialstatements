@@ -1,28 +1,35 @@
 package com.tekion.accounting.fs.service.fsMapping;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
+import com.tekion.accounting.fs.beans.mappings.OemFsMappingDetail;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.dto.mappings.OemFsMappingUpdateDto;
 import com.tekion.accounting.fs.common.utils.OemFSUtils;
 import com.tekion.accounting.fs.enums.FSType;
+import com.tekion.accounting.fs.events.MappingUpdateEvent;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
+import com.tekion.accounting.fs.service.eventing.producers.FSEventHelper;
 import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.tekion.accounting.fs.common.utils.CollectionUtils.isTwoSetsSame;
 import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
 
 @Slf4j
@@ -35,6 +42,7 @@ public class FsMappingServiceImpl implements FsMappingService {
     private final OemFsCellGroupRepo oemFsCellGroupRepo;
     private final DealerConfig dealerConfig;
     private final FSEntryRepo fsEntryRepo;
+    private final FSEventHelper fsEventHelper;
 
 
     @Override
@@ -83,6 +91,160 @@ public class FsMappingServiceImpl implements FsMappingService {
             log.info("deleted irrelevant oemFsMapping {}", oemFsMappingToBeDeleted);
         }
         return oemFsMappingToBeDeleted;
+    }
+
+
+    @Override
+    public List<OemFsMapping> updateOemFsMapping(OemFsMappingUpdateDto requestDto) {
+        Set<String> groupCodes = requestDto.getMappingsToSave().stream()
+                .map(OemFsMappingDetail::getFsCellGroupCode)
+                .collect(Collectors.toSet());
+        groupCodes.addAll(requestDto.getMappingsToDelete().stream()
+                .map(OemFsMappingDetail::getFsCellGroupCode)
+                .collect(Collectors.toSet()));
+
+        List<FSEntry> fsEntries = fsEntryRepo.findByIds(Collections.singletonList(requestDto.getFsId()), UserContextProvider.getCurrentDealerId());
+        if(fsEntries.size() < 1){
+            throw new TBaseRuntimeException("invalid FS id");
+        }
+
+        List<OemFsMapping> existingOemFsMappings = oemFsMappingRepo.findMappingsByGroupCodeAndFsIds(groupCodes, Collections.singletonList(requestDto.getFsId()), getCurrentDealerId());
+
+        Map<String, List<OemFsMapping>> glAcctIdVsListOfGroupsInDbMap = Maps.newHashMap();
+
+        existingOemFsMappings.forEach(m -> {
+            glAcctIdVsListOfGroupsInDbMap.computeIfAbsent( m.getGlAccountId(), k -> Lists.newArrayList()).add(m);
+        });
+
+        List<OemFsMapping> mappingsToUpsertInDb = Lists.newArrayList();
+
+        populateMappings(requestDto, glAcctIdVsListOfGroupsInDbMap, mappingsToUpsertInDb);
+
+        oemFsMappingRepo.updateBulk(mappingsToUpsertInDb);
+
+        List<OemFsMapping> updatedMappings =  getOemFsMapping(requestDto.getFsId());
+
+        List<OemFsMapping> updatedMappingsForKafka = updatedMappings.stream().filter( x -> groupCodes.contains(x.getFsCellGroupCode())).collect(Collectors.toList());
+
+        sendKafkaEvent(existingOemFsMappings, updatedMappingsForKafka, requestDto.getFsId(), fsEntries.get(0).getOemId());
+
+        return updatedMappings;
+    }
+
+    private void sendKafkaEvent(List<OemFsMapping> oldOemFsMappings, List<OemFsMapping> updatedMappings, String fsId, String oemId) {
+        log.info("sendKafkaEvent for mapping update");
+        List<MappingUpdateEvent> mappingUpdateEvents =  getMappingUpdateEvents(oldOemFsMappings, updatedMappings, fsId, oemId) ;
+        for(MappingUpdateEvent mpe: mappingUpdateEvents){
+            fsEventHelper.dispatchEventForMappingUpdate(mpe);
+        }
+    }
+
+    private List<MappingUpdateEvent> getMappingUpdateEvents(List<OemFsMapping> oldOemFsMappings, List<OemFsMapping> updatedMappings, String fsId, String oemId) {
+        Map<String, Set<String>> oldGroupCodeVsGlAccounts = oldOemFsMappings.stream()
+                .collect(Collectors.groupingBy(
+                        OemFsMapping::getFsCellGroupCode,
+                        Collectors.mapping(OemFsMapping::getGlAccountId, Collectors.toSet())));
+
+        Map<String, Set<String>> newGroupCodeVsGlAccounts = updatedMappings.stream()
+                .collect(Collectors.groupingBy(
+                        OemFsMapping::getFsCellGroupCode,
+                        Collectors.mapping(OemFsMapping::getGlAccountId, Collectors.toSet())));
+
+        Set<String> groupCodes = new HashSet<>();
+        if(TCollectionUtils.isNotEmpty(oldGroupCodeVsGlAccounts.keySet())){
+            groupCodes.addAll(oldGroupCodeVsGlAccounts.keySet());
+        }
+
+        if(TCollectionUtils.isNotEmpty(newGroupCodeVsGlAccounts.keySet())){
+            groupCodes.addAll(newGroupCodeVsGlAccounts.keySet());
+        }
+
+        List<MappingUpdateEvent> mappingUpdateEvents =  new ArrayList<>();
+
+
+        for(String groupCode: groupCodes){
+            if(!isTwoSetsSame(oldGroupCodeVsGlAccounts.get(groupCode), newGroupCodeVsGlAccounts.get(groupCode))){
+                MappingUpdateEvent mpe = new MappingUpdateEvent();
+                mpe.setFsId(fsId);
+                mpe.setOemId(oemId);
+                mpe.setGroupCode(groupCode);
+                Set<String> prevGlAccounts = oldGroupCodeVsGlAccounts.get(groupCode);
+                Set<String> curGlAccounts = newGroupCodeVsGlAccounts.get(groupCode);
+                if(prevGlAccounts == null) {
+                    prevGlAccounts = new HashSet<>();
+                }
+                if(curGlAccounts == null) {
+                    curGlAccounts = new HashSet<>();
+                }
+                mpe.setPrevGlAccounts(prevGlAccounts);
+                mpe.setCurrentGlAccounts(curGlAccounts);
+
+                mappingUpdateEvents.add(mpe);
+            }
+        }
+
+        return mappingUpdateEvents;
+    }
+
+    private void populateMappings(OemFsMappingUpdateDto requestDto, Map<String, List<OemFsMapping>> glAcctIdVsListOfCodesInDbMap, List<OemFsMapping> mappingsToUpsertInDb) {
+
+        FSEntry fsEntry = fsEntryRepo.findByIdAndDealerIdWithNullCheck(requestDto.getFsId(),getCurrentDealerId());
+        TCollectionUtils.nullSafeList(requestDto.getMappingsToDelete()).forEach( mappingDetailReq -> {
+            List<OemFsMapping> oemFsMappingsFromDb = glAcctIdVsListOfCodesInDbMap.get(mappingDetailReq.getGlAccountId());
+            Map<String, OemFsMapping> groupCodeVsOemFsMappingFromDbMap = TCollectionUtils.transformToMap(oemFsMappingsFromDb, OemFsMapping::getFsCellGroupCode);
+            OemFsMapping oemFsMappingFromDb = groupCodeVsOemFsMappingFromDbMap.get(mappingDetailReq.getFsCellGroupCode());
+            if(Objects.nonNull(oemFsMappingFromDb)){
+                oemFsMappingFromDb.setDeleted(true);
+                oemFsMappingFromDb.setModifiedTime(System.currentTimeMillis());
+                oemFsMappingFromDb.setModifiedByUserId(UserContextProvider.getCurrentUserId());
+                mappingsToUpsertInDb.add(oemFsMappingFromDb);
+            }
+        });
+
+        TCollectionUtils.nullSafeList(requestDto.getMappingsToSave()).forEach( mappingDetailReq -> {
+            String glAccountId = mappingDetailReq.getGlAccountId();
+            String groupCode = mappingDetailReq.getFsCellGroupCode();
+            String glAccountDealerId = mappingDetailReq.getGlAccountDealerId();
+            if(FSType.CONSOLIDATED.name().equals(fsEntry.getFsType()) && StringUtils.isEmpty(glAccountDealerId)){
+                throw new TBaseRuntimeException("glAccountDealerId cannot be empty for Consolidated FS mappings");
+            }
+            List<OemFsMapping> oemFsMappingsFromDb = TCollectionUtils.nullSafeList(glAcctIdVsListOfCodesInDbMap.get(glAccountId));
+            Map<String, OemFsMapping> groupCodeVsOemFsMappingFromDbMap = TCollectionUtils.transformToMap(oemFsMappingsFromDb, OemFsMapping::getFsCellGroupCode);
+
+            if(!groupCodeVsOemFsMappingFromDbMap.containsKey(groupCode)){
+                OemFsMapping oemFsMapping =  OemFsMapping.builder()
+                        .oemId(fsEntry.getOemId())
+                        .fsId(fsEntry.getId())
+                        .fsCellGroupCode(groupCode)
+                        .glAccountId(glAccountId)
+                        .dealerId(getCurrentDealerId())
+                        .glAccountDealerId(glAccountDealerId)
+                        .year(fsEntry.getYear())
+                        .version(fsEntry.getVersion())
+                        .siteId(requestDto.getSiteId())
+                        .modifiedByUserId(UserContextProvider.getCurrentUserId())
+                        .createdByUserId(UserContextProvider.getCurrentUserId())
+                        .tenantId(UserContextProvider.getCurrentUserId())
+                        .build();
+                oemFsMapping.setCreatedTime(System.currentTimeMillis());
+                oemFsMapping.setModifiedTime(System.currentTimeMillis());
+                mappingsToUpsertInDb.add(oemFsMapping);
+                glAcctIdVsListOfCodesInDbMap.computeIfAbsent(glAccountId, k -> Lists.newArrayList()).add(oemFsMapping);
+            }else{
+                if(groupCodeVsOemFsMappingFromDbMap.get(groupCode).isDeleted()){
+                    groupCodeVsOemFsMappingFromDbMap.get(groupCode).setDeleted(false);
+                    groupCodeVsOemFsMappingFromDbMap.get(groupCode).setModifiedTime(System.currentTimeMillis());
+                    groupCodeVsOemFsMappingFromDbMap.get(groupCode).setModifiedByUserId(UserContextProvider.getCurrentUserId());
+                    mappingsToUpsertInDb.add(groupCodeVsOemFsMappingFromDbMap.get(groupCode));
+                }
+            }
+        });
+    }
+
+    @Override
+    public List<OemFsMapping> getOemFsMapping(String fsId) {
+        return TCollectionUtils.nullSafeList(
+                oemFsMappingRepo.findMappingsByFsId(fsId, getCurrentDealerId()));
     }
 
     @Override
@@ -175,12 +337,6 @@ public class FsMappingServiceImpl implements FsMappingService {
 
         oemFsMappingRepo.insertBulk(copiedMappings);
         log.info("copying of mappings done for {} {} ", toYear, UserContextProvider.getCurrentDealerId());
-    }
-
-    @Override
-    public List<OemFsMapping> getOemFsMapping(String fsId) {
-        return TCollectionUtils.nullSafeList(
-                oemFsMappingRepo.findMappingsByFsId(fsId, getCurrentDealerId()));
     }
 
 

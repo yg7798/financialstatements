@@ -89,6 +89,7 @@ publishing {
             pom.withXml {
                 def node = asNode().get('dependencies')
                 def dependenciesArray = node.get(0).get("dependency")
+                removeDependency(dependenciesArray, "com.tekion.accounting.fs", "fs-events")
                 asNode().remove(node)
                 asNode().appendNode('dependencies', dependenciesArray)
             }
@@ -113,7 +114,7 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation('com.tekion.sdk:servicecommons:3.0.31-SNAPSHOT')
+    implementation('com.tekion.sdk:servicecommons:3.0.39-SNAPSHOT')
     compileOnly 'org.projectlombok:lombok:1.18.6'
     annotationProcessor 'org.projectlombok:lombok:1.18.6'
     implementation('org.springframework.cloud:spring-cloud-starter-openfeign')
@@ -122,4 +123,5 @@ dependencies {
     implementation("io.github.openfeign:feign-jackson:${openFeignVersion}")
     implementation("io.github.openfeign:feign-core:${openFeignVersion}")
     implementation('org.springframework.cloud:spring-cloud-starter-zipkin')
+    compile project(':fs-events')
 }

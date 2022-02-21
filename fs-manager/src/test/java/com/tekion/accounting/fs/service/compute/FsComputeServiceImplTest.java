@@ -1,5 +1,10 @@
 package com.tekion.accounting.fs.service.compute;
 
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
+import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.beans.common.OemConfig;
+import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
+import com.tekion.accounting.fs.beans.mappings.OemFsMappingSnapshot;
 import com.google.common.collect.Maps;
 import com.tekion.accounting.fs.beans.common.*;
 import com.tekion.accounting.fs.beans.mappings.*;
@@ -7,6 +12,7 @@ import com.tekion.accounting.fs.beans.memo.*;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
+import com.tekion.accounting.fs.dto.cellcode.FsCellCodeDetailsResponseDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodesCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FsGroupCodeDetailsResponseDto;
@@ -36,15 +42,17 @@ import com.tekion.dto.ClientDynamicPropertyItem;
 import com.tekion.propertyclient.DPClient;
 import com.tekion.util.DPClientPropertyCache;
 import junit.framework.TestCase;
+
 import org.assertj.core.util.Sets;
 import org.junit.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.*;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -57,7 +65,7 @@ import java.util.stream.Stream;
 
 import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
 import static org.mockito.ArgumentMatchers.*;
-import static org.powermock.api.mockito.PowerMockito.*;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DpUtils.class)
@@ -428,32 +436,6 @@ public class FsComputeServiceImplTest extends TestCase {
         Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).
                 thenReturn(getAccountingOemFsCellCodes_hcWorksheet());
         Assert.assertNotNull(oemMappingService.computeFsCellCodeDetails("GM", 2019, 1, 2019, 1, true, "_1-4", true));
-    }
-
-
-    @Test
-    public void testRestrictDuplicateOemFSMapping() {
-        Mockito.when(oemFSMappingRepo.findByGlAccountIdAndYearIncludeDeleted(any(), any(), any())).thenReturn(oemFsMappingList());
-        Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString())).thenReturn(FSEntry.builder().fsType("OEM").year(2021).oemId("GM").build());
-
-        oemMappingService.updateOemFsMapping(oemFsMappingUpdateDtoRequest());
-        ArgumentCaptor<List<OemFsMapping>> capturingOemFsMappingList = ArgumentCaptor.forClass(List.class);
-        Mockito.verify(oemFSMappingRepo).updateBulk(capturingOemFsMappingList.capture());
-        List<OemFsMapping> capturedOemFsMappingList = capturingOemFsMappingList.getValue();
-        Assert.assertEquals(2, capturedOemFsMappingList.size());
-    }
-
-    @Test
-    public void test2RestrictDuplicateOemFSMapping() {
-        List<OemFsMapping> oemFsMappingList = oemFsMappingList();
-        oemFsMappingList.get(0).setFsCellGroupCode("_202");
-        Mockito.when(oemFSMappingRepo.findByGlAccountIdAndYearIncludeDeleted(any(), any(), any())).thenReturn(oemFsMappingList);
-        Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString())).thenReturn(FSEntry.builder().fsType("OEM").year(2021).oemId("GM").build());
-        oemMappingService.updateOemFsMapping(oemFsMappingUpdateDtoRequest());
-        ArgumentCaptor<List<OemFsMapping>> capturingOemFsMappingList = ArgumentCaptor.forClass(List.class);
-        Mockito.verify(oemFSMappingRepo).updateBulk(capturingOemFsMappingList.capture());
-        List<OemFsMapping> capturedOemFsMappingList = capturingOemFsMappingList.getValue();
-        Assert.assertEquals(1, capturedOemFsMappingList.size());
     }
 
     @Test

@@ -132,6 +132,17 @@ public class BeanFactory {
 	}
 
 	@Bean
+	public ExecutorService executorService(DynamicScalingExecutorService factory) {
+		return factory.createScaleFirstInifiniteQueueExecutor(
+				SERVICE_NAME + "asyncThreadPool-",
+				10,
+				200,
+				1,
+				TimeUnit.MINUTES,
+				new ThreadPoolExecutor.CallerRunsPolicy());
+	}
+
+	@Bean
 	public S3ObjectStorageService getS3ObjectStorageService(ServerConfigService serverConfigService) {
 		return new S3ObjectStorageService(serverConfigService);
 	}
@@ -156,11 +167,6 @@ public class BeanFactory {
 	@Bean
 	public NotificationsV2Client createNotificationClient(NotificationsV2ClientFactory factory) {
 		return factory.createClient();
-	}
-
-	@Bean
-	public ExecutorService executorService() {
-		return new DefaultEventExecutor();
 	}
 
 	@Bean

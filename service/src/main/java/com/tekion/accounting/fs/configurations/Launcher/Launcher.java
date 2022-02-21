@@ -2,6 +2,8 @@ package com.tekion.accounting.fs.configurations.Launcher;
 
 import com.tekion.accounting.fs.configurations.ApiConfig;
 import com.tekion.accounting.fs.configurations.RestrictedApiConfig;
+import com.tekion.accounting.fs.service.eventing.configs.FSKafkaConsumerConfig;
+import com.tekion.accounting.fs.service.eventing.consumers.MonthCloseEventListener;
 import com.tekion.core.service.TekionServiceApplication;
 import com.tekion.core.service.api.DefaultServiceApiWebConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +42,11 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 @Configuration
 @Slf4j
-@Import({DefaultServiceApiWebConfig.class} )
 @EnableAsync
 @EnableCaching
+@Import({DefaultServiceApiWebConfig.class, FSKafkaConsumerConfig.class})
 public class Launcher extends SpringBootServletInitializer implements TekionServiceApplication {
 	public static final String APP_ROOT = "/financial-statements";
-	private final String config_host = System.getenv("config_host");
 
 	public static void main(String[] args) {
 		SpringApplication.run(Launcher.class, args);
@@ -98,5 +99,11 @@ public class Launcher extends SpringBootServletInitializer implements TekionServ
 		servletRegistrationBean.setName("AccountingRestrictedApi");
 		servletRegistrationBean.setLoadOnStartup(1);
 		return servletRegistrationBean;
+	}
+
+	@Bean
+	public MonthCloseEventListener monthCloseEventListener(){
+		log.info("MonthCloseEventListener started");
+		return new MonthCloseEventListener();
 	}
 }

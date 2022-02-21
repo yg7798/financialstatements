@@ -1,22 +1,23 @@
 package com.tekion.accounting.fs.api;
 
-import com.tekion.accounting.fs.service.printing.models.FSViewStatementDto;
-import com.tekion.accounting.fs.dto.cellcode.OemCodeUpdateDto;
-import com.tekion.accounting.fs.dto.oemTemplate.OemTemplateReqDto;
+import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodesCreateDto;
 import com.tekion.accounting.fs.dto.cellcode.CellCodeSnapshotCreateDto;
 import com.tekion.accounting.fs.dto.cellcode.FSCellCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellcode.FSCellCodeListCreateDto;
+import com.tekion.accounting.fs.dto.cellcode.OemCodeUpdateDto;
 import com.tekion.accounting.fs.dto.fsEntry.FsEntryCreateDto;
 import com.tekion.accounting.fs.dto.mappings.MappingSnapshotDto;
 import com.tekion.accounting.fs.dto.mappings.OemFsMappingUpdateDto;
 import com.tekion.accounting.fs.dto.mappings.OemMappingRequestDto;
+import com.tekion.accounting.fs.dto.oemTemplate.OemTemplateReqDto;
 import com.tekion.accounting.fs.enums.OEM;
-import com.tekion.accounting.fs.service.printing.FSPrintService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
-import com.tekion.accounting.fs.common.utils.UserContextUtils;
+import com.tekion.accounting.fs.service.fsMapping.FsMappingService;
+import com.tekion.accounting.fs.service.printing.FSPrintService;
+import com.tekion.accounting.fs.service.printing.models.FSViewStatementDto;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import com.tekion.core.validation.TValidator;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class  OEMMappingApi {
 	private final TValidator validator;
 	private final FsEntryService fsEntryService;
 	private final FSPrintService fsPrintService;
+	private final FsMappingService fsMappingService;
 
 	/********************* OEM Mapping Apis ***************************/
 
@@ -55,13 +57,13 @@ public class  OEMMappingApi {
 	@PutMapping("/glAccountMapping")
 	public ResponseEntity updateMapping(@RequestBody OemFsMappingUpdateDto updateDto){
 		validator.validate(updateDto);
-		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.updateOemFsMapping(updateDto));
+		return TResponseEntityBuilder.okResponseEntity(fsMappingService.updateOemFsMapping(updateDto));
 	}
 
 	@GetMapping("/glAccountMapping/{fsId}")
 	public ResponseEntity getAcctMapping(@PathVariable @NotBlank String fsId){
 		log.info("api call received for glAccountMapping");
-		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.getOemFsMapping(fsId));
+		return TResponseEntityBuilder.okResponseEntity(fsMappingService.getOemFsMapping(fsId));
 	}
 
 	/********************* Old FSEntry related apis ***********************/

@@ -27,17 +27,14 @@ public interface FsComputeService {
 
 	List<AccountingOemFsCellCode> getOemTMappingList(String oemId, Integer year, Integer version, String countryCode);
 
-	List<OemFsMapping> updateOemFsMapping(OemFsMappingUpdateDto requestDto);
-
 	AccountingOemFsCellCode saveFsCellCode(FSCellCodeCreateDto reqDto);
 
 	List<AccountingOemFsCellCode> saveFsCellCodes(FSCellCodeListCreateDto reqDto);
 
-	List<OemFsMapping>  getOemFsMapping(String fsId);
-
 	FsCellCodeDetailsResponseDto computeFsCellCodeDetails(String oemId, Integer oemFsYear, Integer oemFsVersion, Integer year, Integer month, boolean includeM13, String siteId, boolean addM13BalInDecBalances);
 
 	FsCellCodeDetailsResponseDto computeFsCellCodeDetailsByFsId(String fsId, long tillEpoch, boolean includeM13, boolean addM13BalInDecBalances);
+
 	FsCellCodeDetailsResponseDto computeFsCellCodeDetails(FSEntry fsEntry, long tillEpoch, boolean includeM13, boolean addM13BalInDecBalances);
 
 	FsGroupCodeDetailsResponseDto computeFsGroupCodeDetails(String oemId, Integer oemFsYear, Integer oemFsVersion, long tillEpoch, boolean includeM13, boolean addM13BalInDecBalances, String siteId);

@@ -281,7 +281,7 @@ public class OemFSMappingRepoImpl extends BaseDealerLevelMongoRepository<OemFsMa
     }
 
     @Override
-    public List<OemFsMapping> findMappingsByGroupCodeAndFsIds(List<String> groupCodes, Set<String> fsIds, String dealerId) {
+    public List<OemFsMapping> findMappingsByGroupCodeAndFsIds(Collection<String> groupCodes, Collection<String> fsIds, String dealerId) {
         Criteria criteria = criteriaForNonDeleted();
         criteria.and(DEALER_ID).is(dealerId);
         criteria.and(OemFsMapping.FS_CELL_GROUP_CODE).in(groupCodes);
