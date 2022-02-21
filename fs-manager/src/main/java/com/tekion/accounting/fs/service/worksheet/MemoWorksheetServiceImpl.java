@@ -249,6 +249,7 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 		MemoWorksheet memoWorksheet = new MemoWorksheet();
 		memoWorksheet.setFsId(fsId);
 		memoWorksheet.setDealerId(UserContextProvider.getCurrentDealerId());
+		memoWorksheet.setTenantId(UserContextProvider.getCurrentTenantId());
 		memoWorksheet.setSiteId(UserContextUtils.getSiteIdFromUserContext());
 		memoWorksheet.setKey(memoWorksheetTemplate.getKey());
 		memoWorksheet.setOemId(memoWorksheetTemplate.getOemId());

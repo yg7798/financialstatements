@@ -296,6 +296,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 						.year(fsEntry.getYear())
 						.version(fsEntry.getVersion())
 						.siteId(requestDto.getSiteId())
+						.tenantId(UserContextProvider.getCurrentTenantId())
 						.modifiedByUserId(UserContextProvider.getCurrentUserId())
 						.createdByUserId(UserContextProvider.getCurrentUserId())
 						.build();

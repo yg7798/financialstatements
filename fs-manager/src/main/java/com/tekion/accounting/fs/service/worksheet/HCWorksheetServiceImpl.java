@@ -234,6 +234,7 @@ public class HCWorksheetServiceImpl implements HCWorksheetService{
 			HCWorksheet hcWorksheet = new HCWorksheet();
 			hcWorksheet.setFsId(fsId);
 			hcWorksheet.setCreatedByUserId(UserContextProvider.getCurrentUserId());
+			hcWorksheet.setTenantId(UserContextProvider.getCurrentTenantId());
 			hcWorksheet.setDealerId(UserContextProvider.getCurrentDealerId());
 			hcWorksheet.setSiteId(UserContextUtils.getSiteIdFromUserContext());
 			hcWorksheet.setDepartment(hcDepartment.getKey());

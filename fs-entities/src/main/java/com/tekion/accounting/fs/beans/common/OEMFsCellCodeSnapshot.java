@@ -45,6 +45,6 @@ public class OEMFsCellCodeSnapshot extends TBaseMongoBean {
 		this.version = version;
 		this.siteId = siteId;
 		this.fsType = fsType;
-		this.tenantId= UserContextProvider.getCurrentTenantId();
+		this.tenantId = UserContextProvider.getCurrentTenantId();
 	}
 }

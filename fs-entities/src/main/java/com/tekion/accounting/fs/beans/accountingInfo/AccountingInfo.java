@@ -39,6 +39,7 @@ public class AccountingInfo extends TBaseMongoBean {
 
     public AccountingInfo(){
         this.setDealerId(UserContextProvider.getCurrentDealerId());
+        this.setTenantId(UserContextProvider.getCurrentTenantId());
         this.setCreatedByUserId(UserContextProvider.getCurrentUserId());
         this.setCreatedTime(System.currentTimeMillis());
         this.setModifiedTime(System.currentTimeMillis());
