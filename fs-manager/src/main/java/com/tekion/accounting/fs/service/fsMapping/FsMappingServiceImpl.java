@@ -224,7 +224,7 @@ public class FsMappingServiceImpl implements FsMappingService {
                         .siteId(requestDto.getSiteId())
                         .modifiedByUserId(UserContextProvider.getCurrentUserId())
                         .createdByUserId(UserContextProvider.getCurrentUserId())
-                        .tenantId(UserContextProvider.getCurrentUserId())
+                        .tenantId(UserContextProvider.getCurrentTenantId())
                         .build();
                 oemFsMapping.setCreatedTime(System.currentTimeMillis());
                 oemFsMapping.setModifiedTime(System.currentTimeMillis());
