@@ -17,6 +17,7 @@ import com.tekion.accounting.fs.service.externalService.media.MediaInteractorSer
 import com.tekion.core.beans.TResponse;
 import com.tekion.core.excelGeneration.models.model.MediaUploadResponse;
 import com.tekion.core.exceptions.TBaseRuntimeException;
+import com.tekion.core.exportable.lib.annotate.ExcelField;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.TStringUtils;
 import com.tekion.media.beans.response.PreSignedV2Response;
@@ -28,6 +29,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -136,6 +139,9 @@ public class PclCodeServiceImpl implements PclCodeService{
                     .pclCode(requestDto.getDmsType().getPclCode(oemFsCellGroup))
                 .build());
         });
+
+        changeColumnName(requestDto.getDmsType());
+
         if(pclUpdateExcelDtoList.size()<=0)
             throw new TBaseRuntimeException("Error while uploading media!");
         MediaUploadResponse mediaUploadResponse = mediaInteractorService.getMediaUploadResponse(pclUpdateExcelDtoList, PclUpdateExcelDto.class);
@@ -154,6 +160,23 @@ public class PclCodeServiceImpl implements PclCodeService{
         responseMap.put("country", requestDto.getCountry());
         responseMap.put("dmsType", requestDto.getDmsType().name());
         return responseMap;
+    }
+
+    private void changeColumnName(PclCodeEnum dmsType) {
+        try {
+            Field pclCodeField = PclUpdateExcelDto.class.getDeclaredField("pclCode");
+            ExcelField excelField = pclCodeField.getAnnotation(ExcelField.class);
+            Object proxy = Proxy.getInvocationHandler(excelField);
+            Field field = proxy.getClass().getDeclaredField("memberValues");
+            field.setAccessible(true);
+            Map<String, Object> memberValues = (Map<String, Object>) field.get(proxy);
+            memberValues.put("name", dmsType.name());
+            field.setAccessible(false);
+        }catch (NoSuchFieldException | IllegalAccessException e) {
+            log.error("Proxy error while setting column name: ", e);
+        } catch (Exception e){
+            log.error("Exception occured: ", e);
+        }
     }
 
     @Override

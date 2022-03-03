@@ -73,7 +73,7 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean implements Cloneabl
 		this.setAutosoftPcl(toUpdate.getAutosoftPcl());
 		this.setCdkPcl(toUpdate.getCdkPcl());
 		this.setDbPcl(toUpdate.getDbPcl());
-		this.setDealerTrackPcl(toUpdate.getDealerTrackPcl());
+		this.setOemAccountNumber(toUpdate.getDealerTrackPcl());
 		this.setDominionPcl(toUpdate.getDominionPcl());
 		this.setPbsPcl(toUpdate.getPbsPcl());
 		this.setQuorumPcl(toUpdate.getQuorumPcl());
@@ -90,7 +90,7 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean implements Cloneabl
 		this.setAutosoftPcl(toUpdate.getAUTO_SOFT_PCL());
 		this.setAutomatePcl(toUpdate.getAUTOMATE_PCL());
 		this.setPbsPcl(toUpdate.getPBS_PCL());
-		this.setDealerTrackPcl(toUpdate.getDEALER_TRACK_PCL());
+		this.setOemAccountNumber(toUpdate.getDEALER_TRACK_PCL());
 		this.setModifiedTime(System.currentTimeMillis());
 	}
 

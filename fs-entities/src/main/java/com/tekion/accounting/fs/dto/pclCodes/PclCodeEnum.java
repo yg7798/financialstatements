@@ -43,10 +43,10 @@ public enum PclCodeEnum {
     },
     DEALER_TRACK_PCL{
         public String getPclCode(AccountingOemFsCellGroup cellGroup) {
-            return cellGroup.getDealerTrackPcl();
+            return cellGroup.getOemAccountNumber();
         }
         public void setPclCode(AccountingOemFsCellGroup cellGroup, String pclCode) {
-            cellGroup.setDealerTrackPcl(pclCode);
+            cellGroup.setOemAccountNumber(pclCode);
         }
     },
     DOMINION_PCL{
