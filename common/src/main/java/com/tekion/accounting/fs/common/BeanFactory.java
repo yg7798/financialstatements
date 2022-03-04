@@ -5,7 +5,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
 import com.tekion.admin.beans.property.DealerProperty;
 import com.tekion.cachesupport.lib.cache.RedisCacheFactory;
 import com.tekion.client.globalsettings.GlobalSettingsClient;
@@ -21,6 +20,9 @@ import com.tekion.core.utils.TGlobalConstants;
 import com.tekion.core.utils.async.DynamicScalingExecutorService;
 import com.tekion.core.utils.async.ScalingThreadPoolExecutor;
 import com.tekion.core.utils.springasync.DelegatingUserContextExecutorServiceToAsyncTaskWrapper;
+import com.tekion.dealersettings.client.DealerSettingsClientFactory;
+import com.tekion.dealersettings.client.IDealerSettingsClient;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.media.library.MediaClient;
 import com.tekion.notificationsv2.client.NotificationsV2Client;
 import com.tekion.notificationsv2.client.NotificationsV2ClientFactory;
@@ -73,10 +75,15 @@ public class BeanFactory {
 		return preferenceClientFactory.createClient();
 	}
 
+	@Bean
+	public IDealerSettingsClient getDealerSettingsClient(DealerSettingsClientFactory dealerSettingsClientFactory) {
+		return dealerSettingsClientFactory.createClient();
+	}
+
 	@Bean(name = "dealerCache")
-	public LoadingCache<String, DealerMaster> dealerMasterCache(PreferenceClient preferenceClient, DealerPropertyService dealerPropertyService) {
+	public LoadingCache<String, DealerMaster> dealerMasterCache(IDealerSettingsClient dealerSettingsClient, DealerPropertyService dealerPropertyService) {
 		return CacheBuilder.newBuilder()
-				.expireAfterWrite(1, TimeUnit.HOURS)
+				.expireAfterWrite(5, TimeUnit.MINUTES)
 				.build(
 						new CacheLoader<String, DealerMaster>() {
 							@Override
@@ -84,9 +91,9 @@ public class BeanFactory {
 								DealerProperty dealerProperty = dealerPropertyService.getCachedStore().getPropertyForCurrentDealer(TConstants.ACCOUNTING_SITE_OVERRIDE_ENABLED);
 								DealerMaster dealerMaster;
 								if (Objects.nonNull(dealerProperty) && (Boolean) dealerProperty.getValue()) {
-									dealerMaster = preferenceClient.fetchOemSiteDealerMaster(UserContextUtils.getSiteIdFromUserContext()).getData();
+									dealerMaster = dealerSettingsClient.fetchOemSiteDealerMaster(UserContextUtils.getSiteIdFromUserContext()).getData();
 								} else {
-									dealerMaster = preferenceClient.fetchOemSiteDealerMaster(UserContextUtils.getDefaultSiteId()).getData();
+									dealerMaster = dealerSettingsClient.fetchOemSiteDealerMaster(UserContextUtils.getDefaultSiteId()).getData();
 								}
 								//log.info("dealerMaster for site id {} : {}",UserContextUtils.getSiteIdFromUserContext(), JsonUtil.toJson(dealerMaster));
 								return dealerMaster;

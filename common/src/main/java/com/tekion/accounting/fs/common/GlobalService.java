@@ -7,8 +7,8 @@ import com.tekion.accounting.fs.common.pod.PodUtils;
 import com.tekion.accounting.fs.common.utils.MDCUtils;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.mappings.OemSiteDetailsDto;
-import com.tekion.admin.beans.beansdto.DealerMasterBulkRequest;
 import com.tekion.admin.beans.oemsites.OemSite;
+import com.tekion.dealersettings.dealermaster.dto.DealerMasterBulkRequest;
 import com.tekion.client.globalsettings.GlobalSettingsClient;
 import com.tekion.client.globalsettings.beans.Status;
 import com.tekion.client.globalsettings.beans.TenantInfo;
@@ -17,6 +17,8 @@ import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.core.beans.TResponse;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.*;
+import com.tekion.dealersettings.client.IDealerSettingsClient;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,7 @@ public class GlobalService {
 	@Qualifier(AsyncContextDecorator.ASYNC_THREAD_POOL)
 	@Autowired
 	private AsyncTaskExecutor asyncTaskExecutor;
+	private final IDealerSettingsClient dealerSettingsClient;
 	private final PreferenceClient preferenceClient;
 
 	public interface GlobalTask{
@@ -213,7 +216,7 @@ public class GlobalService {
 		return dealerInfoWithOEMDetailsList.stream().filter( dealerInfoWithOEMDetails -> allowedStatus.contains(dealerInfoWithOEMDetails.getStatus())).collect(Collectors.toList());
 	}
 
-	public List<com.tekion.admin.beans.dealersetting.DealerMaster> getAllDealerDetailsForTenant(String tenantId){
+	public List<DealerMaster> getAllDealerDetailsForTenant(String tenantId){
 		TResponse<List<DealerInfoWithOEMDetails>> tResponse = globalSettingsClient.fetchAllDealersForATenant(TRequestUtils.internalCallHeaderMap(),null,tenantId);
 		if(Objects.nonNull(tResponse)){
 			List<DealerInfoWithOEMDetails> dealerInfoWithOEMDetails = TCollectionUtils.nullSafeList(tResponse.getData());
@@ -223,7 +226,7 @@ public class GlobalService {
 			dealerMasterBulkRequest.setDealerIds(dealerIds);
 			dealerMasterBulkRequest.setSelectedFields(Arrays.asList("id","dealerName","tenantId","bankDetails",
 					"dealerDoingBusinessAsName","timeZone"));
-			return preferenceClient.getAllDealerMastersWithSelectedFields(dealerMasterBulkRequest).getData();
+			return dealerSettingsClient.getAllDealerMastersWithSelectedFields(dealerMasterBulkRequest).getData();
 		}
 		return Collections.emptyList();
 	}

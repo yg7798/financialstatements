@@ -6,7 +6,7 @@ import com.tekion.accounting.fs.dto.fsEntry.FSEntryUpdateDto;
 import com.tekion.accounting.fs.dto.fsEntry.FsEntryCreateDto;
 import com.tekion.accounting.fs.dto.mappings.FsMappingInfosResponseDto;
 import com.tekion.accounting.fs.enums.FSType;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 
 import java.util.List;
 

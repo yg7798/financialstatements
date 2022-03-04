@@ -7,7 +7,7 @@ import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.core.dealerInfo.DealerInfoDto;
 import com.tekion.accounting.fs.common.core.dealerInfo.DealerInfo;
 import com.tekion.accounting.fs.dto.mappings.OemSiteDetailsDto;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.client.globalsettings.beans.Status;
 import com.tekion.client.globalsettings.beans.TenantInfo;
 import com.tekion.client.globalsettings.beans.dto.DealerInfoWithOEMDetails;

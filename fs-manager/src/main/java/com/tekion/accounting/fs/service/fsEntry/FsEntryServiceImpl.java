@@ -19,11 +19,11 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
-import com.tekion.admin.beans.beansdto.DealerMasterBulkRequest;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
 import com.tekion.as.client.AccountingClient;
 import com.tekion.as.models.beans.GLAccount;
-import com.tekion.clients.preference.client.PreferenceClient;
+import com.tekion.dealersettings.client.IDealerSettingsClient;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
+import com.tekion.dealersettings.dealermaster.dto.DealerMasterBulkRequest;
 import com.tekion.core.es.common.i.ITekFilterOperator;
 import com.tekion.core.es.common.impl.TekFilterRequest;
 import com.tekion.core.es.common.impl.TekSearchRequest;
@@ -55,7 +55,7 @@ public class FsEntryServiceImpl implements FsEntryService {
   private final OemFSMappingRepo oemFSMappingRepo;
   private final GlobalService globalService;
   private final DealerConfig dealerConfig;
-  private final PreferenceClient preferenceClient;
+  private final IDealerSettingsClient dealerSettingsClient;
   private final AccountingClient accountingClient;
 
   public static final String ACCOUNT_TYPE_ID = "accountTypeId";
@@ -223,7 +223,7 @@ public class FsEntryServiceImpl implements FsEntryService {
       DealerMasterBulkRequest dealerMasterBulkRequest = new DealerMasterBulkRequest();
       dealerMasterBulkRequest.setDealerIds(dealerIds);
       dealerMasterBulkRequest.setSelectedFields(Arrays.asList("id", "dealerName", "tenantId", "dealerDoingBusinessAsName", "timeZone"));
-      return preferenceClient.getAllDealerMastersWithSelectedFields(dealerMasterBulkRequest).getData();
+      return dealerSettingsClient.getAllDealerMastersWithSelectedFields(dealerMasterBulkRequest).getData();
     }
     return Collections.emptyList();
   }

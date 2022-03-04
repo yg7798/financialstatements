@@ -15,7 +15,7 @@ import com.tekion.accounting.fs.service.common.excelGeneration.dto.ESReportCallb
 import com.tekion.accounting.fs.service.common.excelGeneration.dto.financialStatement.OEMMappingRequestDto;
 import com.tekion.accounting.fs.service.common.excelGeneration.enums.ExcelReportType;
 import com.tekion.accounting.fs.service.common.excelGeneration.reportRows.OEMMappingReportRow;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.core.es.common.impl.TekFilterRequest;

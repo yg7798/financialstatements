@@ -11,7 +11,7 @@ import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.admin.beans.BrandMappingResponse;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.clients.preference.client.TekionResponse;
 import com.tekion.core.utils.UserContext;

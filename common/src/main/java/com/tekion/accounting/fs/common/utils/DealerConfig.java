@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.common.utils;
 
 import com.google.common.cache.LoadingCache;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.core.properties.TekionCommonProperties;
 import com.tekion.core.utils.TStringUtils;
 import com.tekion.core.utils.UserContextProvider;

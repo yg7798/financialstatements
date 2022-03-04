@@ -19,7 +19,7 @@ import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.admin.beans.FindBrandRequest;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.client.globalsettings.beans.dto.DealerInfoWithOEMDetails;
 import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.clients.preference.client.TekionResponse;
@@ -99,7 +99,7 @@ public class DefaultFSServiceImplTest extends TestCase {
         when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
         when(globalService.getAllDealerDetailsForTenant(anyString())).thenReturn(new ArrayList<>());
         when(integrationClient.submitFS(any(FSIntegrationRequest.class), any(OEMInfo.class), any())).thenThrow(TBaseRuntimeException.class);
-        com.tekion.admin.beans.dealersetting.DealerMaster dm = DealerMaster.builder().id("gsfgs").dealerName("bhshs").build();
+        DealerMaster dm = DealerMaster.builder().id("gsfgs").dealerName("bhshs").build();
         when(globalService.getAllDealerDetailsForTenant(anyString())).thenReturn(Collections.singletonList(dm));
         OemSiteDetailsDto dto = new OemSiteDetailsDto();
         dto.setName("");

@@ -18,7 +18,7 @@ import com.tekion.accounting.fs.service.fsMetaData.OemFSMetadataMappingService;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
 import com.tekion.accounting.fs.service.integration.IntegrationInternal;
 import com.tekion.admin.beans.BrandMappingResponse;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.clients.preference.client.TekionResponse;
 import com.tekion.core.excelGeneration.models.model.template.SingleCellData;

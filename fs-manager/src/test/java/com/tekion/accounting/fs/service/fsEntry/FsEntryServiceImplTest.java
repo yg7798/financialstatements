@@ -15,7 +15,8 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
-import com.tekion.admin.beans.dealersetting.DealerMaster;
+import com.tekion.dealersettings.client.IDealerSettingsClient;
+import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.as.client.AccountingClient;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.clients.preference.client.PreferenceClient;
@@ -53,7 +54,7 @@ public class FsEntryServiceImplTest extends TestCase {
     @Mock
     OemFSMappingRepo oemFSMappingRepo;
     @Mock
-    PreferenceClient preferenceClient;
+    IDealerSettingsClient dealerSettingsClient;
     @Mock
     AccountingClient accountingClient;
     @Mock
@@ -153,9 +154,9 @@ public class FsEntryServiceImplTest extends TestCase {
         dealerIds.add("5");
         fsEntry.setDealerIds(dealerIds);
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(fsEntry);
-        com.tekion.clients.preference.beans.responseEntity.TResponse<List<DealerMaster>> tResponse = new com.tekion.clients.preference.beans.responseEntity.TResponse<>();
+        TResponse<List<DealerMaster>> tResponse = new TResponse<>();
         tResponse.setData(new ArrayList<>());
-        Mockito.when(preferenceClient.getAllDealerMastersWithSelectedFields(Mockito.any())).thenReturn(tResponse);
+        Mockito.when(dealerSettingsClient.getAllDealerMastersWithSelectedFields(Mockito.any())).thenReturn(tResponse);
         assertEquals(new ArrayList<>(), fsEntryService.getDealersDetailForConsolidatedFS("123"));
     }
 
