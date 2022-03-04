@@ -18,6 +18,8 @@ import com.tekion.core.beans.TResponse;
 import com.tekion.core.excelGeneration.models.model.MediaUploadResponse;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.exportable.lib.annotate.ExcelField;
+import com.tekion.core.exportable.lib.metadata.ClassMetaDataHolder;
+import com.tekion.core.exportable.lib.metadata.ExcelFieldMetaData;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.TStringUtils;
 import com.tekion.media.beans.response.PreSignedV2Response;
@@ -70,6 +72,10 @@ public class PclCodeServiceImpl implements PclCodeService{
         country = defaultCountryCode(country);
         List<AccountingOemFsCellGroup> accountingOemFsCellGroupList =
                 TCollectionUtils.nullSafeList(oemFsCellGroupRepo.findByOemId(oemId, year, country));
+        for (AccountingOemFsCellGroup cellGroup:
+             accountingOemFsCellGroupList) {
+            cellGroup.setDealerTrackPcl(cellGroup.getOemAccountNumber());
+        }
         return accountingOemFsCellGroupList;
     }
 
@@ -116,7 +122,7 @@ public class PclCodeServiceImpl implements PclCodeService{
                     || checkIfFilterTrue(pclFilters.getAutosoftPcl(), cellGroup.getAutosoftPcl())
                     || checkIfFilterTrue(pclFilters.getCdkPcl(), cellGroup.getCdkPcl())
                     || checkIfFilterTrue(pclFilters.getDbPcl(), cellGroup.getDbPcl())
-                    || checkIfFilterTrue(pclFilters.getDealerTrackPcl(), cellGroup.getDealerTrackPcl())
+                    || checkIfFilterTrue(pclFilters.getDealerTrackPcl(), cellGroup.getOemAccountNumber())
                     || checkIfFilterTrue(pclFilters.getDominionPcl(), cellGroup.getDominionPcl())
                     || checkIfFilterTrue(pclFilters.getGroupDisplayName(), cellGroup.getGroupDisplayName())
                     || checkIfFilterTrue(pclFilters.getPbsPcl(), cellGroup.getPbsPcl())
@@ -164,18 +170,10 @@ public class PclCodeServiceImpl implements PclCodeService{
 
     private void changeColumnName(PclCodeEnum dmsType) {
         try {
-            Field pclCodeField = PclUpdateExcelDto.class.getDeclaredField("pclCode");
-            ExcelField excelField = pclCodeField.getAnnotation(ExcelField.class);
-            Object proxy = Proxy.getInvocationHandler(excelField);
-            Field field = proxy.getClass().getDeclaredField("memberValues");
-            field.setAccessible(true);
-            Map<String, Object> memberValues = (Map<String, Object>) field.get(proxy);
-            memberValues.put("name", dmsType.name());
-            field.setAccessible(false);
-        }catch (NoSuchFieldException | IllegalAccessException e) {
-            log.error("Proxy error while setting column name: ", e);
+            Field field = PclUpdateExcelDto.class.getDeclaredField("pclCode");
+            ClassMetaDataHolder.getOrGenerateBeanMetaDataFromMap(PclUpdateExcelDto.class).getExcelFieldMetaDataMap().get(field).setExcelFieldName(dmsType.name());
         } catch (Exception e){
-            log.error("Exception occured: ", e);
+            log.error("Exception occured while changing column name of excel: ", e);
         }
     }
 
