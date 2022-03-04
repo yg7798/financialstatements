@@ -35,6 +35,7 @@ public enum OEM {
 	Niada("Niada","Niada", "Niada"),
 	Subaru("subaru", "subaru", "subaru"),
 	Isuzu("isuzu", "isuzu", "isuzu"),
+	JLR("jaguarlandrover","jaguarlandrover", "jaguarlandrover"),
 	@Deprecated
 	VW("Volkswagen","volkswagen", "Volkswagen");
 
