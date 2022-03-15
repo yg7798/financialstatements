@@ -5,6 +5,9 @@ import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMappingDetail;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.dto.mappings.GroupCodeMappingDetails;
+import com.tekion.accounting.fs.dto.mappings.GroupCodesVsGLAccounts;
+import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
 import com.tekion.accounting.fs.dto.mappings.OemFsMappingUpdateDto;
 import com.tekion.accounting.fs.events.MappingUpdateEvent;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
@@ -277,6 +280,77 @@ public class FsMappingServiceImplTest {
         Mockito.when(fsEntryRepo.findByIdAndDealerId(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());
         Mockito.when(oemFSMappingRepo.findMappingsByFsId(Mockito.anyString(), Mockito.any())).thenReturn(null);
         fsMappingService.copyFsMappings("fromFsId", "toFsID");
+    }
+
+    @Test
+    public void testGetGLAccounts(){
+            OemFsMapping oemFsMapping1 = OemFsMapping.builder().glAccountId("5_001").fsCellGroupCode("_204").fsId("617a3cf25f150300060e3b57").oemId("Volvo").build();
+            OemFsMapping oemFsMapping2 = OemFsMapping.builder().glAccountId("5_002").fsCellGroupCode("_205").fsId("617a3cf25f150300060e3b56").oemId("VW").build();
+            List<OemFsMapping> oemFsMappingList = new ArrayList<>();
+            oemFsMappingList.add(oemFsMapping1);
+            oemFsMappingList.add(oemFsMapping2);
+        Mockito.when(oemFSMappingRepo.getMappingsByOemIds(Mockito.anyList(), Mockito.anyList())).thenReturn(oemFsMappingList);
+        Assert.assertEquals(getGroupCodeMappingDetailsList(), fsMappingService.getGLAccounts(2022, getOemFsGroupCodeDetails()));
+    }
+
+    private List<GroupCodeMappingDetails> getGroupCodeMappingDetailsList() {
+        GroupCodeMappingDetails groupCodeMappingDetails1 = new GroupCodeMappingDetails();
+        groupCodeMappingDetails1.setOemId("Volvo");
+        groupCodeMappingDetails1.setGroupCodesMapping(getGroupCodesVsGLAccounts1());
+
+        GroupCodeMappingDetails groupCodeMappingDetails2 = new GroupCodeMappingDetails();
+        groupCodeMappingDetails2.setOemId("VW");
+        groupCodeMappingDetails2.setGroupCodesMapping(getGroupCodesVsGLAccounts2());
+
+        List<GroupCodeMappingDetails> groupCodeMappingDetails = new ArrayList<>();
+        groupCodeMappingDetails.add(groupCodeMappingDetails1);
+        groupCodeMappingDetails.add(groupCodeMappingDetails2);
+        return groupCodeMappingDetails;
+    }
+
+    private List<GroupCodesVsGLAccounts> getGroupCodesVsGLAccounts1() {
+        List<GroupCodesVsGLAccounts> groupCodesVsGLAccountsList = new ArrayList<>();
+
+        GroupCodesVsGLAccounts glAccounts1 = new GroupCodesVsGLAccounts();
+        glAccounts1.setGroupCode("_204");
+        List<String> glAcctIdList1 = new ArrayList<>();
+        glAcctIdList1.add("5_001");
+        glAccounts1.setGlAccounts(glAcctIdList1);
+
+        groupCodesVsGLAccountsList.add(glAccounts1);
+        return groupCodesVsGLAccountsList;
+    }
+
+    private List<GroupCodesVsGLAccounts> getGroupCodesVsGLAccounts2() {
+        List<GroupCodesVsGLAccounts> groupCodesVsGLAccountsList = new ArrayList<>();
+
+        GroupCodesVsGLAccounts glAccounts2 = new GroupCodesVsGLAccounts();
+        glAccounts2.setGroupCode("_205");
+        List<String> glAcctIdList = new ArrayList<>();
+        glAcctIdList.add("5_002");
+        glAccounts2.setGlAccounts(glAcctIdList);
+
+        groupCodesVsGLAccountsList.add(glAccounts2);
+        return groupCodesVsGLAccountsList;
+    }
+
+    private List<OemFsGroupCodeDetails> getOemFsGroupCodeDetails() {
+        OemFsGroupCodeDetails oemFsGroupCodeDetails1 = new OemFsGroupCodeDetails();
+        oemFsGroupCodeDetails1.setOemId("Volvo");
+        List<String> groupCodes = new ArrayList<>();
+        groupCodes.add("_204");
+        oemFsGroupCodeDetails1.setGroupCodes(groupCodes);
+
+        OemFsGroupCodeDetails oemFsGroupCodeDetails2 = new OemFsGroupCodeDetails();
+        oemFsGroupCodeDetails2.setOemId("VW");
+        List<String> groupCodes1 = new ArrayList<>();
+        groupCodes1.add("_205");
+        oemFsGroupCodeDetails2.setGroupCodes(groupCodes1);
+
+        List<OemFsGroupCodeDetails> oemFsGroupCodeDetailsList = new ArrayList<>();
+        oemFsGroupCodeDetailsList.add(oemFsGroupCodeDetails1);
+        oemFsGroupCodeDetailsList.add(oemFsGroupCodeDetails2);
+        return oemFsGroupCodeDetailsList;
     }
 
     List<OemFsMapping> mappingsToUpdate(){

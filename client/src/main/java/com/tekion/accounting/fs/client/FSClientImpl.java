@@ -83,4 +83,9 @@ public class FSClientImpl implements FSClient{
 	public TResponse<List<FsMappingDto>> getFsMappingsFromOemIdAndGroupCodes(OemIdsAndGroupCodeListDto oemIdsAndGroupCodeListDto) {
 		return fsInternalClient.getFsMappingsFromOemIdAndGroupCodes(TRequestUtils.internalCallHeaderMap(), oemIdsAndGroupCodeListDto);
 	}
+
+	@Override
+	public TResponse<List<GroupCodeMappingDetailsDto>> getGLAccounts(Integer year, List<OemFsGroupCodeDetailsDto> details) {
+		return fsInternalClient.getGLAccounts(TRequestUtils.internalCallHeaderMap(), details, year);
+	}
 }

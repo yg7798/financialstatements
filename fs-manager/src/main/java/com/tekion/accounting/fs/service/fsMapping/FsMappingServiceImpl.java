@@ -7,6 +7,9 @@ import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMappingDetail;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.dto.mappings.GroupCodeMappingDetails;
+import com.tekion.accounting.fs.dto.mappings.GroupCodesVsGLAccounts;
+import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
 import com.tekion.accounting.fs.dto.mappings.OemFsMappingUpdateDto;
 import com.tekion.accounting.fs.common.utils.OemFSUtils;
 import com.tekion.accounting.fs.enums.FSType;
@@ -17,6 +20,7 @@ import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
 import com.tekion.accounting.fs.service.eventing.producers.FSEventHelper;
 import com.tekion.core.beans.TBaseMongoBean;
+import com.tekion.core.beans.TResponse;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
@@ -402,5 +406,68 @@ public class FsMappingServiceImpl implements FsMappingService {
     private List<OemFsMapping> getMappingsByGroupDisplayNames(Collection<String> groupDisplayNames, String oemId, Integer year){
         List<String> groupCodes = groupDisplayNames.stream().map(OemFSUtils::createGroupCode).collect(Collectors.toList());
         return getFsMappingsByOemIdAndGroupCodes(year, groupCodes, Collections.singletonList(oemId), true);
+    }
+
+    @Override
+    public List<GroupCodeMappingDetails> getGLAccounts(Integer year, List<OemFsGroupCodeDetails> details) {
+        List<GroupCodeMappingDetails> glAccountsResponseDetails = new ArrayList<>();
+        List<String> oemIds = new ArrayList<>();
+        List<String> fsIds = new ArrayList<>();
+
+        for (OemFsGroupCodeDetails fsGroupCodeDetails : details) {
+            oemIds.add(fsGroupCodeDetails.getOemId());
+        }
+        List<FSEntry> getFsEntries = fsEntryRepo.getFsEntriesByOemIds(FSType.OEM, oemIds, year, getCurrentDealerId());
+        for (FSEntry fsEntry : TCollectionUtils.nullSafeList(getFsEntries)) {
+            fsIds.add(fsEntry.getId());
+        }
+
+        List<OemFsMapping> oemFsMappings = oemFsMappingRepo.getMappingsByOemIds(fsIds, details);
+        Map<String, List<OemFsMapping>> oemVsFsMappingsMap = getOemVsFsMappingsMap(oemFsMappings);
+
+        for (OemFsGroupCodeDetails fsGroupCodeDetails : details) {
+            GroupCodeMappingDetails glAcctResponse = new GroupCodeMappingDetails();
+            glAcctResponse.setOemId(fsGroupCodeDetails.getOemId());
+            List<OemFsMapping> mappings = oemVsFsMappingsMap.get(fsGroupCodeDetails.getOemId());
+
+            Map<String, List<String>> groupCodeVsGLAcctMap = new HashMap<>();
+            for (OemFsMapping oemFsMapping : TCollectionUtils.nullSafeList(mappings)) {
+                if (groupCodeVsGLAcctMap.containsKey(oemFsMapping.getFsCellGroupCode())) {
+                    List<String> glAcctIds = groupCodeVsGLAcctMap.get(oemFsMapping.getFsCellGroupCode());
+                    glAcctIds.add(oemFsMapping.getGlAccountId());
+                } else {
+                    List<String> glAcctIds = new ArrayList<>();
+                    glAcctIds.add(oemFsMapping.getGlAccountId());
+                    groupCodeVsGLAcctMap.put(oemFsMapping.getFsCellGroupCode(), glAcctIds);
+                }
+            }
+
+            List<GroupCodesVsGLAccounts> groupCodesVsGLAccounts = new ArrayList<>();
+            for (String groupCode : groupCodeVsGLAcctMap.keySet()) {
+                GroupCodesVsGLAccounts glAccounts = new GroupCodesVsGLAccounts();
+                glAccounts.setGlAccounts(groupCodeVsGLAcctMap.get(groupCode));
+                glAccounts.setGroupCode(groupCode);
+                groupCodesVsGLAccounts.add(glAccounts);
+            }
+
+            glAcctResponse.setGroupCodesMapping(groupCodesVsGLAccounts);
+            glAccountsResponseDetails.add(glAcctResponse);
+        }
+        return glAccountsResponseDetails;
+    }
+
+    private Map<String, List<OemFsMapping>> getOemVsFsMappingsMap(List<OemFsMapping> oemFsMappings) {
+        Map<String, List<OemFsMapping>> oemVsFsMappingsMap = new HashMap<>();
+        for (OemFsMapping oemFsMapping : oemFsMappings) {
+            if (oemVsFsMappingsMap.containsKey(oemFsMapping.getOemId())) {
+                List<OemFsMapping> mappings = oemVsFsMappingsMap.get(oemFsMapping.getOemId());
+                mappings.add(oemFsMapping);
+            } else {
+                List<OemFsMapping> fsMappings = new ArrayList<>();
+                fsMappings.add(oemFsMapping);
+                oemVsFsMappingsMap.put(oemFsMapping.getOemId(), fsMappings);
+            }
+        }
+        return oemVsFsMappingsMap;
     }
 }

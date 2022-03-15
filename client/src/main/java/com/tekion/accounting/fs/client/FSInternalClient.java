@@ -61,4 +61,8 @@ public interface FSInternalClient {
 	@RequestLine("POST /financial-statements/u/fsMapping/byOemIdAndGroupCode")
 	TResponse<List<FsMappingDto>> getFsMappingsFromOemIdAndGroupCodes(@HeaderMap Map<String, String> internalCallHeaderMap,
 																	  OemIdsAndGroupCodeListDto requestDto);
+
+	@RequestLine("POST /financial-statements/u/fsMapping/fsCellGroups/fetch/{year}/bulk")
+	TResponse<List<GroupCodeMappingDetailsDto>> getGLAccounts(@HeaderMap Map<String, String> internalCallHeaderMap,
+															  List<OemFsGroupCodeDetailsDto> details, @Param("year") Integer year);
 }

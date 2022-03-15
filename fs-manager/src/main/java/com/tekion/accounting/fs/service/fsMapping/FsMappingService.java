@@ -1,6 +1,8 @@
 package com.tekion.accounting.fs.service.fsMapping;
 
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
+import com.tekion.accounting.fs.dto.mappings.GroupCodeMappingDetails;
+import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
 import com.tekion.accounting.fs.dto.mappings.OemFsMappingUpdateDto;
 
 
@@ -31,4 +33,7 @@ public interface FsMappingService {
     void deleteMappingsByGroupCodes(List<String> groupDisplayNames, String oemId, Integer year, String country);
 
     void replaceGroupCodesInMappings(Map<String, String> groupDisplayNames, String oemId, Integer year, String country);
+
+    List<GroupCodeMappingDetails> getGLAccounts(Integer year, List<OemFsGroupCodeDetails> details);
+
 }

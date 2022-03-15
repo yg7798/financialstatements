@@ -3,6 +3,7 @@ package com.tekion.accounting.fs.repos;
 import com.mongodb.bulk.BulkWriteUpsert;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
+import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
 
 import java.util.Collection;
 import java.util.List;
@@ -53,4 +54,6 @@ public interface OemFSMappingRepo {
     void hardDeleteMappings(Collection<String> fsIds);
 
     Integer addTenantId();
+
+    List<OemFsMapping> getMappingsByOemIds(List<String> fsIds, Collection<OemFsGroupCodeDetails> details);
 }

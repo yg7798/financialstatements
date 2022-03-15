@@ -11,6 +11,8 @@ import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.accounting.fs.common.utils.TMongoUtils;
+import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
+import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
 import com.tekion.core.utils.TCollectionUtils;
@@ -32,6 +34,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.tekion.accounting.fs.beans.common.FSEntry.FS_ID;
+import static com.tekion.accounting.fs.beans.common.FSEntry.FS_TYPE;
 import static com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo.OEM_ID;
 import static com.tekion.accounting.fs.common.TConstants.*;
 import static com.tekion.accounting.fs.common.utils.UserContextUtils.getDefaultSiteId;
@@ -301,4 +304,21 @@ public class OemFSMappingRepoImpl extends BaseDealerLevelMongoRepository<OemFsMa
         BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(), OemFsMapping.class);
         return bulkOperations.execute().getModifiedCount();
     }
+
+    @Override
+    public List<OemFsMapping> getMappingsByOemIds(List<String> fsIds, Collection<OemFsGroupCodeDetails> details) {
+        Query query = new Query();
+        Criteria criteria = criteriaForNonDeleted();
+        List<Criteria> criteriaList =  new ArrayList<>();
+        for (OemFsGroupCodeDetails fsGroupCodeDetails : details) {
+            Criteria expression = criteriaForNonDeleted();
+            expression.and(OemFsMapping.OEM_ID).is(fsGroupCodeDetails.getOemId());
+            expression.and(FS_ID).in(fsIds);
+            expression.and(OemFsMapping.FS_CELL_GROUP_CODE).in(fsGroupCodeDetails.getGroupCodes());
+            criteriaList.add(expression);
+        }
+        query.addCriteria(criteria.orOperator(criteriaList.toArray(new Criteria[criteriaList.size()])));
+        return this.getMongoTemplate().find(query, OemFsMapping.class);
+    }
+
 }

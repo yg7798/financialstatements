@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.api;
 
 import com.tekion.accounting.fs.common.GlobalService;
+import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
 import com.tekion.accounting.fs.dto.mappings.OemIdsAndGroupCodeListRequestDto;
 import com.tekion.accounting.fs.service.fsMapping.FsMappingService;
 import com.tekion.core.service.api.TResponseEntityBuilder;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
@@ -87,5 +89,11 @@ public class FsMappingApi {
         globalService.executeTaskForAllDealers(() -> fsMappingService.replaceGroupCodesInMappings(groupDisplayNames, oemId, year, country),
                 getDefaultParallelism(parallelism));;
         return TResponseEntityBuilder.okResponseEntity("success");
+    }
+
+    @PostMapping("/fsCellGroups/fetch/{year}/bulk")
+    public ResponseEntity getGLAccountsByGroupCodesAndOem(@PathVariable @NotBlank Integer year,
+                                                          @RequestBody List<OemFsGroupCodeDetails> details){
+        return TResponseEntityBuilder.okResponseEntity(fsMappingService.getGLAccounts(year, details));
     }
 }

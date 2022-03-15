@@ -26,5 +26,7 @@ public interface FSClient {
 	TResponse<List<FsMappingDto>> getFsMappings(String fsId, Set<String> glAccountIds);
 
 	TResponse<List<FsMappingDto>> getFsMappingsFromOemIdAndGroupCodes(OemIdsAndGroupCodeListDto oemIdsAndGroupCodeListDto);
+
+	TResponse<List<GroupCodeMappingDetailsDto>> getGLAccounts(Integer year, List<OemFsGroupCodeDetailsDto> details);
 }
 
