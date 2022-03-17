@@ -308,8 +308,11 @@ public class OemFSMappingRepoImpl extends BaseDealerLevelMongoRepository<OemFsMa
     @Override
     public List<OemFsMapping> getMappingsByOemIds(List<String> fsIds, Collection<OemFsGroupCodeDetails> details) {
         Query query = new Query();
+        if (TCollectionUtils.isEmpty(details)) {
+            return new ArrayList<>();
+        }
         Criteria criteria = criteriaForNonDeleted();
-        List<Criteria> criteriaList =  new ArrayList<>();
+        List<Criteria> criteriaList = new ArrayList<>();
         for (OemFsGroupCodeDetails fsGroupCodeDetails : details) {
             Criteria expression = criteriaForNonDeleted();
             expression.and(OemFsMapping.OEM_ID).is(fsGroupCodeDetails.getOemId());
