@@ -7,10 +7,8 @@ import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMappingDetail;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
-import com.tekion.accounting.fs.dto.mappings.GroupCodeMappingDetails;
-import com.tekion.accounting.fs.dto.mappings.GroupCodesVsGLAccounts;
-import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
-import com.tekion.accounting.fs.dto.mappings.OemFsMappingUpdateDto;
+import com.tekion.accounting.fs.common.utils.TimeUtils;
+import com.tekion.accounting.fs.dto.mappings.*;
 import com.tekion.accounting.fs.common.utils.OemFSUtils;
 import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.events.MappingUpdateEvent;
@@ -27,6 +25,7 @@ import com.tekion.core.utils.UserContextProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -430,18 +429,7 @@ public class FsMappingServiceImpl implements FsMappingService {
             glAcctResponse.setOemId(fsGroupCodeDetails.getOemId());
             List<OemFsMapping> mappings = oemVsFsMappingsMap.get(fsGroupCodeDetails.getOemId());
 
-            Map<String, List<String>> groupCodeVsGLAcctMap = new HashMap<>();
-            for (OemFsMapping oemFsMapping : TCollectionUtils.nullSafeList(mappings)) {
-                if (groupCodeVsGLAcctMap.containsKey(oemFsMapping.getFsCellGroupCode())) {
-                    List<String> glAcctIds = groupCodeVsGLAcctMap.get(oemFsMapping.getFsCellGroupCode());
-                    glAcctIds.add(oemFsMapping.getGlAccountId());
-                } else {
-                    List<String> glAcctIds = new ArrayList<>();
-                    glAcctIds.add(oemFsMapping.getGlAccountId());
-                    groupCodeVsGLAcctMap.put(oemFsMapping.getFsCellGroupCode(), glAcctIds);
-                }
-            }
-
+            Map<String, List<String>> groupCodeVsGLAcctMap = getGroupCodeVsGLAcctMap(mappings);
             List<GroupCodesVsGLAccounts> groupCodesVsGLAccounts = new ArrayList<>();
             for (String groupCode : groupCodeVsGLAcctMap.keySet()) {
                 GroupCodesVsGLAccounts glAccounts = new GroupCodesVsGLAccounts();
@@ -454,6 +442,99 @@ public class FsMappingServiceImpl implements FsMappingService {
             glAccountsResponseDetails.add(glAcctResponse);
         }
         return glAccountsResponseDetails;
+    }
+
+    @Override
+    public List<GroupCodeMappingResponseDto> getGLAccountsForMultipleYears(List<OemFsGroupCodeDetailsRequestDto> details) {
+        List<GroupCodeMappingResponseDto> glAccountsResponse = new ArrayList<>();
+        List<String> oemIds = getOemIds(details);
+
+        List<FSEntry> getFsEntries = fsEntryRepo.getFsEntriesByOemIds(FSType.OEM, oemIds, getCurrentDealerId());
+        List<FSEntry> getFsEntriesForCurrentYear = fsEntryRepo.getFsEntriesByOemIds(FSType.OEM, oemIds,
+                TimeUtils.getCurrentYear(), getCurrentDealerId());
+
+        List<String> fsIds = getFsIds(getFsEntries, oemIds);
+        List<String> fsIdsForCurrentYear = getFsIds(getFsEntriesForCurrentYear, oemIds);
+
+        List<OemFsMapping> oemFsMappings = oemFsMappingRepo.getMappingsByOemIdsForMultipleYears(fsIds, details);
+        List<OemFsMapping> oemFsMappingsForCurrentYear = oemFsMappingRepo.getFSEntriesByFsIdsAndDealerId(fsIdsForCurrentYear,
+                getCurrentDealerId());
+
+        Map<String, List<OemFsMapping>> oemVsFsMappingsMap = getOemVsFsMappingsMap(oemFsMappings);
+        Map<String, List<OemFsMapping>> oemVsFsMappingsMapCurrentYear = getOemVsFsMappingsMap(oemFsMappingsForCurrentYear);
+        Map<String, List<String>> groupCodeVsGLAcctMapForCurrentYear = new HashMap<>();
+        for (OemFsGroupCodeDetailsRequestDto groupCodeDetails : details) {
+            List<Integer> years = groupCodeDetails.getYears();
+            for (Integer year : years) {
+                List<OemFsMapping> mappings = getMappingsByYearAndOemId(year, oemVsFsMappingsMap.get(groupCodeDetails.getOemId()));
+                List<OemFsMapping> currentYearMappings = getMappingsByYearAndOemId(TimeUtils.getCurrentYear(), oemVsFsMappingsMapCurrentYear.get(groupCodeDetails.getOemId()));
+                GroupCodeMappingResponseDto glAcctResponse = new GroupCodeMappingResponseDto();
+                glAcctResponse.setOemId(groupCodeDetails.getOemId());
+                glAcctResponse.setYear(year);
+                Map<String, List<String>> groupCodeVsGLAcctMap = getGroupCodeVsGLAcctMap(mappings);
+                groupCodeVsGLAcctMapForCurrentYear = getGroupCodeVsGLAcctMap(currentYearMappings);
+
+                List<GroupCodesVsGLAccounts> groupCodesVsGLAccounts = new ArrayList<>();
+                for (String groupCode : groupCodeDetails.getGroupCodes()) {
+                    GroupCodesVsGLAccounts glAccounts;
+                    if (groupCodeVsGLAcctMap.containsKey(groupCode)) {
+                        glAccounts = new GroupCodesVsGLAccounts();
+                        glAccounts.setGlAccounts(groupCodeVsGLAcctMap.get(groupCode));
+                        glAccounts.setGroupCode(groupCode);
+                        groupCodesVsGLAccounts.add(glAccounts);
+                    } else if (groupCodeVsGLAcctMapForCurrentYear.containsKey(groupCode)) {
+                        glAccounts = new GroupCodesVsGLAccounts();
+                        glAccounts.setGlAccounts(groupCodeVsGLAcctMapForCurrentYear.get(groupCode));
+                        glAccounts.setGroupCode(groupCode);
+                        groupCodesVsGLAccounts.add(glAccounts);
+                    }
+                }
+                glAcctResponse.setGroupCodesMapping(groupCodesVsGLAccounts);
+                glAccountsResponse.add(glAcctResponse);
+            }
+        }
+        return glAccountsResponse;
+    }
+
+    private Map<String, List<String>> getGroupCodeVsGLAcctMap(List<OemFsMapping> mappings) {
+        Map<String, List<String>> groupCodeVsGLAcctMap = new HashMap<>();
+        for (OemFsMapping oemFsMapping : TCollectionUtils.nullSafeList(mappings)) {
+            if (groupCodeVsGLAcctMap.containsKey(oemFsMapping.getFsCellGroupCode())) {
+                List<String> glAcctIds = groupCodeVsGLAcctMap.get(oemFsMapping.getFsCellGroupCode());
+                glAcctIds.add(oemFsMapping.getGlAccountId());
+            } else {
+                List<String> glAcctIds = new ArrayList<>();
+                glAcctIds.add(oemFsMapping.getGlAccountId());
+                groupCodeVsGLAcctMap.put(oemFsMapping.getFsCellGroupCode(), glAcctIds);
+            }
+        }
+        return groupCodeVsGLAcctMap;
+    }
+
+    private List<String> getFsIds(List<FSEntry> fsEntries, List<String> oemIds) {
+        List<String> fsIds = new ArrayList<>();
+        for (FSEntry fsEntry : TCollectionUtils.nullSafeList(fsEntries)) {
+            fsIds.add(fsEntry.getId());
+        }
+        return fsIds;
+    }
+
+    private List<String> getOemIds(List<OemFsGroupCodeDetailsRequestDto> details) {
+        List<String> oemIds = new ArrayList<>();
+        for (OemFsGroupCodeDetailsRequestDto fsGroupCodeDetails : details) {
+            oemIds.add(fsGroupCodeDetails.getOemId());
+        }
+        return oemIds;
+    }
+
+    private List<OemFsMapping> getMappingsByYearAndOemId(Integer year, List<OemFsMapping> oemFsMappings) {
+        List<OemFsMapping> fsMappings = new ArrayList<>();
+        for (OemFsMapping mapping : TCollectionUtils.nullSafeList(oemFsMappings)) {
+            if (year.equals(mapping.getYear())) {
+                fsMappings.add(mapping);
+            }
+        }
+        return fsMappings;
     }
 
     private Map<String, List<OemFsMapping>> getOemVsFsMappingsMap(List<OemFsMapping> oemFsMappings) {

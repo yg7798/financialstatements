@@ -66,6 +66,8 @@ public interface FSEntryRepo {
 
     List<FSEntry> getFsEntriesByOemIds(List<String> oemIds, Integer year, String dealerId);
 
+    List<FSEntry> getFsEntriesByOemIds(FSType fsType, List<String> oemIds, String dealerId);
+
     Integer addTenantId();
 
     Long updateFsTypeForFsEntry(String fsId, String changedType);

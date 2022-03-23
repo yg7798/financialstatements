@@ -12,6 +12,8 @@ import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.accounting.fs.common.utils.TMongoUtils;
 import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
+import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetailsRequestDto;
+import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
@@ -317,6 +319,26 @@ public class OemFSMappingRepoImpl extends BaseDealerLevelMongoRepository<OemFsMa
             Criteria expression = criteriaForNonDeleted();
             expression.and(OemFsMapping.OEM_ID).is(fsGroupCodeDetails.getOemId());
             expression.and(FS_ID).in(fsIds);
+            expression.and(OemFsMapping.FS_CELL_GROUP_CODE).in(fsGroupCodeDetails.getGroupCodes());
+            criteriaList.add(expression);
+        }
+        query.addCriteria(criteria.orOperator(criteriaList.toArray(new Criteria[criteriaList.size()])));
+        return this.getMongoTemplate().find(query, OemFsMapping.class);
+    }
+
+    @Override
+    public List<OemFsMapping> getMappingsByOemIdsForMultipleYears(List<String> fsIds, Collection<OemFsGroupCodeDetailsRequestDto> details) {
+        Query query = new Query();
+        if (TCollectionUtils.isEmpty(details)) {
+            return new ArrayList<>();
+        }
+        Criteria criteria = criteriaForNonDeleted();
+        List<Criteria> criteriaList = new ArrayList<>();
+        for (OemFsGroupCodeDetailsRequestDto fsGroupCodeDetails : details) {
+            Criteria expression = criteriaForNonDeleted();
+            expression.and(OemFsMapping.OEM_ID).is(fsGroupCodeDetails.getOemId());
+            expression.and(FS_ID).in(fsIds);
+            expression.and(OemFsMapping.Year).in(fsGroupCodeDetails.getYears());
             expression.and(OemFsMapping.FS_CELL_GROUP_CODE).in(fsGroupCodeDetails.getGroupCodes());
             criteriaList.add(expression);
         }

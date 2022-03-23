@@ -291,6 +291,15 @@ public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> imp
     }
 
     @Override
+    public List<FSEntry> getFsEntriesByOemIds(FSType fsType, List<String> oemIds, String dealerId) {
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(DEALER_ID).is(dealerId);
+        criteria.and(FS_TYPE).is(fsType);
+        criteria.and(OEM_ID).in(oemIds);
+        return this.findAll(criteria, this.getBeanClass(), this.getMongoTemplate());
+    }
+
+    @Override
     public Long updateFsTypeForFsEntry(String fsId, String changedType) {
         Criteria criteria = criteriaForNonDeleted().and(ID).is(fsId);
         Update update = new Update();

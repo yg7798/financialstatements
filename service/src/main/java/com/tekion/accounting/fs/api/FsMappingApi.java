@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.api;
 
 import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
+import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetailsRequestDto;
 import com.tekion.accounting.fs.dto.mappings.OemIdsAndGroupCodeListRequestDto;
 import com.tekion.accounting.fs.service.fsMapping.FsMappingService;
 import com.tekion.core.service.api.TResponseEntityBuilder;
@@ -95,5 +96,10 @@ public class FsMappingApi {
     public ResponseEntity getGLAccountsByGroupCodesAndOem(@PathVariable @NotBlank Integer year,
                                                           @RequestBody List<OemFsGroupCodeDetails> details){
         return TResponseEntityBuilder.okResponseEntity(fsMappingService.getGLAccounts(year, details));
+    }
+
+    @PostMapping("/fsCellGroups/fetch/bulk")
+    public ResponseEntity getGLAccountsByGroupCodesAndOemForMultipleYears(@RequestBody List<OemFsGroupCodeDetailsRequestDto> details){
+        return TResponseEntityBuilder.okResponseEntity(fsMappingService.getGLAccountsForMultipleYears(details));
     }
 }

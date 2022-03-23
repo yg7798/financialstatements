@@ -4,6 +4,8 @@ import com.mongodb.bulk.BulkWriteUpsert;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
+import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetailsRequestDto;
+import com.tekion.accounting.fs.enums.FSType;
 
 import java.util.Collection;
 import java.util.List;
@@ -56,4 +58,7 @@ public interface OemFSMappingRepo {
     Integer addTenantId();
 
     List<OemFsMapping> getMappingsByOemIds(List<String> fsIds, Collection<OemFsGroupCodeDetails> details);
+
+    List<OemFsMapping> getMappingsByOemIdsForMultipleYears(List<String> fsIds, Collection<OemFsGroupCodeDetailsRequestDto> details);
+
 }

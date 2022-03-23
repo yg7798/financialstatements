@@ -5,10 +5,9 @@ import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMappingDetail;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
-import com.tekion.accounting.fs.dto.mappings.GroupCodeMappingDetails;
-import com.tekion.accounting.fs.dto.mappings.GroupCodesVsGLAccounts;
-import com.tekion.accounting.fs.dto.mappings.OemFsGroupCodeDetails;
-import com.tekion.accounting.fs.dto.mappings.OemFsMappingUpdateDto;
+import com.tekion.accounting.fs.common.utils.TimeUtils;
+import com.tekion.accounting.fs.dto.mappings.*;
+import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.events.MappingUpdateEvent;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFSMappingRepo;
@@ -37,6 +36,8 @@ import static org.mockito.Mockito.times;
 public class FsMappingServiceImplTest {
     @InjectMocks
     FsMappingServiceImpl fsMappingService;
+    @InjectMocks
+    TimeUtils timeUtils;
 
     @Mock
     OemFSMappingRepo oemFSMappingRepo;
@@ -293,6 +294,92 @@ public class FsMappingServiceImplTest {
         Assert.assertEquals(getGroupCodeMappingDetailsList(), fsMappingService.getGLAccounts(2022, getOemFsGroupCodeDetails()));
     }
 
+    @Test
+    public void testGetGLAccountsForMultipleYears() {
+        Mockito.when(dealerConfig.getDealerTimeZone()).thenReturn(TimeZone.getTimeZone("America/Los_Angeles"));
+        Mockito.when(fsEntryRepo.getFsEntriesByOemIds(Mockito.any(), Mockito.anyList(), Mockito.anyString())).thenReturn(getFsEntries());
+        List<FSEntry> fsEntries = getFsEntries();
+        fsEntries.get(0).setYear(2022);
+        Mockito.when(fsEntryRepo.getFsEntriesByOemIds(Mockito.any(), Mockito.anyList(), Mockito.anyInt(), Mockito.anyString())).thenReturn(fsEntries);
+        Mockito.when(oemFSMappingRepo.getMappingsByOemIdsForMultipleYears(Mockito.anyList(), Mockito.anyList())).thenReturn(getMappings());
+        Mockito.when(oemFSMappingRepo.getFSEntriesByFsIdsAndDealerId(Mockito.anyList(), Mockito.anyString())).thenReturn(currentYearMappings());
+        Assert.assertEquals(getGroupCodeMappingResponseDtoList(), fsMappingService.getGLAccountsForMultipleYears(getOemFsGroupCodeDetailsRequestDtoList()));
+    }
+
+    private List<OemFsGroupCodeDetailsRequestDto> getOemFsGroupCodeDetailsRequestDtoList() {
+        OemFsGroupCodeDetailsRequestDto dto = new OemFsGroupCodeDetailsRequestDto();
+        dto.setOemId("Acura");
+        dto.setYears(getYearsList());
+        dto.setGroupCodes(getGroupCodesList());
+
+        List<OemFsGroupCodeDetailsRequestDto> dtos = new ArrayList<>();
+        dtos.add(dto);
+        return dtos;
+    }
+
+    private List<String> getGroupCodesList() {
+        List<String> grpCodes = new ArrayList<>();
+        grpCodes.add("_200");
+        grpCodes.add("_300");
+        return grpCodes;
+    }
+
+    private List<Integer> getYearsList() {
+        List<Integer> years = new ArrayList<>();
+        years.add(2021);
+        years.add(2022);
+        return years;
+    }
+
+    private List<GroupCodeMappingResponseDto> getGroupCodeMappingResponseDtoList() {
+        GroupCodeMappingResponseDto dto1 = new GroupCodeMappingResponseDto();
+        dto1.setYear(2021);
+        dto1.setOemId("Acura");
+        dto1.setGroupCodesMapping(getGrpCodesMapping());
+
+        GroupCodeMappingResponseDto dto2 = new GroupCodeMappingResponseDto();
+        dto2.setYear(2022);
+        dto2.setOemId("Acura");
+        dto2.setGroupCodesMapping(getGrpCodesMapping());
+
+        List<GroupCodeMappingResponseDto> dtos = new ArrayList<>();
+        dtos.add(dto1);
+        dtos.add(dto2);
+        return dtos;
+    }
+
+    private List<GroupCodesVsGLAccounts> getGrpCodesMapping() {
+        GroupCodesVsGLAccounts glAccounts = new GroupCodesVsGLAccounts();
+        glAccounts.setGroupCode("_200");
+        List<String> glAccountsList = new ArrayList<>();
+        glAccountsList.add("123");
+        glAccounts.setGlAccounts(glAccountsList);
+
+        GroupCodesVsGLAccounts glAccounts1 = new GroupCodesVsGLAccounts();
+        glAccounts1.setGroupCode("_300");
+        List<String> glAccountsList1 = new ArrayList<>();
+        glAccountsList1.add("567");
+        glAccounts1.setGlAccounts(glAccountsList1);
+
+        List<GroupCodesVsGLAccounts> groupCodesVsGLAccounts = new ArrayList<>();
+        groupCodesVsGLAccounts.add(glAccounts);
+        groupCodesVsGLAccounts.add(glAccounts1);
+        return groupCodesVsGLAccounts;
+    }
+
+    private List<FSEntry> getFsEntries() {
+        FSEntry fsEntry1 = getFsEntry();
+        fsEntry1.setFsType(FSType.OEM.name());
+        FSEntry fsEntry2 = getFsEntry();
+        fsEntry2.setYear(2022);
+        fsEntry2.setFsType(FSType.OEM.name());
+        fsEntry2.setId("6155a7d8b3cb1f0006868ab5");
+        List<FSEntry> fsEntries = new ArrayList<>();
+        fsEntries.add(fsEntry1);
+        fsEntries.add(fsEntry2);
+        return fsEntries;
+    }
+
     private List<GroupCodeMappingDetails> getGroupCodeMappingDetailsList() {
         GroupCodeMappingDetails groupCodeMappingDetails1 = new GroupCodeMappingDetails();
         groupCodeMappingDetails1.setOemId("Volvo");
@@ -360,16 +447,64 @@ public class FsMappingServiceImplTest {
         oemFsMapping.setId("1");
         oemFsMapping.setDeleted(false);
         oemFsMapping.setOemId("Acura");
+        oemFsMapping.setYear(2021);
         mappings.add(oemFsMapping);
 
         OemFsMapping oemFsMapping1 = new OemFsMapping();
         oemFsMapping1.setFsCellGroupCode("_300");
         oemFsMapping1.setId("2");
         oemFsMapping1.setDeleted(false);
-        oemFsMapping.setOemId("Acura");
+        oemFsMapping1.setOemId("Acura");
+        oemFsMapping1.setYear(2021);
         mappings.add(oemFsMapping1);
         return mappings;
     }
+
+    List<OemFsMapping> currentYearMappings(){
+        List<OemFsMapping> mappings = new ArrayList<>();
+        OemFsMapping oemFsMapping = new OemFsMapping();
+        oemFsMapping.setFsCellGroupCode("_200");
+        oemFsMapping.setId("1");
+        oemFsMapping.setDeleted(false);
+        oemFsMapping.setOemId("Acura");
+        oemFsMapping.setYear(2022);
+        oemFsMapping.setGlAccountId("123");
+        mappings.add(oemFsMapping);
+
+        OemFsMapping oemFsMapping1 = new OemFsMapping();
+        oemFsMapping1.setFsCellGroupCode("_300");
+        oemFsMapping1.setGlAccountId("567");
+        oemFsMapping1.setId("2");
+        oemFsMapping1.setDeleted(false);
+        oemFsMapping1.setOemId("Acura");
+        oemFsMapping1.setYear(2022);
+        mappings.add(oemFsMapping1);
+        return mappings;
+    }
+
+    List<OemFsMapping> getMappings(){
+        List<OemFsMapping> mappings = new ArrayList<>();
+        OemFsMapping oemFsMapping = new OemFsMapping();
+        oemFsMapping.setFsCellGroupCode("_200");
+        oemFsMapping.setId("1");
+        oemFsMapping.setDeleted(false);
+        oemFsMapping.setOemId("Acura");
+        oemFsMapping.setYear(2021);
+        oemFsMapping.setGlAccountId("123");
+        mappings.add(oemFsMapping);
+
+        OemFsMapping oemFsMapping1 = new OemFsMapping();
+        oemFsMapping1.setFsCellGroupCode("_200");
+        oemFsMapping1.setId("2");
+        oemFsMapping1.setDeleted(false);
+        oemFsMapping1.setOemId("Acura");
+        oemFsMapping1.setYear(2022);
+        oemFsMapping1.setGlAccountId("123");
+        mappings.add(oemFsMapping1);
+        return mappings;
+    }
+
+
 
     private FSEntry getFsEntry()
     {
