@@ -1936,18 +1936,19 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 		if(TCollectionUtils.isEmpty(groupCodes)) return new ArrayList<>();
 
+		List<AccountingOemFsCellGroup> migratedGroupCodes = new ArrayList<>();
 		for(AccountingOemFsCellGroup group: groupCodes){
 			AccountingOemFsCellGroup clonedCellGroup = null;
 			try {
 				clonedCellGroup = (AccountingOemFsCellGroup) group.clone();
 				AccountingOemFsCellGroup.updateInfoForClonedCellGroup(clonedCellGroup);
 				clonedCellGroup.setYear(toYear);
-				groupCodes.add(clonedCellGroup);
+				migratedGroupCodes.add(clonedCellGroup);
 			} catch (CloneNotSupportedException e) {
 				log.error(e.getMessage());
 			}
 		}
-		oemFsCellGroupRepo.insertBulk(groupCodes);
+		oemFsCellGroupRepo.insertBulk(migratedGroupCodes);
 
 		return oemFsCellGroupRepo.findByOemId(oemId, toYear, dealerConfig.getDealerCountryCode());
 	}

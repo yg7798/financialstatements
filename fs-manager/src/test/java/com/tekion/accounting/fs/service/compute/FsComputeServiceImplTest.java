@@ -749,6 +749,36 @@ public class FsComputeServiceImplTest extends TestCase {
        Assert.assertEquals(0, oemMappingService.migrateGroupsCodesToYear("GM", 2019, 2021, "US").size());
     }
 
+    @Test
+    public void testMigrateGroupsCodesToYear_success() {
+        Mockito.when(oemFsCellGroupRepo.findByOemId(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(null,getAccountingOemFsGroupCode());
+        Assert.assertEquals(2, oemMappingService.migrateGroupsCodesToYear("GM", 2019, 2021, "US").size());
+    }
+
+    @Test(
+            expected = TBaseRuntimeException.class
+    )
+    public void testMigrateCellCodesToYear_toYearExists() {
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(getAccountingOemFsCellCodes());
+        oemMappingService.migrateCellCodesToYear("GM", 2019, 2021, "US").size();
+    }
+
+    @Test
+    public void testMigrateCellCodesToYear_fromYearNotExists() {
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(null);
+        Assert.assertEquals(0, oemMappingService.migrateCellCodesToYear("GM", 2019, 2021, "US").size());
+    }
+
+    @Test
+    public void testMigrateCellCodesToYear_success() {
+        Mockito.when(fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString()))
+                .thenReturn(null, getAccountingOemFsCellCodes());
+        Assert.assertEquals(3, oemMappingService.migrateCellCodesToYear("GM", 2019, 2021, "US").size());
+    }
+
 
     @Test
     public void testDeleteCellCodes() {
