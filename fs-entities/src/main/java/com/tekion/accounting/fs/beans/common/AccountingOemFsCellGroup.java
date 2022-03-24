@@ -9,8 +9,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
 @CompoundIndexes({
 		@CompoundIndex(
 				name = "idx_group_cdkPcl_year_oemId_country",
@@ -68,7 +66,7 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean implements Cloneabl
 	private String disPcl;
 	private FsCellCodeSource source;
 
-	public void updateGroupCodes(AccountingOemFsCellGroup toUpdate) {
+	public void updatePclCodes(AccountingOemFsCellGroup toUpdate) {
 		this.setAutomatePcl(toUpdate.getAutomatePcl());
 		this.setAutosoftPcl(toUpdate.getAutosoftPcl());
 		this.setCdkPcl(toUpdate.getCdkPcl());
@@ -78,10 +76,13 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean implements Cloneabl
 		this.setPbsPcl(toUpdate.getPbsPcl());
 		this.setQuorumPcl(toUpdate.getQuorumPcl());
 		this.setRrPcl(toUpdate.getRrPcl());
+		this.setDisPcl(toUpdate.getDisPcl());
+		this.setOemAccountNumber(toUpdate.getOemAccountNumber());
+
 		this.setModifiedTime(System.currentTimeMillis());
 	}
 
-	public void updateGroupCodes(PclDetailsInExcel toUpdate) {
+	public void updatePclCodes(PclDetailsInExcel toUpdate) {
 		this.setCdkPcl(toUpdate.getCDK_PCL());
 		this.setDbPcl(toUpdate.getDB_PCL());
 		this.setRrPcl(toUpdate.getRR_PCL());

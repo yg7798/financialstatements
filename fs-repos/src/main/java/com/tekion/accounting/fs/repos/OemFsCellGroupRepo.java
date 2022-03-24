@@ -40,4 +40,6 @@ public interface OemFsCellGroupRepo {
     AccountingOemFsCellGroup findByGroupCode(String oemId, Integer year, String groupCode, String country);
 
     List<AccountingOemFsCellGroup> findByGroupCode(Set<String> oemIds, Set<Integer> years, Set<String> countries, Set<String> groupCodes);
+
+    List<AccountingOemFsCellGroup> findByOemIds(Set<String> oemIds, Set<Integer> years, String country);
 }

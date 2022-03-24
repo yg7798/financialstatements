@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -23,5 +24,12 @@ public class CellGroupApi {
 	public ResponseEntity getCellGroups(@PathVariable String oemId, @PathVariable Integer year, @PathVariable Integer version, @NotNull @RequestBody List<String> groupCodes) {
 		return TResponseEntityBuilder.okResponseEntity(fsCellGroupService.findGroupCodes(groupCodes, oemId, year, version));
 	}
+
+	@PostMapping("/migrate/values/{country}/fromYear/{fromYear}/toYear/{toYear}")
+	public ResponseEntity migrateCellGroupValuesForOem(@PathVariable String country, @PathVariable Integer fromYear, @PathVariable Integer toYear,  @RequestBody Set<String> oemIds) {
+		fsCellGroupService.migrateCellGroupValuesForOem(country, fromYear, toYear, oemIds);
+		return TResponseEntityBuilder.okResponseEntity("pcl values copied from prev year to current year");
+	}
+
 
 }

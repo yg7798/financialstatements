@@ -10,16 +10,11 @@ import com.tekion.accounting.fs.dto.pclCodes.*;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.repos.OemTemplateRepo;
 import com.tekion.accounting.fs.service.common.FileCommons;
-import com.tekion.accounting.fs.service.common.pdfPrinting.PDFPrintService;
-import com.tekion.accounting.fs.service.common.pdfPrinting.dto.MediaItem;
-import com.tekion.accounting.fs.service.common.pdfPrinting.dto.MediaResponse;
 import com.tekion.accounting.fs.service.externalService.media.MediaInteractorService;
 import com.tekion.core.beans.TResponse;
 import com.tekion.core.excelGeneration.models.model.MediaUploadResponse;
 import com.tekion.core.exceptions.TBaseRuntimeException;
-import com.tekion.core.exportable.lib.annotate.ExcelField;
 import com.tekion.core.exportable.lib.metadata.ClassMetaDataHolder;
-import com.tekion.core.exportable.lib.metadata.ExcelFieldMetaData;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.TStringUtils;
 import com.tekion.media.beans.response.PreSignedV2Response;
@@ -32,7 +27,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -87,7 +81,7 @@ public class PclCodeServiceImpl implements PclCodeService{
         if(Objects.isNull(accountingOemFsCellGroup)) {
             throw new TBaseRuntimeException("This combination of pclCode update does not exist {}, {}, {}, {}", pclDetails.getOemId(), pclDetails.getYear().toString(), pclDetails.getCountry(), pclDetails.getGroupCode());
         }
-        accountingOemFsCellGroup.updateGroupCodes(pclDetails);
+        accountingOemFsCellGroup.updatePclCodes(pclDetails);
         oemFsCellGroupRepo.save(accountingOemFsCellGroup);
     }
 
@@ -305,7 +299,7 @@ public class PclCodeServiceImpl implements PclCodeService{
         for (Map.Entry<String, PclDetailsInExcel> entry: pclDetailsToBeUpdatedList.entrySet()) {
             if(keyListToFetchFromDb.containsKey(entry.getKey())) {
                 AccountingOemFsCellGroup accountingOemFsCellGroup = keyListToFetchFromDb.get(entry.getKey());
-                accountingOemFsCellGroup.updateGroupCodes(pclDetailsToBeUpdatedList.get(entry.getKey()));
+                accountingOemFsCellGroup.updatePclCodes(pclDetailsToBeUpdatedList.get(entry.getKey()));
                 accountingOemFsCellGroupList.add(accountingOemFsCellGroup);
             }
         }
