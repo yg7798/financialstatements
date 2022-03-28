@@ -1310,6 +1310,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 			oemConfigInDb.setEnableRoundOffOffset(requestDto.isEnableRoundOffOffset());
 			oemConfigInDb.setModifiedByUserId(UserContextProvider.getCurrentUserId());
 			oemConfigInDb.setModifiedTime(System.currentTimeMillis());
+			oemConfigInDb.setFsValidationEnabled(requestDto.isFsValidationEnabled());
 			return oemConfigRepo.save(oemConfigInDb);
 
 		} else {

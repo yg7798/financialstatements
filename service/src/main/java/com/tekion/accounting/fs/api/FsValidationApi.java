@@ -19,7 +19,7 @@ public class FsValidationApi {
 
 	private final FsValidationService fsValidationService;
 
-	@PutMapping("/import/{oemId}/{country}/{year}/{mediaId}")
+	@PutMapping("/import/{oem}/{country}/{year}/{mediaId}")
 	public ResponseEntity importRules(@PathVariable String mediaId, @PathVariable OEM oem, @PathVariable String country, @PathVariable Integer year){
 		return TResponseEntityBuilder.okResponseEntity(fsValidationService.importRules(mediaId, oem.name(), country.toUpperCase(), year));
 	}
