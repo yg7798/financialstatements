@@ -33,6 +33,7 @@ public class OemConfig extends TBaseMongoBean {
 	private boolean downloadFileFromIntegration;
 	private boolean enableRoundOff;
 	private boolean enableRoundOffOffset;
+	private boolean fsValidationEnabled;
 
 	private String createdByUserId;
 	private String modifiedByUserId;

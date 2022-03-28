@@ -57,6 +57,7 @@ public class OemFSUtils {
 		StringSubstitutor sub = new StringSubstitutor(map);
 		return sub.replace(str);
 	}
+
 	public static BigDecimal getCalculatedAmount(String expression) {
 		if(TStringUtils.isBlank(expression)){
 			return BigDecimal.ZERO;

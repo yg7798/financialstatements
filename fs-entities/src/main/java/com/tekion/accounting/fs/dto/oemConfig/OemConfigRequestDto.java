@@ -31,6 +31,7 @@ public class OemConfigRequestDto {
     private boolean enableRoundOff;
     private boolean enableRoundOffOffset;
     private FSPreferences fsPreferences;
+    private boolean fsValidationEnabled;
 
     private List<OemConfig.SupportedFileFormats> supportedFileFormats = new ArrayList<>();
 
@@ -55,6 +56,7 @@ public class OemConfigRequestDto {
         oemConfig.setModifiedByUserId(UserContextProvider.getCurrentUserId());
         oemConfig.setModifiedTime(System.currentTimeMillis());
         oemConfig.setCreatedTime(System.currentTimeMillis());
+        oemConfig.setFsValidationEnabled(fsValidationEnabled);
 
         return oemConfig;
     }

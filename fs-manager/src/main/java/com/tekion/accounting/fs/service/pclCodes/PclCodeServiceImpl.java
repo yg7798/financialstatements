@@ -21,7 +21,6 @@ import com.tekion.media.beans.response.PreSignedV2Response;
 import com.tekion.media.library.MediaClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -29,6 +28,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.tekion.accounting.fs.service.utils.ExcelUtils.validateExcelFile;
 
 @Slf4j
 @Service
@@ -91,12 +92,12 @@ public class PclCodeServiceImpl implements PclCodeService{
         try{
             log.info("PCL bulk update requested for media id {}", requestDto.getMediaId());
             file = fileCommons.downloadFileUsingMediaId(requestDto.getMediaId());
-            validatePclCodeUpdateFile(file);
+            validateExcelFile(file);
             updatePclDetails(file);
 
         }catch (Exception e){
-            log.error("Pcl update failed with error: {} ",e);
-            throw new TBaseRuntimeException(FSError.uploadValidPclCodesFile);
+            log.error("Pcl update failed with error: ", e);
+            throw new TBaseRuntimeException(FSError.uploadValidExcelFile);
         }finally {
             if(Objects.nonNull(file)) {
                 file.delete();
@@ -177,12 +178,12 @@ public class PclCodeServiceImpl implements PclCodeService{
         try{
             log.info("PCL bulk update requested for media id {} and dmsType {}", requestDto.getMediaId(), requestDto.getDmsType());
             file = fileCommons.downloadFileUsingPresignedUrl(requestDto.getPreSignedUrl());
-            validatePclCodeUpdateFile(file);
+            validateExcelFile(file);
             updatePclDetailByGroupCodeAndOemDetails(file, requestDto);
 
         }catch (Exception e){
             log.error("Pcl update failed with error: {} ",e);
-            throw new TBaseRuntimeException(FSError.uploadValidPclCodesFile);
+            throw new TBaseRuntimeException(FSError.uploadValidExcelFile);
         }finally {
             if(Objects.nonNull(file)) {
                 file.delete();
@@ -224,36 +225,6 @@ public class PclCodeServiceImpl implements PclCodeService{
         return TStringUtils.isBlank(country) ? TConstants.COUNTRY_US : country;
     }
 
-    private void validatePclCodeUpdateFile(File file) throws IOException {
-        Workbook workbook = null;
-        try{
-            workbook = WorkbookFactory.create(file);
-            Sheet sheet = workbook.getSheetAt(0);
-            Iterator<Row> rowIterator = sheet.iterator();
-            if(!rowIterator.hasNext()){
-                throw new TBaseRuntimeException(FSError.uploadValidPclCodesFile);
-            }
-
-            rowIterator.next(); // skip header row
-
-            if(!rowIterator.hasNext() ){
-                throw new TBaseRuntimeException(FSError.uploadValidPclCodesFile);
-            }
-
-            Row row = rowIterator.next();
-            if(row == null || row.getCell(0) == null || row.getCell(0).getCellType().equals(CellType.BLANK)){
-                throw new TBaseRuntimeException(FSError.entryNumberCannotBeEmpty);
-            }
-            log.info("Validate pcl code update successfully");
-        }catch (IOException ioException){
-            log.error("Validate pcl code update failed with error: {} ",ioException);
-            throw new TBaseRuntimeException(FSError.ioError);
-        }finally {
-            workbook.close();
-        }
-        log.info("PCL bulk update file validated");
-    }
-
     private void updatePclDetails(File file) {
         Map<String, PclDetailsInExcel> pclDetailsToBeUpdatedList = Maps.newHashMap();
         Map<String, Set<String>> keyVsOemDetails = Maps.newHashMap();
@@ -263,7 +234,7 @@ public class PclCodeServiceImpl implements PclCodeService{
 
             if(TCollectionUtils.isEmpty(pclDetailsToBeUpdatedList)){
                 log.error("ERROR: Invalid pcl details to update");
-                throw new TBaseRuntimeException(FSError.uploadValidPclCodesFile);
+                throw new TBaseRuntimeException(FSError.uploadValidExcelFile);
             }
 
             Set<Integer> years = convertIntegersToString(keyVsOemDetails.get(YEARS));
@@ -280,7 +251,7 @@ public class PclCodeServiceImpl implements PclCodeService{
             throw new TBaseRuntimeException(FSError.ioError);
         } catch (Exception e) {
             log.error("ERROR: update pcl details {}", e);
-            throw new TBaseRuntimeException(FSError.uploadValidPclCodesFile);
+            throw new TBaseRuntimeException(FSError.uploadValidExcelFile);
         }
     }
 
