@@ -132,8 +132,8 @@ public class OemFsRelateCodesFromPreviewMigrationTaskExecutor extends AbstractFr
 		}};
 
 		List<GLAccount> tekionGlAccounts = TCollectionUtils.nullSafeCollection(accountingService.getGLAccounts(UserContextProvider.getCurrentDealerId()));
-		tekionGlAccounts = tekionGlAccounts.stream().filter(x -> (AccountType.MEMO.name().equals(x.getAccountName())))
-				.filter(y -> AccountType.EXPENSE_ALLOCATION.name().equals(y.getAccountName())).collect(Collectors.toList());
+		tekionGlAccounts = tekionGlAccounts.stream().filter(x -> (!AccountType.MEMO.name().equals(x.getAccountName())))
+				.filter(y -> !AccountType.EXPENSE_ALLOCATION.name().equals(y.getAccountName())).collect(Collectors.toList());
 
 		//List<GLAccount> tekionGlAccounts = accountRepository.findAllGlAccountsExceptAccountsHavingAccountTypeGivenInList(UserContextProvider.getCurrentDealerId(),accountTypes);
 		Map<String, String> accountNoToIdMap = tekionGlAccounts.stream().collect(Collectors.toMap(GLAccount::getAccountNumber, GLAccount::getId));
