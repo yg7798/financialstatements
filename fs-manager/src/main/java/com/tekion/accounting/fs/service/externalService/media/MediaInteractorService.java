@@ -1,15 +1,9 @@
 package com.tekion.accounting.fs.service.externalService.media;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 import com.poiji.bind.Poiji;
-import com.tekion.accounting.fs.common.TConstants;
-import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.dto.pclCodes.PclUpdateExcelDto;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.service.common.pdfPrinting.PDFPrintService;
-import com.tekion.accounting.fs.service.common.pdfPrinting.dto.MediaResponse;
-import com.tekion.accounting.fs.service.common.pdfPrinting.dto.MediaResponseEntity;
 import com.tekion.accounting.fs.service.utils.ExcelUtils;
 import com.tekion.core.excelGeneration.models.model.MediaUploadResponse;
 import com.tekion.core.excelGeneration.models.utils.JsonUtil;
@@ -22,11 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
@@ -36,8 +26,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
-import static com.tekion.accounting.fs.service.common.pdfPrinting.PDFPrintService.buildHeaders;
 
 @Component
 @Slf4j

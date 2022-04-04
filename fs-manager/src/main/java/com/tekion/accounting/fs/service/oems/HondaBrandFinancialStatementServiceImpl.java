@@ -1,13 +1,13 @@
 package com.tekion.accounting.fs.service.oems;
 
 import com.tekion.accounting.fs.beans.common.FSEntry;
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.integration.Detail;
 import com.tekion.accounting.fs.integration.FinancialStatement;
 import com.tekion.accounting.fs.integration.Header;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
@@ -37,7 +37,7 @@ public class HondaBrandFinancialStatementServiceImpl extends AbstractFinancialSt
 
     @Override
     public String generateXML(FinancialStatementRequestDto requestDto) {
-        throw new TBaseRuntimeException(AccountingError.notSupported);
+        throw new TBaseRuntimeException(FSError.notSupported);
     }
 
     /**
@@ -58,7 +58,7 @@ public class HondaBrandFinancialStatementServiceImpl extends AbstractFinancialSt
             writeExtras(response.getWriter());
         } catch (IOException e){
             log.error("Error while downloading Financial Statement", e);
-            throw new TBaseRuntimeException(AccountingError.ioError);
+            throw new TBaseRuntimeException(FSError.ioError);
         }
     }
 

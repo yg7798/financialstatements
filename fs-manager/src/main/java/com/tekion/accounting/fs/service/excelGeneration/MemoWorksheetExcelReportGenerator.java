@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.service.excelGeneration;
 
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.service.common.excelGeneration.reportRows.MemoWorksheetReportRow;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.service.common.excelGeneration.abstractExecutors.AccAbstractExcelReportGeneratorV2;
 import com.tekion.accounting.fs.service.common.excelGeneration.columnConfigs.financialStatment.MemoWorksheetColumnConfig;
 import com.tekion.accounting.fs.service.common.excelGeneration.dto.AccExcelRequestDto;
@@ -49,7 +49,7 @@ public class MemoWorksheetExcelReportGenerator extends AccAbstractExcelReportGen
 
 		List<ExcelReportSheet> excelReportSheets = ExcelReportSheet.getReportTypeToGroupInfoHolder().get(reportType);
 		if(TCollectionUtils.isEmpty(excelReportSheets)){
-			throw new TBaseRuntimeException(AccountingError.excelSheetNotRegistered, reportType);
+			throw new TBaseRuntimeException(FSError.excelSheetNotRegistered, reportType);
 		}
 		List<ColumnConfig> columnConfigList = getDefaultColumnConfigList(reportType);
 
@@ -70,7 +70,7 @@ public class MemoWorksheetExcelReportGenerator extends AccAbstractExcelReportGen
 
 	private void validateWorksheetExcelGenerationRequestDto(MemoWorksheetRequestDto memoWorksheetRequestDto) {
 		if (Objects.isNull(memoWorksheetRequestDto)) {
-			throw new TBaseRuntimeException(AccountingError.emptyExcelRequestDto, ExcelReportType.MEMO_WORKSHEET.name());
+			throw new TBaseRuntimeException(FSError.emptyExcelRequestDto, ExcelReportType.MEMO_WORKSHEET.name());
 		}
 		validator.validate(memoWorksheetRequestDto, NotNullGroup.class);
 	}

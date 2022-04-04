@@ -6,6 +6,7 @@ import com.tekion.accounting.fs.beans.common.*;
 import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.enums.Month;
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
@@ -137,7 +138,7 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
 
     @Override
     public String generateXML(FinancialStatementRequestDto requestDto) {
-        throw new TBaseRuntimeException(AccountingError.notSupported);
+        throw new TBaseRuntimeException(FSError.notSupported);
     }
 
     @Override
@@ -161,7 +162,7 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
             FSSubmitResponse fsSubmitResponse = submit(requestDto);
             log.info("fsSubmitResponse {}", fsSubmitResponse);
         }else{
-            throw new TBaseRuntimeException(AccountingError.notSupported);
+            throw new TBaseRuntimeException(FSError.notSupported);
         }
     }
 

@@ -16,7 +16,6 @@ import java.util.TimeZone;
 
 import static java.util.Objects.isNull;
 
-@Component
 @Data
 @Slf4j
 public class DealerConfig {

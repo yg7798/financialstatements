@@ -7,10 +7,10 @@ import com.tekion.accounting.fs.beans.memo.HCDepartment;
 import com.tekion.accounting.fs.beans.memo.HCValue;
 import com.tekion.accounting.fs.beans.memo.HCWorksheet;
 import com.tekion.accounting.fs.beans.memo.HCWorksheetTemplate;
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.dto.memo.CopyHCWorksheetValuesDto;
 import com.tekion.accounting.fs.dto.memo.HCBulkUpdateDto;
 import com.tekion.accounting.fs.dto.memo.HCUpdateDto;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetRepo;
@@ -192,7 +192,7 @@ public class HCWorksheetServiceImpl implements HCWorksheetService{
 				|| Objects.isNull(dto.getToMonth())
 				|| Objects.isNull(dto.getToYear())
 		){
-			throw new TBaseRuntimeException(AccountingError.invalidPayload);
+			throw new TBaseRuntimeException(FSError.invalidPayload);
 		}
 
 		TimeUtils.validateTwelveIndexedMonth(dto.getFromMonth());

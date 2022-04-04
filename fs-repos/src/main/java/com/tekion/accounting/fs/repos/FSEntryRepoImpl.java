@@ -3,11 +3,10 @@ package com.tekion.accounting.fs.repos;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mongodb.BasicDBObject;
-import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.common.utils.TMongoUtils;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.mongo.BaseDealerLevelMongoRepository;
@@ -123,7 +122,7 @@ public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> imp
     public FSEntry findByIdAndDealerIdWithNullCheck(String id, String dealerId) {
         FSEntry fsEntry = findByIdAndDealerId(id, dealerId);
         if(Objects.isNull(fsEntry)){
-            throw new TBaseRuntimeException(AccountingError.fsEntryNotFoundById);
+            throw new TBaseRuntimeException(FSError.fsEntryNotFoundById);
         }
         return fsEntry;
     }
@@ -139,7 +138,7 @@ public class FSEntryRepoImpl extends BaseDealerLevelMongoRepository<FSEntry> imp
         Criteria criteria = getCriteriaForOemYearAndFSType(oemId, year, dealerId, siteId, FSType.OEM.name());
         FSEntry fsEntry = this.getMongoTemplate().findOne(Query.query(criteria), FSEntry.class);
         if(Objects.isNull(fsEntry)){
-            throw new TBaseRuntimeException(AccountingError.fsEntryNotFoundForRequestedOemAndYear, oemId, String.valueOf(year));
+            throw new TBaseRuntimeException(FSError.fsEntryNotFoundForRequestedOemAndYear, oemId, String.valueOf(year));
         }
         return fsEntry;
     }

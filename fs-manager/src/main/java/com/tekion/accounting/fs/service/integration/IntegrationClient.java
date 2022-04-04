@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.service.integration;
 
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.dto.integration.FSIntegrationRequest;
 import com.tekion.accounting.fs.dto.integration.FSSubmitResponse;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.service.oems.OEMInfo;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.core.exceptions.TBaseRuntimeException;
@@ -74,7 +74,7 @@ public class IntegrationClient {
 				try{
 					log.error("Error resposne {}", IOUtils.toString(response.body().asInputStream()));
 				}catch (Exception e){}
-				return new TBaseRuntimeException(AccountingError.fsSubmitError);
+				return new TBaseRuntimeException(FSError.fsSubmitError);
 			}
 		}, null,null);
 //        return HystrixFeign.builder()

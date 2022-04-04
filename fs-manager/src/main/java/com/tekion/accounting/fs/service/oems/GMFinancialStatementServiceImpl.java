@@ -3,9 +3,9 @@ package com.tekion.accounting.fs.service.oems;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.common.TConstants;
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.integration.Detail;
 import com.tekion.accounting.fs.integration.FinancialStatement;
 import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
@@ -77,7 +77,7 @@ public class GMFinancialStatementServiceImpl extends AbstractFinancialStatementS
             response.getWriter().write(report);
         }catch (IOException ex) {
             log.error("IoException while generating XML file", ex);
-            throw new TBaseRuntimeException(AccountingError.ioError);
+            throw new TBaseRuntimeException(FSError.ioError);
         }
     }
 

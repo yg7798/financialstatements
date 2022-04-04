@@ -17,6 +17,7 @@ import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.enums.CustomFieldType;
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.common.utils.*;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodesCreateDto;
@@ -1523,7 +1524,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 		Calendar c = TimeUtils.buildCalendar(tillEpoch);
 		int tillMonth = c.get(Calendar.MONTH)+1;
 		if(c.get(Calendar.YEAR) != year){
-			throw new TBaseRuntimeException(AccountingError.invalidPayload);
+			throw new TBaseRuntimeException(FSError.invalidPayload);
 		}
 
 		List<AccountingOemFsCellCode> codes = getOemTMappingListFromCache(oem.name(), year, version, dealerConfig.getDealerCountryCode());
@@ -1907,7 +1908,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 		List<AccountingOemFsCellCode> cellCodes1 = fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(oemId, toYear, 1, country);
 		if(TCollectionUtils.isNotEmpty(cellCodes1)){
-			throw new TBaseRuntimeException(AccountingError.valuesExistForRequestedYear);
+			throw new TBaseRuntimeException(FSError.valuesExistForRequestedYear);
 		}
 
 		List<AccountingOemFsCellCode> cellCodes = fsCellCodeRepo.getFsCellCodesForOemYearAndCountry(oemId, fromYear, 1, country);
@@ -1930,7 +1931,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 		List<AccountingOemFsCellGroup> groupCodes1 = oemFsCellGroupRepo.findByOemId(oemId, toYear, country);
 
 		if(TCollectionUtils.isNotEmpty(groupCodes1)){
-			throw new TBaseRuntimeException(AccountingError.valuesExistForRequestedYear);
+			throw new TBaseRuntimeException(FSError.valuesExistForRequestedYear);
 		}
 
 		List<AccountingOemFsCellGroup> groupCodes = oemFsCellGroupRepo.findByOemId(oemId, fromYear, country);

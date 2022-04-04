@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.enums;
 
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 
 import java.util.Objects;
@@ -16,7 +17,7 @@ public enum OemValueType {
 		try{
 			OemValueType.valueOf(name.toUpperCase());
 		}catch (IllegalArgumentException e){
-			throw new TBaseRuntimeException(AccountingError.invalidFSOemValueType);
+			throw new TBaseRuntimeException(FSError.invalidFSOemValueType);
 		}
 	}
 }

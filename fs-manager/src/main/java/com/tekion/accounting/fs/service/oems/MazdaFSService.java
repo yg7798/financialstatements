@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.service.oems;
 
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.integration.Detail;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.OemCellValueType;
 import com.tekion.accounting.fs.enums.OemValueType;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
@@ -42,7 +42,7 @@ public class MazdaFSService extends AbstractFinancialStatementService  {
 				return;
 			}else{
 				log.error("Either Oem value Type as BALANCE1, BALANCE2, UNIT1, UNIT2 or ValueType as BALANCE, COUNT must present for cell {}", cellCode.getCode());
-				throw new TBaseRuntimeException(AccountingError.eitherOemValueTypeOrValueTypeInCellCodeMustPresent, cellCode.getCode());
+				throw new TBaseRuntimeException(FSError.eitherOemValueTypeOrValueTypeInCellCodeMustPresent, cellCode.getCode());
 			}
 		}
 

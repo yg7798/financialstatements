@@ -5,11 +5,11 @@ import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.MemoValue;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheetTemplate;
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.dto.memo.CopyMemoValuesDto;
 import com.tekion.accounting.fs.dto.memo.MemoBulkUpdateDto;
 import com.tekion.accounting.fs.dto.memo.MemoWorkSheetUpdateDto;
 import com.tekion.accounting.fs.dto.memo.WorksheetRequestDto;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.enums.OemCellDurationType;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
@@ -380,7 +380,7 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 		List<MemoWorksheet> worksheetsToUpdate = memoWorksheetRepo.findByFSId(fsEntry.getId());
 
 		if (TCollectionUtils.isEmpty(worksheetsToUpdate)) {
-			throw new TBaseRuntimeException(AccountingError.memoWorksheetsAreMissing);
+			throw new TBaseRuntimeException(FSError.memoWorksheetsAreMissing);
 		}
 
 		FSEntry previousYearEntry = fsEntryRepo.findDefaultType(oem.name(), fromYear, UserContextProvider.getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext());
@@ -425,7 +425,7 @@ public class MemoWorksheetServiceImpl implements MemoWorksheetService{
 				|| Objects.isNull(dto.getToYear())
 				|| TCollectionUtils.isEmpty(dto.getKeys())
 		){
-			throw new TBaseRuntimeException(AccountingError.invalidPayload);
+			throw new TBaseRuntimeException(FSError.invalidPayload);
 		}
 
 		TimeUtils.validateTwelveIndexedMonth(dto.getFromMonth());

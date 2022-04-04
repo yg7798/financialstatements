@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.service.oems;
 
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.integration.Detail;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
@@ -23,12 +23,12 @@ public class FordServiceImpl extends AbstractFinancialStatementService {
 
     @Override
     public String generateXML(FinancialStatementRequestDto requestDto) {
-        throw new TBaseRuntimeException(AccountingError.notSupported);
+        throw new TBaseRuntimeException(FSError.notSupported);
     }
 
     @Override
     public void downloadFile(FinancialStatementRequestDto requestDto, HttpServletResponse response) {
-        throw new TBaseRuntimeException(AccountingError.notSupported);
+        throw new TBaseRuntimeException(FSError.notSupported);
     }
 
     @Override

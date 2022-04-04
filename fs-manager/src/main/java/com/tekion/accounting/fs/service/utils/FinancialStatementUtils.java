@@ -1,12 +1,12 @@
 package com.tekion.accounting.fs.service.utils;
 
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
+import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.dto.context.FsReportContext;
 import com.tekion.accounting.fs.beans.common.OEMFsCellCodeSnapshot;
 import com.tekion.accounting.fs.beans.common.OemConfig;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.service.compute.models.OemFsCellContext;
-import com.tekion.accounting.fs.enums.AccountingError;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.core.excelGeneration.models.utils.TCollectionUtils;
 import com.tekion.core.exceptions.TBaseRuntimeException;
@@ -26,7 +26,7 @@ public class FinancialStatementUtils {
 
 	public static void validateOemId(String oemId){
 		if(!EnumUtils.isValidEnum(OEM.class, oemId)){
-			throw new TBaseRuntimeException(AccountingError.invalidOemId, oemId);
+			throw new TBaseRuntimeException(FSError.invalidOemId, oemId);
 		}
 	}
 
