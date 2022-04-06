@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.service.compute.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tekion.accounting.commons.utils.LocaleUtils;
 import com.tekion.accounting.fs.service.common.cache.dtos.OptionMinimal;
 import com.tekion.accounting.fs.common.enums.CustomFieldType;
 import com.tekion.as.models.beans.GLAccount;
@@ -34,15 +35,16 @@ public class OemFsMappingSimilarToUI {
 	private Long ytdCount;
 	private List<String> groupCodes;
 
-	public static final String MAPPED = "Mapped";
-	public static final String UNMAPPED = "Unmapped";
-	public static final String ACTIVE = "Active";
-	public static final String INACTIVE = "Inactive";
+	public static final String MAPPED_KEY = "key.mapped";
+	public static final String UNMAPPED_KEY = "key.unmapped";
+	public static final String ACTIVE_KEY = "key.active";
+	public static final String INACTIVE_KEY = "key.inactive";
 
 	public void toOemFsMappingBean(TrialBalanceRow trialBalanceRow, GLAccount glAccount, Map<String,List<String>> idOemFsMappings){
 		this.setGlNumber(glAccount.getAccountNumber());
 		this.setGlName(glAccount.getAccountName());
-		this.setAccountStatus(glAccount.isActive()? ACTIVE:INACTIVE);
+		this.setAccountStatus(glAccount.isActive()? LocaleUtils.translateLabel(ACTIVE_KEY)
+				: LocaleUtils.translateLabel(INACTIVE_KEY));
 		this.setAccountType(trialBalanceRow.getAccountType());
 		this.setDepartment("");
 		this.setYtdBalance(trialBalanceRow.getCurrentBalance());
@@ -51,10 +53,10 @@ public class OemFsMappingSimilarToUI {
 		this.setYtdCount(trialBalanceRow.getYtdCount());
 		this.setGroupCodes(idOemFsMappings.get(glAccount.getId()));
 		if(idOemFsMappings.containsKey(glAccount.getId()) && idOemFsMappings.get(glAccount.getId()).size()>0) {
-			this.setStatus(MAPPED);
+			this.setStatus(LocaleUtils.translateLabel(MAPPED_KEY));
 			this.setGroupCodes(idOemFsMappings.get(glAccount.getId()));
 		}else {
-			this.setStatus(UNMAPPED);
+			this.setStatus(LocaleUtils.translateLabel(UNMAPPED_KEY));
 			this.setGroupCodes(Lists.emptyList());
 		}
 	}

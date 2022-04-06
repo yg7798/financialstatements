@@ -15,6 +15,8 @@ public class OEMMappingReportRow {
 
     public static final String ACTIVE = "Active";
     public static final String INACTIVE = "Inactive";
+    public static final String ACTIVE_KEY = "key.active";
+    public static final String INACTIVE_KEY = "key.inactive";
 
     private String franchise;
     private String status;

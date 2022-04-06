@@ -102,6 +102,19 @@ public class Launcher extends SpringBootServletInitializer implements TekionServ
 	}
 
 	@Bean
+	public ServletRegistrationBean fsRestrictedApi2() {
+		DispatcherServlet dispatcherServlet = new DispatcherServlet();
+		AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
+		applicationContext.register(RestrictedApiConfig.class);
+		dispatcherServlet.setApplicationContext(applicationContext);
+		ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(dispatcherServlet,
+				APP_ROOT + "/restricted/*");
+		servletRegistrationBean.setName("fsRestrictedApi");
+		servletRegistrationBean.setLoadOnStartup(1);
+		return servletRegistrationBean;
+	}
+
+	@Bean
 	public MonthCloseEventListener monthCloseEventListener(){
 		log.info("MonthCloseEventListener started");
 		return new MonthCloseEventListener();

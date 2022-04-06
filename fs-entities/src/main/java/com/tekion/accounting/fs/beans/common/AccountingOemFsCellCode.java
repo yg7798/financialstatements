@@ -71,7 +71,7 @@ public class AccountingOemFsCellCode extends TBaseMongoBean {
 	private FsCellCodeSource source;
 
 	/**
-	 * @see OemValueType
+	 * @see oemValueType
 	 * */
 
 	private String oemValueType;

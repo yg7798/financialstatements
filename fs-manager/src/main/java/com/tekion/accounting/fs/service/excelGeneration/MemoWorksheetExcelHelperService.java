@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.service.excelGeneration;
 
 
+import com.tekion.accounting.commons.utils.LocaleUtils;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.MemoValue;
@@ -37,8 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tekion.accounting.fs.common.TConstants.STATUS;
-import static com.tekion.accounting.fs.service.common.excelGeneration.reportRows.OEMMappingReportRow.ACTIVE;
-import static com.tekion.accounting.fs.service.common.excelGeneration.reportRows.OEMMappingReportRow.INACTIVE;
+import static com.tekion.accounting.fs.service.common.excelGeneration.reportRows.OEMMappingReportRow.*;
 
 @Component
 @RequiredArgsConstructor
@@ -88,7 +88,7 @@ public class MemoWorksheetExcelHelperService {
 			}
 			BigDecimal ytdValue = (durationTypes.contains(OemCellDurationType.YTD)? memoValue.getYtdValue(): BigDecimal.ZERO);
 			reportRow.setYtdValue(ytdValue.toString());
-			reportRow.setStatus(worksheet.getActive()? ACTIVE: INACTIVE);
+			reportRow.setStatus(worksheet.getActive()? ACTIVE : INACTIVE);
 			memoWorksheetReportRows.add(reportRow);
 		}
 		return memoWorksheetReportRows;
@@ -171,6 +171,15 @@ public class MemoWorksheetExcelHelperService {
 				}
 			}
 		}
+		memoWorksheetReportRows.forEach(
+				row -> {
+					if(ACTIVE.equalsIgnoreCase(row.getStatus())){
+						row.setStatus(LocaleUtils.translateLabel(ACTIVE_KEY));
+					}else if(INACTIVE.equalsIgnoreCase(row.getStatus())) {
+						row.setStatus(LocaleUtils.translateLabel(INACTIVE_KEY));
+					}
+				}
+		);
 		for(MemoWorksheetReportRow worksheetReportRow : TCollectionUtils.nullSafeList(memoWorksheetReportRows)){
 			if (doesMatchSearchFilter(TStringUtils.nullSafeString(context.getReportRequestDto().getMemoWorksheetRequestDto().getSearchText()),
 					context.getReportRequestDto().getMemoWorksheetRequestDto().getSearchableFields(), worksheetReportRow)){

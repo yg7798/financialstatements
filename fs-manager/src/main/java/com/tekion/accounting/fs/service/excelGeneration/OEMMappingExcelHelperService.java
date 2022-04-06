@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.service.excelGeneration;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.tekion.accounting.commons.utils.LocaleUtils;
 import com.tekion.accounting.fs.service.common.cache.utils.CustomFieldUtils;
 import com.tekion.accounting.fs.service.common.excelGeneration.dto.ESReportCallbackDto;
 import com.tekion.accounting.fs.common.TConstants;
@@ -43,8 +44,8 @@ import java.util.stream.Collectors;
 
 import static com.tekion.accounting.fs.common.TConstants.BLANK_STRING;
 import static com.tekion.accounting.fs.common.TConstants.STATUS;
-import static com.tekion.accounting.fs.service.compute.models.OemFsMappingSimilarToUI.MAPPED;
-import static com.tekion.accounting.fs.service.compute.models.OemFsMappingSimilarToUI.UNMAPPED;
+import static com.tekion.accounting.fs.service.compute.models.OemFsMappingSimilarToUI.MAPPED_KEY;
+import static com.tekion.accounting.fs.service.compute.models.OemFsMappingSimilarToUI.UNMAPPED_KEY;
 import static com.tekion.accounting.fs.common.enums.CustomFieldType.DEPARTMENT;
 import static com.tekion.core.utils.TStringUtils.isBlank;
 import static com.tekion.core.utils.TStringUtils.isNotBlank;
@@ -93,8 +94,9 @@ public class OEMMappingExcelHelperService {
 			reportRow.setFranchise(context.getDealerIdToDealerNameMap().get(glAccount.getDealerId()));
 			reportRow.setGlAccountNumber(glAccount.getAccountNumber());
 			reportRow.setGlAccountName(glAccount.getAccountName());
-			reportRow.setAccountStatus(glAccount.isActive()? OEMMappingReportRow.ACTIVE : OEMMappingReportRow.INACTIVE);
-			reportRow.setAccountType(trialBalanceRow.getAccountType());
+			reportRow.setAccountStatus(glAccount.isActive()? LocaleUtils.translateLabel(OEMMappingReportRow.ACTIVE_KEY) :
+					LocaleUtils.translateLabel(OEMMappingReportRow.INACTIVE_KEY));
+			reportRow.setAccountType(AccountType.getDisplayName(trialBalanceRow.getAccountType()));
 			reportRow.setDepartment("");
 			reportRow.setYtdBalance(trialBalanceRow.getCurrentBalance());
 			BigDecimal curBal = BigDecimal.ZERO;
@@ -106,11 +108,11 @@ public class OEMMappingExcelHelperService {
 			reportRow.setYtdCount(GeneralUtils.nullSafeLong(trialBalanceRow.getYtdCount()));
 			reportRow.setGroupCodes(TStringUtils.join(idOemFsMappings.get(glAccount.getId()), mappingSeperationDelimeter));
 			if(idOemFsMappings.containsKey(glAccount.getId()) && TCollectionUtils.isNotEmpty(idOemFsMappings.get(glAccount.getId()))) {
-				reportRow.setStatus(MAPPED);
+				reportRow.setStatus(LocaleUtils.translateLabel(MAPPED_KEY));
 				String mappedGroupCodes = TStringUtils.join(idOemFsMappings.get(glAccount.getId()), mappingSeperationDelimeter);
 				reportRow.setGroupCodes(mappedGroupCodes);
 			}else {
-				reportRow.setStatus(UNMAPPED);
+				reportRow.setStatus(LocaleUtils.translateLabel(UNMAPPED_KEY));
 				reportRow.setGroupCodes(BLANK_STRING);
 			}
 			resolveDepartmentFromId(glAccount, context.getKeyToIdToOptionMap(),reportRow);

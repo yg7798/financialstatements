@@ -2,10 +2,12 @@ package com.tekion.accounting.fs.enums;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.tekion.accounting.commons.utils.LocaleUtils;
 import com.tekion.as.models.beans.GLAccount;
 import com.tekion.core.utils.TStringUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,22 +17,24 @@ import java.util.Set;
 import static com.tekion.core.utils.TStringUtils.isBlank;
 
 @Getter
+@Slf4j
 @RequiredArgsConstructor
 public enum AccountType {
-	ASSET("A", "Asset", false),
-	COST_OF_SALE("C", "Cost of Sale", false),
-	OPERATING_EXPENSE("E", "Operating Expense", false),
-	NON_OPERATING_INCOME("I", "Non Operating Income", true),
-	LIABILITY("L", "Liability", true),
-	MEMO("M", "Memo", false),//bookkeeping TBD
-	EXPENSE_ALLOCATION("N", "Expense Allocation", false),
-	EQUITY("Q", "Equity", true),//bookkeeping TBD
-	SALE("S", "Sale", true),
-	NON_OPERATING_EXPENSE("X", "Non Operating Expense", false);
+	ASSET("A", "Asset", false, "accountType.asset"),
+	COST_OF_SALE("C", "Cost of Sale", false, "accountType.costOfSale"),
+	OPERATING_EXPENSE("E", "Operating Expense", false, "accountType.operating.expense"),
+	NON_OPERATING_INCOME("I", "Non Operating Income", true, "accountType.non.operating.income"),
+	LIABILITY("L", "Liability", true, "accountType.liability"),
+	MEMO("M", "Memo", false, "accountType.memo"),//bookkeeping TBD
+	EXPENSE_ALLOCATION("N", "Expense Allocation", false, "accountType.expense.allocation"),
+	EQUITY("Q", "Equity", true, "accountType.equity"),//bookkeeping TBD
+	SALE("S", "Sale", true, "accountType.sale"),
+	NON_OPERATING_EXPENSE("X", "Non Operating Expense", false, "accountType.non.operating.expense");
 
 	private final String typeIdentifier;
 	private final String displayValue;
 	private final boolean negativeBookKeeping;
+	private final String displayKey;
 
 
 	public static AccountType fromTypeIdentifier(String typeIdentifier) {
@@ -82,6 +86,17 @@ public enum AccountType {
 			mapToReturn.put(accountType.name().toLowerCase(),accountType);
 		}
 		return mapToReturn;
+	}
+
+	public static String getDisplayName(String accountType){
+		if(TStringUtils.isBlank(accountType))
+			return "";
+		try{
+			return LocaleUtils.translateLabel(AccountType.valueOf(accountType).getDisplayKey());
+		}catch(Exception e){
+			log.error("Exception while getting display name for accountType : {} ", accountType, e);
+		}
+		return "";
 	}
 
 }

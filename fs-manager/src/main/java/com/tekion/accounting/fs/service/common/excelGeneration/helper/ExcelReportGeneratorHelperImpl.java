@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.service.common.excelGeneration.helper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.tekion.accounting.commons.utils.LocaleUtils;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.service.common.excelGeneration.apiGateway.dto.PdfPreviewResponseDto;
 import com.tekion.accounting.fs.service.common.excelGeneration.columnConfigs.AccAbstractColumnConfig;
@@ -23,6 +24,7 @@ import com.tekion.core.excelGeneration.models.CallbackResponse;
 import com.tekion.core.excelGeneration.models.model.*;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
+import com.tekion.core.utils.UserContextProvider;
 import com.tekion.notifcationsv2.beans.EventGroup;
 import com.tekion.notifcationsv2.beans.EventType;
 import com.tekion.notifcationsv2.beans.NotificationPayload;
@@ -45,8 +47,8 @@ import static com.tekion.core.utils.UserContextProvider.getCurrentUserId;
 @RequiredArgsConstructor
 @Slf4j
 public class ExcelReportGeneratorHelperImpl implements ExcelReportGeneratorHelper {
-    private final String SUCCESS_EXPORT_NOTIFICATION_MESSAGE = "Your export has finished processing and is ready to be downloaded.";
-    private final String FAILURE_EXPORT_NOTIFICATION_MESSAGE = "Your requested export processing has failed.";
+    private final String SUCCESS_EXPORT_NOTIFICATION_MESSAGE_KEY = "Your export has finished processing and is ready to be downloaded.";
+    private final String FAILURE_EXPORT_NOTIFICATION_MESSAGE_KEY = "Your requested export processing has failed.";
     private final String NOTIFICATION_DYNAMIC_BODY_KEY = "bodyOfMessage";
     private final String NOTIFICATION_DYNAMIC_SUBJECT_KEY = "subjectOfMessage";
 
@@ -99,8 +101,8 @@ public class ExcelReportGeneratorHelperImpl implements ExcelReportGeneratorHelpe
         payload.put(mediaId, successCallbackResponse.getMediaUploadResponse().getMediaId());
         payload.put(fileName, successCallbackResponse.getReportOriginalFileName());
         payload.put(IS_SUCCESS_KEY, true);
-        payload.put(NOTIFICATION_DYNAMIC_SUBJECT_KEY,reportType.getDisplayName() );
-        payload.put(NOTIFICATION_DYNAMIC_BODY_KEY,SUCCESS_EXPORT_NOTIFICATION_MESSAGE );
+        payload.put(NOTIFICATION_DYNAMIC_SUBJECT_KEY, LocaleUtils.translateLabel(reportType.getMultilingualKey()));
+        payload.put(NOTIFICATION_DYNAMIC_BODY_KEY, SUCCESS_EXPORT_NOTIFICATION_MESSAGE_KEY);
 
         notificationRequest.setDefaultPayload(payload);
 
@@ -134,8 +136,8 @@ public class ExcelReportGeneratorHelperImpl implements ExcelReportGeneratorHelpe
         }
         Map<String, Object> payload = Maps.newHashMap();
         payload.put(IS_SUCCESS_KEY, false);
-        payload.put(NOTIFICATION_DYNAMIC_SUBJECT_KEY, reportType.getDisplayName());
-        payload.put(NOTIFICATION_DYNAMIC_BODY_KEY, FAILURE_EXPORT_NOTIFICATION_MESSAGE);
+        payload.put(NOTIFICATION_DYNAMIC_SUBJECT_KEY, LocaleUtils.translateLabel(reportType.getMultilingualKey()));
+        payload.put(NOTIFICATION_DYNAMIC_BODY_KEY, FAILURE_EXPORT_NOTIFICATION_MESSAGE_KEY);
 
         notificationRequest.setDefaultPayload(payload);
 
@@ -254,7 +256,7 @@ public class ExcelReportGeneratorHelperImpl implements ExcelReportGeneratorHelpe
                 .assetType("Excel Generation")
                 .eventType(eventType)
                 .groupKey(EventGroup.ACCOUNTING +  "_" + assetId)
-                .locale("en-US")
+                .locale(UserContextProvider.getCurrentLocale().toString())
                 .receiverIds(receiverIds)
                 .senderId(getCurrentUserId())
                 .build();

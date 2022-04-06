@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.service.common.excelGeneration.columnConfigs;
 
 import com.google.common.collect.Maps;
+import com.tekion.accounting.commons.utils.LocaleUtils;
 import com.tekion.accounting.fs.service.common.excelGeneration.columnConfigs.enums.ExcelCellFormattingHolder;
 import com.tekion.accounting.fs.service.common.excelGeneration.enums.ColumnFreezeType;
 import com.tekion.accounting.fs.service.common.excelGeneration.enums.ConditionalRule;
@@ -25,6 +26,7 @@ import java.util.Objects;
 
 public interface AccAbstractColumnConfig extends AbstractColumnConfig {
 
+    String getMultilingualKey();
     Map<String,Map<String, AccAbstractColumnConfig>> configClassNameToSortKeyToEnumMap = Maps.newHashMap();
     // if 2 columns have to be driven by 1 sort key, use this method
     Map<String,Map<String, List<AccAbstractColumnConfig>>> configClassNameToPreferenceKeyToEnumListMap = Maps.newHashMap();
@@ -39,6 +41,7 @@ public interface AccAbstractColumnConfig extends AbstractColumnConfig {
      *
      * @return
      */
+
     default String getPreferenceColumnKey() {
         return null;
     }
@@ -143,7 +146,7 @@ public interface AccAbstractColumnConfig extends AbstractColumnConfig {
         columnConfig = new AccColumnConfig();
         columnConfig.setFormatOverrideIdentifier(getSupportedFormatOverrideIdentifiers());
         columnConfig.setExcelFieldIdentifier(getExcelFieldIdentifier());
-        columnConfig.setColumnName(getColumnDisplayName());
+        columnConfig.setColumnName(LocaleUtils.translateLabel(this.getMultilingualKey()));
         columnConfig.setKey(getBeanKey());
         columnConfig.setPreferenceColumnKey(getPreferenceColumnKey());
         columnConfig.setSortLookupKey(getSortLookupKey());
