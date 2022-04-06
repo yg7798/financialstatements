@@ -276,6 +276,7 @@ public class TConstants {
 	public static final String INVOICE_BATCH_PAYMENT_LOG = "invoice-batch-payment-log";
 	public static final String ASSET_GL_ACCOUNT = "GL_ACCOUNT";
 	public static final String PDF_PRINT_SERVICE = "PDF_PRINT_SERVICE";
+	public static final String FS_GROUP_CODE = "FS_GROUP_CODE";
 
 
 	public static final String ACCOUNTS_CF_ASSET_TYPE = "accounts";

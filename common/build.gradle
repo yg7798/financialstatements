@@ -41,5 +41,6 @@ dependencies {
     compile('com.tekion.sdk:medialibraryclient:0.0.16-SNAPSHOT')
     compile("com.tekion.sdk:propertiesclient:1.0.7-SNAPSHOT")
     compile("com.tekion.sdk:dealersettingsclient:1.0.8-SNAPSHOT")
+    compile('com.tekion.sdk:auditclient:0.0.58-SNAPSHOT')
     compile('com.tekion.accounting.commons:acc-utils:1.0.5locale-SNAPSHOT')
 }

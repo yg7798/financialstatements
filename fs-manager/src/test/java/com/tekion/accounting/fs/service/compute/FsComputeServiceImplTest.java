@@ -33,6 +33,8 @@ import com.tekion.accounting.fs.service.common.cache.CustomFieldConfig;
 import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
 import com.tekion.as.models.beans.*;
 import com.tekion.as.models.dto.MonthInfo;
+import com.tekion.audit.client.manager.AuditEventManager;
+import com.tekion.audit.client.manager.impl.AuditEventDTO;
 import com.tekion.beans.DynamicProperty;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.UserContext;
@@ -117,6 +119,8 @@ public class FsComputeServiceImplTest extends TestCase {
     OEMFsCellCodeSnapshotRepo oemFsCellCodeSnapshotRepo;
     @Mock
     CustomFieldConfig customFieldConfig;
+    @Mock
+    AuditEventManager auditEventManager;
 
     private final List<String> EMPTY_LIST = new ArrayList<>();
 
@@ -696,7 +700,28 @@ public class FsComputeServiceImplTest extends TestCase {
     public void testUpsertFsCellGroupCodes() {
         Mockito.when(oemFsCellGroupRepo.upsertBulk(Mockito.anyList()))
                 .thenReturn(new ArrayList<>());
+        Mockito.when(oemFsCellGroupRepo.findByOemIdsAndGroupCodes(Mockito.anyList(), Mockito.anyList(), Mockito.anyList(), Mockito.anyString())).thenReturn(getAccountingOemFsGroupCode());
         oemMappingService.upsertFsCellGroupCodes(getFSCellGroupCodesCreateDto());
+        Mockito.verify(oemFsCellGroupRepo, Mockito.times(1))
+                .upsertBulk(Mockito.anyList());
+    }
+
+    @Test
+    public void testAuditEventForSaveFsCellGroupCodes(){
+        Mockito.doNothing().when(oemFsCellGroupRepo).insertBulk(Mockito.anyList());
+        oemMappingService.saveFsCellGroupCodes(getFSCellGroupCodesCreateDto());
+        Mockito.doNothing().when(auditEventManager).publishEvents(Mockito.any(AuditEventDTO.class));
+        Mockito.verify(oemFsCellGroupRepo, Mockito.times(1))
+                .insertBulk(Mockito.anyList());
+    }
+
+    @Test
+    public void testAuditEventForUpsertFsCellGroupCodes(){
+        Mockito.when(oemFsCellGroupRepo.upsertBulk(Mockito.anyList()))
+                .thenReturn(new ArrayList<>());
+        Mockito.when(oemFsCellGroupRepo.findByOemIdsAndGroupCodes(Mockito.anyList(), Mockito.anyList(), Mockito.anyList(), Mockito.anyString())).thenReturn(getAccountingOemFsGroupCode());
+        oemMappingService.upsertFsCellGroupCodes(getFSCellGroupCodesCreateDto());
+        Mockito.doNothing().when(auditEventManager).publishEvents(Mockito.any(AuditEventDTO.class));
         Mockito.verify(oemFsCellGroupRepo, Mockito.times(1))
                 .upsertBulk(Mockito.anyList());
     }
@@ -1129,6 +1154,7 @@ public class FsComputeServiceImplTest extends TestCase {
         FSCellGroupCodeCreateDto dto = new FSCellGroupCodeCreateDto();
         dto.setOemId(OEM.GM);
         dto.setYear(2021);
+        dto.setGroupDisplayName("204");
         return dto;
     }
 

@@ -6,6 +6,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.tekion.accounting.fs.auditevents.AccountingOemFsCellGroupAuditEvent;
+import com.tekion.accounting.fs.auditevents.PclCodesAuditEventHelper;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.*;
 import com.tekion.accounting.fs.beans.mappings.*;
@@ -51,6 +53,8 @@ import com.tekion.as.models.beans.TrialBalance;
 import com.tekion.as.models.beans.TrialBalanceRow;
 import com.tekion.as.models.beans.fs.FsReportDto;
 import com.tekion.as.models.dto.MonthInfo;
+import com.tekion.audit.client.manager.AuditEventManager;
+import com.tekion.audit.client.manager.impl.AuditEventDTO;
 import com.tekion.beans.DynamicProperty;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
@@ -112,6 +116,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 	public final AccountingClient accountingClient;
 	public final AccountingService accountingService;
 	public final CustomFieldConfig customFieldConfig;
+	private final AuditEventManager auditEventManager;
 
 
 	@Qualifier(ASYNC_THREAD_POOL)
@@ -1199,12 +1204,34 @@ public class FsComputeServiceImpl implements FsComputeService {
 	public void saveFsCellGroupCodes(FSCellGroupCodesCreateDto reqDto) {
 		List<AccountingOemFsCellGroup> oemFSCellGroups = reqDto.toOemFSCellGroupList();
 		oemFsCellGroupRepo.insertBulk(oemFSCellGroups);
+
+		oemFSCellGroups.stream().forEach(fsCellGroup -> {
+			AccountingOemFsCellGroupAuditEvent fsCellGroupAuditEvent = fsCellGroup.populateOemFsCellGroupAuditEvent();
+			AuditEventDTO fsCellGroupEventDto = PclCodesAuditEventHelper.getAuditEvent(fsCellGroupAuditEvent);
+			auditEventManager.publishEvents(fsCellGroupEventDto);
+		});
 	}
 
 	@Override
 	public void upsertFsCellGroupCodes(FSCellGroupCodesCreateDto reqDto) {
 		List<AccountingOemFsCellGroup> oemFSCellGroups = reqDto.toOemFSCellGroupList();
 		oemFsCellGroupRepo.upsertBulk(oemFSCellGroups);
+
+		List<String> oemIds = new ArrayList<>();
+		List<Integer> years = new ArrayList<>();
+		List<String> cellGroupDisplayNames = new ArrayList<>();
+		oemFSCellGroups.stream().forEach(fsCellGroup -> {
+			oemIds.add(fsCellGroup.getOemId());
+			years.add(fsCellGroup.getYear());
+			cellGroupDisplayNames.add(fsCellGroup.getGroupDisplayName());
+		});
+
+		List<AccountingOemFsCellGroup> fsCellGroupList = oemFsCellGroupRepo.findByOemIdsAndGroupCodes(oemIds, years, cellGroupDisplayNames, dealerConfig.getDealerCountryCode());
+		fsCellGroupList.stream().forEach(fsCellGroup -> {
+			AccountingOemFsCellGroupAuditEvent fsCellGroupAuditEvent = fsCellGroup.populateOemFsCellGroupAuditEvent();
+			AuditEventDTO fsCellGroupEventDto = PclCodesAuditEventHelper.getAuditEvent(fsCellGroupAuditEvent);
+			auditEventManager.publishEvents(fsCellGroupEventDto);
+		});
 	}
 
 	@Override

@@ -2,15 +2,20 @@ package com.tekion.accounting.fs.service.pclCodes;
 
 import com.google.common.collect.Maps;
 import com.poiji.bind.Poiji;
+import com.tekion.accounting.fs.auditevents.AccountingOemFsCellGroupAuditEvent;
+import com.tekion.accounting.fs.auditevents.PclCodesAuditEventHelper;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.beans.common.OemTemplate;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.exceptions.FSError;
+import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.accounting.fs.dto.pclCodes.*;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.repos.OemTemplateRepo;
 import com.tekion.accounting.fs.service.common.FileCommons;
 import com.tekion.accounting.fs.service.externalService.media.MediaInteractorService;
+import com.tekion.audit.client.manager.AuditEventManager;
+import com.tekion.audit.client.manager.impl.AuditEventDTO;
 import com.tekion.core.beans.TResponse;
 import com.tekion.core.excelGeneration.models.model.MediaUploadResponse;
 import com.tekion.core.exceptions.TBaseRuntimeException;
@@ -30,6 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tekion.accounting.fs.service.utils.ExcelUtils.validateExcelFile;
+import static com.tekion.core.utils.UserContextProvider.*;
 
 @Slf4j
 @Service
@@ -45,6 +51,7 @@ public class PclCodeServiceImpl implements PclCodeService{
     private FileCommons fileCommons;
     private final MediaInteractorService mediaInteractorService;
     private final MediaClient mediaClient;
+    private final AuditEventManager auditEventManager;
 
     @Override
     public List<OemDetailsResponseDto> getOemDetails() {
@@ -83,7 +90,11 @@ public class PclCodeServiceImpl implements PclCodeService{
             throw new TBaseRuntimeException("This combination of pclCode update does not exist {}, {}, {}, {}", pclDetails.getOemId(), pclDetails.getYear().toString(), pclDetails.getCountry(), pclDetails.getGroupCode());
         }
         accountingOemFsCellGroup.updatePclCodes(pclDetails);
-        oemFsCellGroupRepo.save(accountingOemFsCellGroup);
+        AccountingOemFsCellGroup cellGroup = oemFsCellGroupRepo.save(accountingOemFsCellGroup);
+
+        AccountingOemFsCellGroupAuditEvent fsCellGroupAuditEvent = cellGroup.populateOemFsCellGroupAuditEvent();
+        AuditEventDTO fsCellGroupEventDto = PclCodesAuditEventHelper.getAuditEvent(fsCellGroupAuditEvent);
+        auditEventManager.publishEvents(fsCellGroupEventDto);
     }
 
     @Override
@@ -210,6 +221,12 @@ public class PclCodeServiceImpl implements PclCodeService{
             }
             oemFsCellGroupRepo.upsertBulk(updateCellGroupsInDbList);
             log.info("Pcl codes updated on db: {}", updateCellGroupsInDbList.size());
+
+            updateCellGroupsInDbList.stream().forEach(fsCellGroup -> {
+                AccountingOemFsCellGroupAuditEvent fsCellGroupAuditEvent = fsCellGroup.populateOemFsCellGroupAuditEvent();
+                AuditEventDTO fsCellGroupEventDto = PclCodesAuditEventHelper.getAuditEvent(fsCellGroupAuditEvent);
+                auditEventManager.publishEvents(fsCellGroupEventDto);
+            });
         } catch (Exception e){
             log.error("Error while updating pcl details {}", e);
         }

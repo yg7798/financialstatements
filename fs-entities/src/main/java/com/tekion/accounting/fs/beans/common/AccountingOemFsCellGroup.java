@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.beans.common;
 
+import com.tekion.accounting.fs.auditevents.AccountingOemFsCellGroupAuditEvent;
 import com.tekion.accounting.fs.dto.pclCodes.PclDetailsInExcel;
 import com.tekion.accounting.fs.enums.FsCellCodeSource;
 import com.tekion.core.beans.TBaseMongoBean;
@@ -93,6 +94,23 @@ public class AccountingOemFsCellGroup extends TBaseMongoBean implements Cloneabl
 		this.setPbsPcl(toUpdate.getPBS_PCL());
 		this.setOemAccountNumber(toUpdate.getDEALER_TRACK_PCL());
 		this.setModifiedTime(System.currentTimeMillis());
+	}
+
+	public AccountingOemFsCellGroupAuditEvent populateOemFsCellGroupAuditEvent(){
+		AccountingOemFsCellGroupAuditEvent auditEvent = new AccountingOemFsCellGroupAuditEvent();
+		auditEvent.setId(this.getId());
+		auditEvent.setAutomatePcl(this.automatePcl);
+		auditEvent.setAutosoftPcl(this.autosoftPcl);
+		auditEvent.setCdkPcl(this.cdkPcl);
+		auditEvent.setDbPcl(this.dbPcl);
+		auditEvent.setOemAccountNumber(this.oemAccountNumber);
+		auditEvent.setDominionPcl(this.dominionPcl);
+		auditEvent.setPbsPcl(this.pbsPcl);
+		auditEvent.setDisPcl(this.disPcl);
+		auditEvent.setRrPcl(this.rrPcl);
+		auditEvent.setDealerTrackPcl(this.oemAccountNumber);
+		auditEvent.setQuorumPcl(this.quorumPcl);
+		return auditEvent;
 	}
 
 	public Object clone() throws CloneNotSupportedException {

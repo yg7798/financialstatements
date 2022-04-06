@@ -188,4 +188,14 @@ public class OemFSCellGroupRepoImpl extends BaseGlobalMongoRepository<Accounting
         criteria.and(COUNTRY).is(country);
         return this.getMongoTemplate().find(Query.query(criteria), AccountingOemFsCellGroup.class);
     }
+
+    @Override
+    public List<AccountingOemFsCellGroup> findByOemIdsAndGroupCodes(List<String> oemIds, List<Integer> years, List<String> groupCodesDisplayNames, String country) {
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(AccountingOemFsCellGroup.OEM_ID).in(oemIds);
+        criteria.and(AccountingOemFsCellGroup.YEAR).in(years);
+        criteria.and(AccountingOemFsCellGroup.GROUP_DISPLAY_NAME).in(groupCodesDisplayNames);
+        criteria.and(COUNTRY).is(country);
+        return this.getMongoTemplate().find(Query.query(criteria), AccountingOemFsCellGroup.class);
+    }
 }

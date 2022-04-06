@@ -9,6 +9,8 @@ import com.tekion.accounting.fs.dto.pclCodes.PclFilters;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.repos.OemTemplateRepo;
 import com.tekion.accounting.fs.service.common.FileCommons;
+import com.tekion.audit.client.manager.AuditEventManager;
+import com.tekion.audit.client.manager.impl.AuditEventDTO;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import junit.framework.TestCase;
@@ -40,6 +42,8 @@ public class PclCodeServiceImplTest extends TestCase {
     PclCodeServiceImpl pclCodeService;
     @Mock
     FileCommons fileCommons;
+    @Mock
+    AuditEventManager auditEventManager;
     @Rule
     public TemporaryFolder folder= new TemporaryFolder();
 
@@ -74,6 +78,16 @@ public class PclCodeServiceImplTest extends TestCase {
         assertEquals("1108A", accountingOemFsCellGroup.getAutosoftPcl());
         Mockito.verify(oemFsCellGroupRepo, Mockito.times(1))
                 .findByGroupCode(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString());
+    }
+
+    @Test
+    public void testAuditEventInUpdatePclCodeDetails(){
+        Mockito.when(oemFsCellGroupRepo
+                .findByGroupCode(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getAccountingOemFsCellGroupList().get(0));
+        Mockito.when(oemFsCellGroupRepo.save(Mockito.any(AccountingOemFsCellGroup.class))).thenReturn(getFSCellGroup());
+        Mockito.doNothing().when(auditEventManager).publishEvents(Mockito.any(AuditEventDTO.class));
+        pclCodeService.updatePclCodeDetails(getPclDetailsDto());
     }
 
     @Test(expected = TBaseRuntimeException.class)
@@ -236,5 +250,20 @@ public class PclCodeServiceImplTest extends TestCase {
                 .country("US")
                 .build();
         return pclDetailsDto;
+    }
+
+    private AccountingOemFsCellGroup getFSCellGroup() {
+        AccountingOemFsCellGroup accountingOemFsCellGroup = AccountingOemFsCellGroup.builder()
+                .oemId("GM")
+                .year(2021)
+                .country("US")
+                .groupCode("_202")
+                .automatePcl("202A")
+                .autosoftPcl("0108A")
+                .rrPcl("205A")
+                .cdkPcl("1A08")
+                .groupDisplayName("202")
+                .build();
+        return accountingOemFsCellGroup;
     }
 }
