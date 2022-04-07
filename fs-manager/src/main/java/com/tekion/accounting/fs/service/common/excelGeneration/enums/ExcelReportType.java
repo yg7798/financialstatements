@@ -20,12 +20,12 @@ public enum ExcelReportType {
 	private final String displayName;
 	private final String columnPreferenceReportKey;
 	private  boolean isPdfType;
-	private final String multilingualKey;
+	private final String displayKey;
 
-	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, GeneratorVersion generatorVersion, String displayName, String multilingualKey) {
-		this(defaultMaxReportSize,dpPropertyName,generatorVersion,displayName,false, multilingualKey);
+	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, GeneratorVersion generatorVersion, String displayName, String displayKey) {
+		this(defaultMaxReportSize,dpPropertyName,generatorVersion,displayName,false, displayKey);
 	}
-	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, GeneratorVersion generatorVersion, String displayName, boolean isPdfType1, String multilingualKey) {
+	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, GeneratorVersion generatorVersion, String displayName, boolean isPdfType1, String displayKey) {
 		this.defaultMaxReportSize = defaultMaxReportSize;
 		this.dpPropertyName = dpPropertyName;
 		this.baseColumnConfigs = null;
@@ -34,10 +34,10 @@ public enum ExcelReportType {
 		this.generatorVersion = generatorVersion;
 		this.groupByColumnConfigs = null;
 		this.isPdfType = isPdfType1;
-		this.multilingualKey = multilingualKey;
+		this.displayKey = displayKey;
 	}
 
-	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, Class<? extends AccAbstractColumnConfig> baseColumnConfigs, String displayName, String multilingualKey) {
+	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, Class<? extends AccAbstractColumnConfig> baseColumnConfigs, String displayName, String displayKey) {
 		this.defaultMaxReportSize = defaultMaxReportSize;
 		this.dpPropertyName = dpPropertyName;
 		this.baseColumnConfigs = baseColumnConfigs;
@@ -45,10 +45,10 @@ public enum ExcelReportType {
 		this.displayName = displayName;
 		this.generatorVersion = GeneratorVersion.SINGLE_SHEET;
 		this.groupByColumnConfigs = null;
-		this.multilingualKey = multilingualKey;
+		this.displayKey = displayKey;
 	}
 
-	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, Class<? extends AccAbstractColumnConfig> baseColumnConfigs, Class<? extends AccAbstractColumnConfig> groupByColumnConfigs, String displayName, String multilingualKey) {
+	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, Class<? extends AccAbstractColumnConfig> baseColumnConfigs, Class<? extends AccAbstractColumnConfig> groupByColumnConfigs, String displayName, String displayKey) {
 		this.defaultMaxReportSize = defaultMaxReportSize;
 		this.dpPropertyName = dpPropertyName;
 		this.baseColumnConfigs = baseColumnConfigs;
@@ -56,10 +56,10 @@ public enum ExcelReportType {
 		this.displayName = displayName;
 		this.generatorVersion = GeneratorVersion.SINGLE_SHEET;
 		this.groupByColumnConfigs = groupByColumnConfigs;
-		this.multilingualKey = multilingualKey;
+		this.displayKey = displayKey;
 	}
 
-	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, Class<? extends AccAbstractColumnConfig> baseColumnConfigs, String displayName, String columnPreferenceReportKey, String multilingualKey) {
+	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, Class<? extends AccAbstractColumnConfig> baseColumnConfigs, String displayName, String columnPreferenceReportKey, String displayKey) {
 		this.defaultMaxReportSize = defaultMaxReportSize;
 		this.dpPropertyName = dpPropertyName;
 		this.baseColumnConfigs = baseColumnConfigs;
@@ -67,11 +67,11 @@ public enum ExcelReportType {
 		this.displayName = displayName;
 		this.generatorVersion = GeneratorVersion.SINGLE_SHEET;
 		this.groupByColumnConfigs = null;
-		this.multilingualKey = multilingualKey;
+		this.displayKey = displayKey;
 	}
 
 
-	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, Class<? extends AccAbstractColumnConfig> baseColumnConfigs, Class<? extends AccAbstractColumnConfig> groupByColumnConfigs, String displayName, String columnPreferenceReportKey, String multilingualKey) {
+	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName, Class<? extends AccAbstractColumnConfig> baseColumnConfigs, Class<? extends AccAbstractColumnConfig> groupByColumnConfigs, String displayName, String columnPreferenceReportKey, String displayKey) {
 		this.defaultMaxReportSize = defaultMaxReportSize;
 		this.dpPropertyName = dpPropertyName;
 		this.baseColumnConfigs = baseColumnConfigs;
@@ -79,7 +79,7 @@ public enum ExcelReportType {
 		this.generatorVersion = GeneratorVersion.SINGLE_SHEET;
 		this.displayName = displayName;
 		this.groupByColumnConfigs = groupByColumnConfigs;
-		this.multilingualKey = multilingualKey;
+		this.displayKey = displayKey;
 	}
 
 	private ExcelReportType(int defaultMaxReportSize, String dpPropertyName) {
@@ -90,7 +90,7 @@ public enum ExcelReportType {
 		this.displayName = null;
 		this.generatorVersion = null;
 		this.groupByColumnConfigs = null;
-		this.multilingualKey = null;
+		this.displayKey = null;
 	}
 
 	public boolean isITGroupByReportType(){

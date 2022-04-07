@@ -34,13 +34,14 @@ dependencies {
     }
     compile("com.tekion.sdk:slackclient:0.0.2-SNAPSHOT")
     compile("com.tekion.sdk:printer-client-v2:0.0.4-SNAPSHOT")
-    compile("com.tekion.sdk:notificationV2Client:1.0.72-SNAPSHOT")
+    compile("com.tekion.sdk:notificationV2Client:1.0.119-multilingual-SNAPSHOT")
     compile("com.tekion.sdk:tmysqllib:2.0.7-SNAPSHOT")
     compile('org.apache.poi:poi:5.0.0')
     compile('com.tekion.sdk:mysqlsupport:2.0.11-SNAPSHOT')
     compile('com.tekion.sdk:medialibraryclient:0.0.16-SNAPSHOT')
     compile("com.tekion.sdk:propertiesclient:1.0.7-SNAPSHOT")
     compile("com.tekion.sdk:dealersettingsclient:1.0.8-SNAPSHOT")
+    implementation('com.tekion.sdk:tekionconstant:0.0.153-SNAPSHOT')
     compile('com.tekion.sdk:auditclient:0.0.58-SNAPSHOT')
     compile('com.tekion.accounting.commons:acc-utils:1.0.5locale-SNAPSHOT')
 }

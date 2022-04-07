@@ -366,4 +366,5 @@ public class FsEntryServiceImpl implements FsEntryService {
     }
     return fsEntryRepo.updateFsTypeForFsEntry(fsId, changedType.name());
   }
+
 }

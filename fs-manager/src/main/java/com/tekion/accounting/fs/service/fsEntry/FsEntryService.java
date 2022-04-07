@@ -44,4 +44,5 @@ public interface FsEntryService {
   FSEntry updateSiteId(String fsId, String siteId);
 
   Long updateFsTypeForFsEntry(String fsId, FSType changedType);
+
 }

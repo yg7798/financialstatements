@@ -31,6 +31,7 @@ import com.tekion.notifcationsv2.beans.NotificationPayload;
 import com.tekion.notifcationsv2.beans.NotificationType;
 import com.tekion.notificationsv2.client.NotificationsV2Client;
 import com.tekion.notificationsv2.client.dto.SendNotificationRequest;
+import com.tekion.tekionconstant.locale.TekLocale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
@@ -47,17 +48,10 @@ import static com.tekion.core.utils.UserContextProvider.getCurrentUserId;
 @RequiredArgsConstructor
 @Slf4j
 public class ExcelReportGeneratorHelperImpl implements ExcelReportGeneratorHelper {
-    private final String SUCCESS_EXPORT_NOTIFICATION_MESSAGE_KEY = "Your export has finished processing and is ready to be downloaded.";
-    private final String FAILURE_EXPORT_NOTIFICATION_MESSAGE_KEY = "Your requested export processing has failed.";
-    private final String NOTIFICATION_DYNAMIC_BODY_KEY = "bodyOfMessage";
-    private final String NOTIFICATION_DYNAMIC_SUBJECT_KEY = "subjectOfMessage";
-
 
     private final NotificationsV2Client notificationClient;
     private final ExcelColumnConfigGeneratorService excelColumnConfigGeneratorService;
     private final AccountingClient accountingClient;
-    //private final AccountingSettingsService accountingSettingsService;
-    //private final ResolveAssetUtils resolveAssetUtils;
     private final KeywordConfigCache keywordConfigCache;
 
 
@@ -88,6 +82,7 @@ public class ExcelReportGeneratorHelperImpl implements ExcelReportGeneratorHelpe
         String mediaId = "mediaId";
         String fileName = "fileName";
         String IS_SUCCESS_KEY = "isSuccess";
+        String REPORT_TYPE_KEY = "reportType";
 
         SendNotificationRequest notificationRequest =
                 buildNotificationRequest(reportTypeIdentifier
@@ -96,18 +91,21 @@ public class ExcelReportGeneratorHelperImpl implements ExcelReportGeneratorHelpe
         if (reportType.isPDFReportType()) {
             notificationRequest.setAssetType("PDF Generation");
         }
+        Map<TekLocale, Map<String, Object>> payload = Maps.newHashMap();
+        for (TekLocale locale:
+             TekLocale.values()) {
+            Map<String, Object> localeSpecificPayload = new HashMap<>();
+            localeSpecificPayload.put(mediaId, successCallbackResponse.getMediaUploadResponse().getMediaId());
+            localeSpecificPayload.put(fileName, successCallbackResponse.getReportOriginalFileName());
+            localeSpecificPayload.put(IS_SUCCESS_KEY, true);
+            localeSpecificPayload.put(REPORT_TYPE_KEY, LocaleUtils.translateLabelByKeyAndLocale(reportType.getDisplayKey(), locale));
+            payload.put(locale, localeSpecificPayload);
+        }
 
-        Map<String, Object> payload = Maps.newHashMap();
-        payload.put(mediaId, successCallbackResponse.getMediaUploadResponse().getMediaId());
-        payload.put(fileName, successCallbackResponse.getReportOriginalFileName());
-        payload.put(IS_SUCCESS_KEY, true);
-        payload.put(NOTIFICATION_DYNAMIC_SUBJECT_KEY, LocaleUtils.translateLabel(reportType.getMultilingualKey()));
-        payload.put(NOTIFICATION_DYNAMIC_BODY_KEY, SUCCESS_EXPORT_NOTIFICATION_MESSAGE_KEY);
-
-        notificationRequest.setDefaultPayload(payload);
+        notificationRequest.setMultilingualPayload(payload);
 
         NotificationPayload payloadForPush = new NotificationPayload();
-        payloadForPush.setPushPayload(payload);
+        payloadForPush.setMultilingualData(payload);
         notificationRequest.setPayloads(new HashMap<>());
         notificationRequest.getPayloads().put(NotificationType.PUSH, payloadForPush);
 
@@ -125,6 +123,7 @@ public class ExcelReportGeneratorHelperImpl implements ExcelReportGeneratorHelpe
 
         String reportTypeIdentifier = reportType.name();
         String IS_SUCCESS_KEY = "isSuccess";
+        String REPORT_TYPE_KEY = "reportType";
 
         SendNotificationRequest notificationRequest =
                 buildNotificationRequest(reportTypeIdentifier
@@ -134,15 +133,21 @@ public class ExcelReportGeneratorHelperImpl implements ExcelReportGeneratorHelpe
         if (reportType.isPDFReportType()) {
             notificationRequest.setAssetType("PDF Generation");
         }
-        Map<String, Object> payload = Maps.newHashMap();
-        payload.put(IS_SUCCESS_KEY, false);
-        payload.put(NOTIFICATION_DYNAMIC_SUBJECT_KEY, LocaleUtils.translateLabel(reportType.getMultilingualKey()));
-        payload.put(NOTIFICATION_DYNAMIC_BODY_KEY, FAILURE_EXPORT_NOTIFICATION_MESSAGE_KEY);
 
-        notificationRequest.setDefaultPayload(payload);
+
+        Map<TekLocale, Map<String, Object>> payload = Maps.newHashMap();
+        for (TekLocale locale:
+                TekLocale.values()) {
+            Map<String, Object> localeSpecificPayload = new HashMap<>();
+            localeSpecificPayload.put(IS_SUCCESS_KEY, false);
+            localeSpecificPayload.put(REPORT_TYPE_KEY, LocaleUtils.translateLabelByKeyAndLocale(reportType.getDisplayKey(), locale));
+            payload.put(locale, localeSpecificPayload);
+        }
+
+        notificationRequest.setMultilingualPayload(payload);
 
         NotificationPayload payloadForPush = new NotificationPayload();
-        payloadForPush.setPushPayload(payload);
+        payloadForPush.setMultilingualData(payload);
         notificationRequest.setPayloads(new HashMap<>());
         notificationRequest.getPayloads().put(NotificationType.PUSH, payloadForPush);
 
