@@ -18,7 +18,6 @@ import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
 import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
-import com.tekion.accounting.fs.common.enums.CustomFieldType;
 import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.common.utils.*;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
@@ -39,10 +38,8 @@ import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
 import com.tekion.accounting.fs.service.common.cache.CustomFieldConfig;
-import com.tekion.accounting.fs.service.common.cache.dtos.OptionMinimal;
 import com.tekion.accounting.fs.service.compute.models.CellCodeKey;
 import com.tekion.accounting.fs.service.compute.models.OemFsCellContext;
-import com.tekion.accounting.fs.service.compute.models.OemFsMappingSimilarToUI;
 import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
 import com.tekion.accounting.fs.service.tasks.ConsolidatedFsGlBalanceReportInEpochTask;
 import com.tekion.accounting.fs.service.utils.FinancialStatementUtils;
@@ -137,6 +134,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 	private DynamicProperty<String> dealerRoundOffPref;
 
 	private final int defaultMonth = 0;
+	public static final int FIRST_RECORD = 0;
 
 	@PostConstruct
 	public void postConstruct(){
@@ -308,7 +306,33 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 	@Override
 	public FsGroupCodeDetailsResponseDto computeFsGroupCodeDetails(String oemId, Integer oemFsYear, Integer oemFsVersion, long tillEpoch, boolean includeM13, boolean addM13BalInDecBalances, String siteId) {
-		FSEntry fsEntry = fsEntryRepo.findDefaultType(oemId, oemFsYear ,UserContextProvider.getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext());
+		List<FSEntry> fsEntries = TCollectionUtils.nullSafeList(fsEntryRepo.findByOemYearVersionAndSite(oemId, oemFsYear, oemFsVersion,
+				                   UserContextProvider.getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext()));
+
+		if (TCollectionUtils.isEmpty(fsEntries)) {
+			return new FsGroupCodeDetailsResponseDto();
+		}
+
+		List<FSEntry> fsEntriesOfTypeOem = new ArrayList<>();
+		List<FSEntry> fsEntriesOfTypeInternal = new ArrayList<>();
+
+		fsEntries.stream().forEach(fsEntry -> {
+			if (FSType.INTERNAL.name().equals(fsEntry.getFsType())) {
+				fsEntriesOfTypeInternal.add(fsEntry);
+			} else if (FSType.OEM.name().equals(fsEntry.getFsType())) {
+				fsEntriesOfTypeOem.add(fsEntry);
+			}
+		});
+
+		FSEntry fsEntry;
+		if (TCollectionUtils.isEmpty(fsEntriesOfTypeOem)) {
+			sortFsEntriesByCreatedTime(fsEntriesOfTypeInternal);
+			fsEntry = fsEntriesOfTypeInternal.get(FIRST_RECORD);
+		} else {
+			sortFsEntriesByCreatedTime(fsEntriesOfTypeOem);
+			fsEntry = fsEntriesOfTypeOem.get(FIRST_RECORD);
+		}
+
 		FsGroupCodeDetailsResponseDto responseDto = new FsGroupCodeDetailsResponseDto();
 		MonthInfo activeMonthInfo = getActiveMonthInfo();
 		Calendar c = TimeUtils.buildCalendar(tillEpoch);
@@ -378,6 +402,15 @@ public class FsComputeServiceImpl implements FsComputeService {
 		responseDto.setDetails(groupCodeDisplayNameVsDetailsMap);
 		responseDto.setDate(TimeUtils.getStringFromEpoch(tillEpoch,"dd-MM-yyyy"));
 		return responseDto;
+	}
+
+	private void sortFsEntriesByCreatedTime(List<FSEntry> fsEntries) {
+		Collections.sort(fsEntries, new Comparator<FSEntry>() {
+			@Override
+			public int compare(FSEntry fsEntry1, FSEntry fsEntry2) {
+				return Long.compare(fsEntry1.getCreatedTime(), fsEntry2.getCreatedTime());
+			}
+		});
 	}
 
 	@Override

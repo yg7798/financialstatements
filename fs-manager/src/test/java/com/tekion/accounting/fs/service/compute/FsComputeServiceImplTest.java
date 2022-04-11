@@ -12,6 +12,7 @@ import com.tekion.accounting.fs.beans.memo.*;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
+import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.cellcode.FsCellCodeDetailsResponseDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodesCreateDto;
@@ -22,6 +23,7 @@ import com.tekion.accounting.fs.dto.oemConfig.OemConfigRequestDto;
 import com.tekion.accounting.fs.dto.oemTemplate.OemTemplateReqDto;
 import com.tekion.accounting.fs.dto.oemTemplate.TemplateDetail;
 import com.tekion.accounting.fs.enums.AccountType;
+import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.enums.FsCellCodeSource;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.*;
@@ -444,6 +446,8 @@ public class FsComputeServiceImplTest extends TestCase {
 
     @Test
     public void testComputeFsGroupCodeDetails_ifNotFutureMonth() {
+        Mockito.when(fsEntryRepo.findByOemYearVersionAndSite(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(),
+                Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntries());
         Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(getFsEntry());
         Mockito.when(accountingService.getActiveMonthInfo()).thenReturn(getMonthInfo());
@@ -454,6 +458,8 @@ public class FsComputeServiceImplTest extends TestCase {
 
     @Test
     public void testComputeFsGroupCodeDetails_ifFutureMonth() {
+        Mockito.when(fsEntryRepo.findByOemYearVersionAndSite(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(),
+                Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntries());
         Mockito.when(fsEntryRepo.findDefaultType(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(getFsEntry());
         Mockito.when(accountingService.getActiveMonthInfo()).thenReturn(getMonthInfo());
@@ -1589,6 +1595,18 @@ public class FsComputeServiceImplTest extends TestCase {
 
         oemMappingRequestDto.setMappings(Arrays.asList(oemMappingDto, oemMappingDto2));
         return oemMappingRequestDto;
+    }
+
+    private List<FSEntry> getFsEntries() {
+        FSEntry fsEntry1 = getFsEntry();
+        fsEntry1.setFsType(FSType.OEM.name());
+        FSEntry fsEntry2 = getFsEntry();
+        fsEntry2.setYear(2022);
+        fsEntry2.setFsType(FSType.INTERNAL.name());
+        List<FSEntry> fsEntries = new ArrayList<>();
+        fsEntries.add(fsEntry1);
+        fsEntries.add(fsEntry2);
+        return fsEntries;
     }
 
 }
