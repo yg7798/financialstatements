@@ -15,6 +15,7 @@ import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
 import com.tekion.accounting.fs.service.eventing.producers.FSEventHelper;
 import com.tekion.as.models.beans.GLAccount;
+import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
@@ -297,6 +298,7 @@ public class FsMappingServiceImplTest {
     @Test
     public void testGetGLAccountsForMultipleYears() {
         Mockito.when(dealerConfig.getDealerTimeZone()).thenReturn(TimeZone.getTimeZone("America/Los_Angeles"));
+        Mockito.when(accountingService.getActiveMonthInfo()).thenReturn(getMonthInfo());
         Mockito.when(fsEntryRepo.getFsEntriesByOemIds(Mockito.any(), Mockito.anyList(), Mockito.anyString())).thenReturn(getFsEntries());
         List<FSEntry> fsEntries = getFsEntries();
         fsEntries.get(0).setYear(2022);
@@ -304,6 +306,13 @@ public class FsMappingServiceImplTest {
         Mockito.when(oemFSMappingRepo.getMappingsByOemIdsForMultipleYears(Mockito.anyList(), Mockito.anyList())).thenReturn(getMappings());
         Mockito.when(oemFSMappingRepo.getFSEntriesByFsIdsAndDealerId(Mockito.anyList(), Mockito.anyString())).thenReturn(currentYearMappings());
         Assert.assertEquals(getGroupCodeMappingResponseDtoList(), fsMappingService.getGLAccountsForMultipleYears(getOemFsGroupCodeDetailsRequestDtoList()));
+    }
+
+    private MonthInfo getMonthInfo() {
+        MonthInfo monthInfo = new MonthInfo();
+        monthInfo.setMonth(2);
+        monthInfo.setYear(2022);
+        return monthInfo;
     }
 
     private List<OemFsGroupCodeDetailsRequestDto> getOemFsGroupCodeDetailsRequestDtoList() {

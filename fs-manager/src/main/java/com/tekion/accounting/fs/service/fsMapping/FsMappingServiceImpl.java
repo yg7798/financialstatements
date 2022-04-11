@@ -17,6 +17,7 @@ import com.tekion.accounting.fs.repos.OemFSMappingRepo;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
 import com.tekion.accounting.fs.service.eventing.producers.FSEventHelper;
+import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.beans.TResponse;
 import com.tekion.core.exceptions.TBaseRuntimeException;
@@ -448,31 +449,36 @@ public class FsMappingServiceImpl implements FsMappingService {
     public List<GroupCodeMappingResponseDto> getGLAccountsForMultipleYears(List<OemFsGroupCodeDetailsRequestDto> details) {
         List<GroupCodeMappingResponseDto> glAccountsResponse = new ArrayList<>();
         List<String> oemIds = getOemIds(details);
+        MonthInfo monthInfo = accountingService.getActiveMonthInfo();
 
-        List<FSEntry> getFsEntries = fsEntryRepo.getFsEntriesByOemIds(FSType.OEM, oemIds, getCurrentDealerId());
-        List<FSEntry> getFsEntriesForCurrentYear = fsEntryRepo.getFsEntriesByOemIds(FSType.OEM, oemIds,
-                TimeUtils.getCurrentYear(), getCurrentDealerId());
+        List<FSEntry> fsEntries = fsEntryRepo.getFsEntriesByOemIds(FSType.OEM, oemIds, getCurrentDealerId());
+        List<FSEntry> fsEntriesForActiveYear = fsEntryRepo.getFsEntriesByOemIds(FSType.OEM, oemIds,
+                monthInfo.getYear(), getCurrentDealerId());
 
-        List<String> fsIds = getFsIds(getFsEntries, oemIds);
-        List<String> fsIdsForCurrentYear = getFsIds(getFsEntriesForCurrentYear, oemIds);
+        List<String> fsIds = getFsIds(fsEntries, oemIds);
+        List<String> fsIdsForActiveYear = getFsIds(fsEntriesForActiveYear, oemIds);
 
         List<OemFsMapping> oemFsMappings = oemFsMappingRepo.getMappingsByOemIdsForMultipleYears(fsIds, details);
-        List<OemFsMapping> oemFsMappingsForCurrentYear = oemFsMappingRepo.getFSEntriesByFsIdsAndDealerId(fsIdsForCurrentYear,
+        List<OemFsMapping> oemFsMappingsForActiveYear = oemFsMappingRepo.getFSEntriesByFsIdsAndDealerId(fsIdsForActiveYear,
                 getCurrentDealerId());
 
         Map<String, List<OemFsMapping>> oemVsFsMappingsMap = getOemVsFsMappingsMap(oemFsMappings);
-        Map<String, List<OemFsMapping>> oemVsFsMappingsMapCurrentYear = getOemVsFsMappingsMap(oemFsMappingsForCurrentYear);
-        Map<String, List<String>> groupCodeVsGLAcctMapForCurrentYear = new HashMap<>();
+        Map<String, List<OemFsMapping>> oemVsFsMappingsMapActiveYear = getOemVsFsMappingsMap(oemFsMappingsForActiveYear);
+        Map<String, List<String>> groupCodeVsGLAcctMapForActiveYear = new HashMap<>();
         for (OemFsGroupCodeDetailsRequestDto groupCodeDetails : details) {
             List<Integer> years = groupCodeDetails.getYears();
             for (Integer year : years) {
                 List<OemFsMapping> mappings = getMappingsByYearAndOemId(year, oemVsFsMappingsMap.get(groupCodeDetails.getOemId()));
-                List<OemFsMapping> currentYearMappings = getMappingsByYearAndOemId(TimeUtils.getCurrentYear(), oemVsFsMappingsMapCurrentYear.get(groupCodeDetails.getOemId()));
+                List<OemFsMapping> activeYearMappings = getMappingsByYearAndOemId(monthInfo.getYear(), oemVsFsMappingsMapActiveYear.get(groupCodeDetails.getOemId()));
+                if (year > monthInfo.getYear()) {
+                    mappings.addAll(activeYearMappings);
+                }
+
                 GroupCodeMappingResponseDto glAcctResponse = new GroupCodeMappingResponseDto();
                 glAcctResponse.setOemId(groupCodeDetails.getOemId());
                 glAcctResponse.setYear(year);
                 Map<String, List<String>> groupCodeVsGLAcctMap = getGroupCodeVsGLAcctMap(mappings);
-                groupCodeVsGLAcctMapForCurrentYear = getGroupCodeVsGLAcctMap(currentYearMappings);
+                groupCodeVsGLAcctMapForActiveYear = getGroupCodeVsGLAcctMap(activeYearMappings);
 
                 List<GroupCodesVsGLAccounts> groupCodesVsGLAccounts = new ArrayList<>();
                 for (String groupCode : groupCodeDetails.getGroupCodes()) {
@@ -482,9 +488,9 @@ public class FsMappingServiceImpl implements FsMappingService {
                         glAccounts.setGlAccounts(groupCodeVsGLAcctMap.get(groupCode));
                         glAccounts.setGroupCode(groupCode);
                         groupCodesVsGLAccounts.add(glAccounts);
-                    } else if (groupCodeVsGLAcctMapForCurrentYear.containsKey(groupCode)) {
+                    } else if (groupCodeVsGLAcctMapForActiveYear.containsKey(groupCode)) {
                         glAccounts = new GroupCodesVsGLAccounts();
-                        glAccounts.setGlAccounts(groupCodeVsGLAcctMapForCurrentYear.get(groupCode));
+                        glAccounts.setGlAccounts(groupCodeVsGLAcctMapForActiveYear.get(groupCode));
                         glAccounts.setGroupCode(groupCode);
                         groupCodesVsGLAccounts.add(glAccounts);
                     }
