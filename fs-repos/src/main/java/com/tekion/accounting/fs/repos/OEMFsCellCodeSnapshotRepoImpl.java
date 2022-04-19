@@ -115,6 +115,15 @@ public class OEMFsCellCodeSnapshotRepoImpl extends BaseDealerLevelMongoRepositor
     }
 
     @Override
+    public void hardDeleteSnapshotByFsIdAndMonth(Collection<String> fsIds, String dealerId) {
+        Criteria criteria = Criteria.where(TConstants.DELETED).is(false)
+                .and(FS_ID).in(fsIds)
+                .and(TConstants.DEALER_ID).is(dealerId);
+
+        this.getMongoTemplate().remove(Query.query(criteria), OEMFsCellCodeSnapshot.class);
+    }
+
+    @Override
     public void deleteBulkSnapshotByYearAndMonth(String oemId, int year, int fromMonth, int toMonth, String dealerId, String siteId) {
         Criteria criteria = Criteria
                 .where(OEMFinancialMapping.OEM_ID).is(oemId)

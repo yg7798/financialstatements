@@ -71,4 +71,6 @@ public interface FSEntryRepo {
     Integer addTenantId();
 
     Long updateFsTypeForFsEntry(String fsId, String changedType);
+
+    List<FSEntry> findFsEntriesForDealerAndYears(FSType fsType, List<Integer> years, String dealerId);
 }

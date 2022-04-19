@@ -1301,8 +1301,9 @@ public class FsComputeServiceImpl implements FsComputeService {
 		DateTime monthStart = new DateTime(year, month, 1, 0,
 				0, DateTimeZone.forID(dealerConfig.getDealerTimeZoneName()));
 
-		if(Objects.nonNull(oemFsCellCodeSnapshotRepo.findOneSnapshotByFsIdAndMonth(fsEntry.getId(), month, getCurrentDealerId()))) {
-			throw new TBaseRuntimeException(String.format("Snapshot already exists for oem %s, year %s, month %s", oemId, year, month));
+		if (Objects.nonNull(oemFsCellCodeSnapshotRepo.findOneSnapshotByFsIdAndMonth(fsEntry.getId(), month, getCurrentDealerId()))) {
+			log.warn(String.format("Snapshot already exists for oem %s, year %s, month %s", oemId, year, month));
+			return;
 		}
 		FsCellCodeDetailsResponseDto fsCellCodeDetailsResponseDto = computeFsCellCodeDetails(oemId, oemFsYear, oemFsVersion, year, month, includeM13, fsEntry.getSiteId(), addM13BalInDecBalances);
 		Map<String, FsCodeDetail> codeVsDetailsMap = fsCellCodeDetailsResponseDto.getCodeVsDetailsMap();

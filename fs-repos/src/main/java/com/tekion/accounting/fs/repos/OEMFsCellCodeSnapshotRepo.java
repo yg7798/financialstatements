@@ -23,6 +23,8 @@ public interface OEMFsCellCodeSnapshotRepo {
 
     void deleteSnapshotByFsIdAndMonth(String fsId, int month, String dealerId);
 
+    void hardDeleteSnapshotByFsIdAndMonth(Collection<String> fsIds, String dealerId);
+
     void deleteBulkSnapshotByYearAndMonth(String oemId, int year, int fromMonth, int toMonth, String dealerId, String siteId );
 
     void updateDefaultSiteId(String dealerId);

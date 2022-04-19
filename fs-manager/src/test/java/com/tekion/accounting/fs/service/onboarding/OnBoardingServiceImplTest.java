@@ -24,11 +24,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.core.task.AsyncTaskExecutor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static org.mockito.Mockito.timeout;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OnBoardingServiceImplTest extends TestCase {
@@ -53,24 +60,24 @@ public class OnBoardingServiceImplTest extends TestCase {
     FsComputeService fsComputeService;
     @Mock
     OemFsMappingSnapshotRepo oemFsMappingSnapshotRepo;
+    @Mock
+    ExecutorService executorService;
+    @Mock
+    AsyncTaskExecutor asyncTaskExecutor;
 
 
     @Before
     public void setUp() {
         UserContextProvider.setContext(new UserContext("-1", "ca", "4"));
+        this.executorService = Executors.newCachedThreadPool();
     }
 
     @Test
-    public void createSnapshotsToOnboardNewDealerTest(){
+    public void createSnapshotsToOnboardNewDealerTest() {
         AccountingInfo accountingInfo = getAccountingInfo();
-        Mockito.when(infoRepo.findByDealerIdNonDeleted(Mockito.anyString())).thenReturn(accountingInfo);
-        Mockito.when(fsEntryRepo.fetchAllByDealerIdNonDeleted(Mockito.anyString())).thenReturn(getFsEntries());
-        Mockito.when(infoRepo.save(accountingInfo)).thenReturn(accountingInfo);
-        Mockito.when(fsEntryRepo.getAllFSEntriesByFsType(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntries());
+        Mockito.doNothing().when(asyncTaskExecutor).execute(Mockito.any());
+        Mockito.when(fsEntryRepo.findFsEntriesForDealerAndYears(Mockito.any(), Mockito.anyList(), Mockito.anyString())).thenReturn(getFsEntries());
         Mockito.when(accountingService.getActiveMonthInfo()).thenReturn(getActiveMonthInfo());
-        Mockito.when(oemFsCellCodeSnapshotRepo.findOneSnapshotByFsIdAndMonth(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString()))
-                .thenReturn(null);
-        Mockito.doNothing().when(oemFsCellCodeSnapshotRepo).saveBulkSnapshot(Mockito.anyList());
         dealerOnBoardService.createSnapshotsToOnboardNewDealer();
     }
 
@@ -93,13 +100,22 @@ public class OnBoardingServiceImplTest extends TestCase {
         fsEntry.setFsType(FSType.OEM.name());
         fsEntry.setYear(2021);
         fsEntry.setDealerId("5");
-        return new ArrayList<>(Collections.singletonList(fsEntry));
+
+        FSEntry fsEntry1= new FSEntry();
+        fsEntry1.setOemId("GM");
+        fsEntry1.setFsType(FSType.OEM.name());
+        fsEntry1.setYear(2020);
+        fsEntry1.setDealerId("5");
+        List<FSEntry> fsEntries = new ArrayList<>();
+        fsEntries.add(fsEntry);
+        fsEntries.add(fsEntry1);
+        return fsEntries;
     }
 
     private MonthInfo getActiveMonthInfo() {
         MonthInfo monthInfo = new MonthInfo();
         monthInfo.setMonth(11);
-        monthInfo.setYear(2020);
+        monthInfo.setYear(2021);
         return monthInfo;
     }
 }
