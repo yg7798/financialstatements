@@ -233,7 +233,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 	@Override
 	public FsCellCodeDetailsResponseDto computeFsCellCodeDetails(String oemId, Integer oemFsYear, Integer version, Integer year, Integer month, boolean includeM13, String siteId, boolean addM13BalInDecBalances) {
-		FSEntry fsEntry = fsEntryRepo.findDefaultType(oemId, oemFsYear ,UserContextProvider.getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext());
+		FSEntry fsEntry = fsEntryRepo.findDefaultType(oemId, oemFsYear ,UserContextProvider.getCurrentDealerId(), siteId);
 		MonthInfo activeMonthInfo = getActiveMonthInfo();
 
 		if(Objects.nonNull(year) && Objects.nonNull(month) && isFutureMonth(activeMonthInfo, year, month - 1)){

@@ -63,12 +63,22 @@ public class OnBoardingServiceImpl implements OnBoardingService {
         oemFsCellCodeSnapshotRepo.hardDeleteSnapshotByFsIdAndMonth(fsEntries.stream().map(TBaseMongoBean::getId).collect(Collectors.toSet()), UserContextProvider.getCurrentDealerId());
         fsEntries.forEach(fsEntry -> {
             if (monthInfo.getYear().equals(fsEntry.getYear())) {
+                try {
                     createSnapshotForMonthRange(fsEntry, monthInfo, fsEntry.getYear(), fsEntry.getYear(),
                             Calendar.JANUARY + 1, monthInfo.getMonth(), DEFAULT_INCLUDE_M13, DEFAULT_ADD_M13_BALANCES_IN_DEC);
+                } catch (Exception e) {
+                    log.error(String.format("error while creating snapshot for fsId %s", fsEntry.getOemId()), e);
+                }
+
             } else {
+
+                try {
                     createSnapshotForMonthRange(fsEntry, monthInfo, fsEntry.getYear(), fsEntry.getYear(),
                             Calendar.JANUARY + 1, Calendar.DECEMBER + 1, DEFAULT_INCLUDE_M13, DEFAULT_ADD_M13_BALANCES_IN_DEC);
+                } catch (Exception e) {
+                    log.error(String.format("error while creating snapshot for fsId %s", fsEntry.getOemId()), e);
                 }
+            }
         });
 
     }
