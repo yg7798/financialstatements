@@ -1,11 +1,15 @@
 package com.tekion.accounting.fs.service.fsCellGroup;
 
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.dto.cellGrouop.ValidateGroupCodeResponseDto;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
+import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
+import com.tekion.core.utils.TStringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,6 +24,9 @@ public class FSCellGroupServiceImpl implements  FSCellGroupService{
 
 	private final OemFsCellGroupRepo cellGroupRepo;
 	private final DealerConfig dealerConfig;
+	private final FsComputeService computeService;
+
+	public static final Integer VERSION = 1;
 
 	@Override
 	public List<AccountingOemFsCellGroup> findGroupCodes(List<String> groupCodes, String oemId, Integer year, Integer version) {
@@ -66,6 +73,41 @@ public class FSCellGroupServiceImpl implements  FSCellGroupService{
 		}
 
 		cellGroupRepo.upsertBulk(cellGroupValuesToUpsert);
+	}
+
+	@Override
+	public ValidateGroupCodeResponseDto findInvalidAndMissingGroupCodes(String oemId, Integer year, String country) {
+		ValidateGroupCodeResponseDto dto = new ValidateGroupCodeResponseDto();
+		Set<String> groupCodesFromCellCodes = new HashSet<>();
+		Set<String> groupCodesFromDb = new HashSet<>();
+
+		List<AccountingOemFsCellCode> cellCodes = TCollectionUtils.nullSafeList(computeService.getOemTMappingList(oemId, year, VERSION, country));
+		cellCodes.stream().forEach(cellCode -> {
+			if (TStringUtils.isNotBlank(cellCode.getGroupCode()))
+				groupCodesFromCellCodes.add(cellCode.getGroupCode());
+		});
+
+		List<AccountingOemFsCellGroup> cellGroups = cellGroupRepo.findNonDeletedByOemIdYearVersionAndCountry(oemId, year, VERSION, country);
+		cellGroups.stream().forEach(cellGroup -> {
+			if (TStringUtils.isNotBlank(cellGroup.getGroupCode()))
+				groupCodesFromDb.add(cellGroup.getGroupCode());
+		});
+
+		List<String> groupCodesToAdd = getExtraItemsFromFirstSet(groupCodesFromCellCodes, groupCodesFromDb);
+		List<String> groupCodesToRemove = getExtraItemsFromFirstSet(groupCodesFromDb, groupCodesFromCellCodes);
+		dto.setGroupCodesToAdd(groupCodesToAdd);
+		dto.setGroupCodesToRemove(groupCodesToRemove);
+		return dto;
+	}
+
+	private List<String> getExtraItemsFromFirstSet(Set<String> set1, Set<String> set2) {
+		List<String> groupCodes = new ArrayList<>();
+		set1.stream().forEach(groupCode -> {
+			if (!set2.contains(groupCode)) {
+				groupCodes.add(groupCode);
+			}
+		});
+		return groupCodes;
 	}
 
 	private Map<String, List<AccountingOemFsCellGroup>> getOemIdVsCellGroupsMap(List<AccountingOemFsCellGroup> cellGroups) {

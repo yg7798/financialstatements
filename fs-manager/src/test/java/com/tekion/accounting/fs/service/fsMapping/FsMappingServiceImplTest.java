@@ -106,6 +106,29 @@ public class FsMappingServiceImplTest {
     }
 
     @Test
+    public void testRemoveInvalidMappings(){
+        List<OemFsMapping> oemFsMappingList = oemFsMappingList();
+        OemFsMapping oemFsMapping = OemFsMapping.builder()
+                .glAccountId("5_001")
+                .fsCellGroupCode("_305")
+                .fsId("6155a7d8b3cb1f0006868ab6")
+                .year(2021).version(1).oemId("GM").build();
+        oemFsMappingList.add(oemFsMapping);
+
+        List<AccountingOemFsCellGroup> accountingOemFsCellGroupList = new ArrayList<>();
+        AccountingOemFsCellGroup accountingOemFsCellGroup1 = AccountingOemFsCellGroup.builder().groupCode("_204").build();
+        AccountingOemFsCellGroup accountingOemFsCellGroup2 = AccountingOemFsCellGroup.builder().groupCode("_304").build();
+        accountingOemFsCellGroupList.add(accountingOemFsCellGroup1);
+        accountingOemFsCellGroupList.add(accountingOemFsCellGroup2);
+
+        Mockito.when(oemFSMappingRepo.findMappingsByFsId(any(),any())).thenReturn(oemFsMappingList);
+        Mockito.when(accountingService.getGLAccounts(anyString())).thenReturn(glAccountList());
+        Mockito.when(oemFsCellGroupRepo.findByOemId(any(), eq(2021), any())).thenReturn(accountingOemFsCellGroupList);
+        Mockito.when(fsEntryRepo.getFsEntriesByOemIdYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).thenReturn(getFsEntries());
+        fsMappingService.removeInvalidMappings("GM", 2022, "US");
+    }
+
+    @Test
     public void testRestrictDuplicateOemFSMapping() {
         Mockito.when(oemFSMappingRepo.findMappingsByGroupCodeAndFsIds(any(), any(), any())).thenReturn(oemFsMappingList());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString())).
@@ -379,6 +402,7 @@ public class FsMappingServiceImplTest {
     private List<FSEntry> getFsEntries() {
         FSEntry fsEntry1 = getFsEntry();
         fsEntry1.setFsType(FSType.OEM.name());
+        fsEntry1.setId("6155a7d8b3cb1f0006868ab6");
         FSEntry fsEntry2 = getFsEntry();
         fsEntry2.setYear(2022);
         fsEntry2.setFsType(FSType.OEM.name());

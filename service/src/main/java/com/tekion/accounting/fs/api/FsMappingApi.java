@@ -102,4 +102,19 @@ public class FsMappingApi {
     public ResponseEntity getGLAccountsByGroupCodesAndOemForMultipleYears(@RequestBody List<OemFsGroupCodeDetailsRequestDto> details){
         return TResponseEntityBuilder.okResponseEntity(fsMappingService.getGLAccountsForMultipleYears(details));
     }
+
+    @DeleteMapping("/invalidMappings/{oemId}/{year}/{country}")
+    public ResponseEntity deleteInvalidMappings(@PathVariable String oemId, @PathVariable Integer year, @PathVariable String country) {
+        fsMappingService.removeInvalidMappings(oemId, year, country);
+        return TResponseEntityBuilder.okResponseEntity("success");
+    }
+
+    @DeleteMapping("/invalidMappings/{oemId}/{year}/{country}/all")
+    public ResponseEntity deleteInvalidMappings(@PathVariable String oemId, @PathVariable Integer year,
+                                                @PathVariable String country,
+                                                @RequestParam(required = false) Integer parallelism) {
+        globalService.executeTaskForAllDealers(() -> fsMappingService.removeInvalidMappings(oemId, year, country),
+                getDefaultParallelism(parallelism));
+        return TResponseEntityBuilder.okResponseEntity("success");
+    }
 }

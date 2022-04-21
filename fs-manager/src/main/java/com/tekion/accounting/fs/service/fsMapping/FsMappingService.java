@@ -36,4 +36,5 @@ public interface FsMappingService {
 
     List<GroupCodeMappingResponseDto> getGLAccountsForMultipleYears(List<OemFsGroupCodeDetailsRequestDto> details);
 
+    void removeInvalidMappings(String oemId, Integer year, String country);
 }

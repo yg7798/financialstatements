@@ -48,6 +48,7 @@ public class FsMappingServiceImpl implements FsMappingService {
     private final FSEntryRepo fsEntryRepo;
     private final FSEventHelper fsEventHelper;
 
+    public static final Integer VERSION = 1;
 
     @Override
     public Set<String> deleteDuplicateMappings(List<String> fsIds) {
@@ -500,6 +501,15 @@ public class FsMappingServiceImpl implements FsMappingService {
             }
         }
         return glAccountsResponse;
+    }
+
+    @Override
+    public void removeInvalidMappings(String oemId, Integer year, String country) {
+        List<FSEntry> fsEntries = TCollectionUtils.nullSafeList(fsEntryRepo.getFsEntriesByOemIdYearAndCountry(oemId, year, VERSION, country));
+
+        fsEntries.stream().forEach(fsEntry -> {
+            deleteInvalidMappings(fsEntry.getId());
+        });
     }
 
     private Map<String, List<String>> getGroupCodeVsGLAcctMap(List<OemFsMapping> mappings) {

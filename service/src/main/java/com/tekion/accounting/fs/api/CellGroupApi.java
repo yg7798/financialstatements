@@ -31,5 +31,10 @@ public class CellGroupApi {
 		return TResponseEntityBuilder.okResponseEntity("pcl values copied from prev year to current year");
 	}
 
+	@GetMapping("/validate/{oemId}/{year}/{country}")
+	public ResponseEntity getInValidCellGroups(@PathVariable String oemId, @PathVariable Integer year, @PathVariable String country) {
+		return TResponseEntityBuilder.okResponseEntity(fsCellGroupService.findInValidAndMissingGroupCodes(oemId, year, country));
+	}
+
 
 }

@@ -73,4 +73,6 @@ public interface FSEntryRepo {
     Long updateFsTypeForFsEntry(String fsId, String changedType);
 
     List<FSEntry> findFsEntriesForDealerAndYears(FSType fsType, List<Integer> years, String dealerId);
+
+    List<FSEntry> getFsEntriesByOemIdYearAndCountry(String oemId, Integer year, Integer version, String country);
 }

@@ -1,10 +1,14 @@
 package com.tekion.accounting.fs.service.fsCellGroup;
 
 import com.amazonaws.services.dynamodbv2.xspec.S;
+import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.fs.dto.cellGrouop.ValidateGroupCodeResponseDto;
+import com.tekion.accounting.fs.repos.FSCellCodeRepo;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
+import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -29,6 +33,8 @@ public class FSCellGroupServiceImplTest extends TestCase {
     DealerConfig dealerConfig;
     @Mock
     OemFsCellGroupRepo cellGroupRepo;
+    @Mock
+    FsComputeService computeService;
     @Captor
     private ArgumentCaptor<ArrayList<AccountingOemFsCellGroup>> captor;
 
@@ -70,6 +76,60 @@ public class FSCellGroupServiceImplTest extends TestCase {
     public void testMigrateCellGroupValuesForOemToYearEmpty() {
         Mockito.when(cellGroupRepo.findByOemIds(Mockito.anySet(), Mockito.anySet(), Mockito.anyString())).thenReturn(getExistCellGroupsFromYear());
         fsCellGroupService.migrateCellGroupValuesForOem("US", 2021, 2022, getOemIds());
+    }
+
+    @Test
+    public void testFindInValidAndMissingGroupCodes() {
+        Mockito.when(computeService.getOemTMappingList(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).thenReturn(getCellCodes());
+        Mockito.when(cellGroupRepo.findNonDeletedByOemIdYearVersionAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString())).thenReturn(getCellGroups());
+        assertEquals(getValidateGroupCodeResponseDto(), fsCellGroupService.findInvalidAndMissingGroupCodes("Acura", 2022, "US"));
+    }
+
+    private List<AccountingOemFsCellGroup> getCellGroups() {
+        List<AccountingOemFsCellGroup> cellGroups = getAccountingOemFsCellGroupToYear();
+        AccountingOemFsCellGroup accountingOemFsCellGroup = new AccountingOemFsCellGroup();
+        accountingOemFsCellGroup.setOemId("Acura");
+        accountingOemFsCellGroup.setCountry("US");
+        accountingOemFsCellGroup.setGroupCode("456");
+        accountingOemFsCellGroup.setVersion(1);
+        accountingOemFsCellGroup.setYear(2022);
+        cellGroups.add(accountingOemFsCellGroup);
+        return cellGroups;
+    }
+
+    private List<AccountingOemFsCellCode> getCellCodes() {
+        AccountingOemFsCellCode cellCode = new AccountingOemFsCellCode();
+        cellCode.setOemId("Acura");
+        cellCode.setCountry("US");
+        cellCode.setVersion(1);
+        cellCode.setYear(2022);
+        cellCode.setGroupCode("123");
+
+        AccountingOemFsCellCode cellCode1 = new AccountingOemFsCellCode();
+        cellCode1.setOemId("Acura");
+        cellCode1.setCountry("US");
+        cellCode1.setVersion(1);
+        cellCode1.setYear(2022);
+        cellCode1.setGroupCode("1000");
+
+        List<AccountingOemFsCellCode> cellCodes = new ArrayList<>();
+        cellCodes.add(cellCode);
+        cellCodes.add(cellCode1);
+        return cellCodes;
+    }
+
+    private ValidateGroupCodeResponseDto getValidateGroupCodeResponseDto() {
+        ValidateGroupCodeResponseDto dto = new ValidateGroupCodeResponseDto();
+
+        List<String> groupCodesToRemove = new ArrayList<>();
+        groupCodesToRemove.add("456");
+
+        List<String> groupCodesToAdd = new ArrayList<>();
+        groupCodesToAdd.add("1000");
+
+        dto.setGroupCodesToRemove(groupCodesToRemove);
+        dto.setGroupCodesToAdd(groupCodesToAdd);
+        return dto;
     }
 
     private Set<String> getOemIds() {
