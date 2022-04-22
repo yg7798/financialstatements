@@ -33,7 +33,7 @@ public class CellGroupApi {
 
 	@GetMapping("/validate/{oemId}/{year}/{country}")
 	public ResponseEntity getInValidCellGroups(@PathVariable String oemId, @PathVariable Integer year, @PathVariable String country) {
-		return TResponseEntityBuilder.okResponseEntity(fsCellGroupService.findInValidAndMissingGroupCodes(oemId, year, country));
+		return TResponseEntityBuilder.okResponseEntity(fsCellGroupService.findInvalidAndMissingGroupCodes(oemId, year, country));
 	}
 
 
