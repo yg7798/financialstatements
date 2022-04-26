@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.configurations;
 
-import com.tekion.core.service.resourcebundle.ResourceBundlePropertiesApi;
+import com.tekion.core.service.i118.resourcebundle.ResourceBundlePropertiesApi;
 import com.tekion.migration.v3.MigrationRestController;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
