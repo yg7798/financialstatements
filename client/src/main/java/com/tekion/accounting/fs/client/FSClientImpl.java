@@ -88,4 +88,17 @@ public class FSClientImpl implements FSClient{
 	public TResponse<List<GroupCodeMappingDetailsDto>> getGLAccounts(Integer year, List<OemFsGroupCodeDetailsDto> details) {
 		return fsInternalClient.getGLAccounts(TRequestUtils.internalCallHeaderMap(), details, year);
 	}
+
+	@Override
+	public TResponse<Boolean> deleteSnapshotByYearAndMonth(String siteId, String oemId, int oemFsVersion, int year, int month) {
+		Map<String, String> queryMap = new HashMap<>();
+		queryMap.put("year", String.valueOf(year));
+		queryMap.put("month", String.valueOf(month));
+		return fsInternalClient.deleteFsCellCodeSnapshot(TRequestUtils.internalCallHeaderMap(), oemId, oemFsVersion, queryMap);
+	}
+
+	@Override
+	public TResponse<Boolean> deleteFsCellCodeSnapshotForMultipleMonths(FSCellCodeSnapshotDto dto) {
+		return fsInternalClient.deleteFsCellCodeSnapshotForMultipleMonths(TRequestUtils.internalCallHeaderMap(), dto);
+	}
 }

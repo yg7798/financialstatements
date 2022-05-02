@@ -28,5 +28,9 @@ public interface FSClient {
 	TResponse<List<FsMappingDto>> getFsMappingsFromOemIdAndGroupCodes(OemIdsAndGroupCodeListDto oemIdsAndGroupCodeListDto);
 
 	TResponse<List<GroupCodeMappingDetailsDto>> getGLAccounts(Integer year, List<OemFsGroupCodeDetailsDto> details);
+
+	TResponse<Boolean> deleteSnapshotByYearAndMonth(String siteId,String oemId, int oemFsVersion, int year, int month);
+
+	TResponse<Boolean> deleteFsCellCodeSnapshotForMultipleMonths(FSCellCodeSnapshotDto dto);
 }
 

@@ -3,10 +3,7 @@ package com.tekion.accounting.fs.api;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodesCreateDto;
-import com.tekion.accounting.fs.dto.cellcode.CellCodeSnapshotCreateDto;
-import com.tekion.accounting.fs.dto.cellcode.FSCellCodeCreateDto;
-import com.tekion.accounting.fs.dto.cellcode.FSCellCodeListCreateDto;
-import com.tekion.accounting.fs.dto.cellcode.OemCodeUpdateDto;
+import com.tekion.accounting.fs.dto.cellcode.*;
 import com.tekion.accounting.fs.dto.fsEntry.FsEntryCreateDto;
 import com.tekion.accounting.fs.dto.mappings.MappingSnapshotDto;
 import com.tekion.accounting.fs.dto.mappings.OemFsMappingUpdateDto;
@@ -366,6 +363,12 @@ public class  OEMMappingApi {
 		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.deleteSnapshotByYearAndMonth(UserContextUtils.getSiteIdFromUserContext(), oemId.name(), oemFsVersion, year, month));
 	}
 
+	@DeleteMapping("/bulk/fsCellCodeSnapshot")
+	public ResponseEntity deleteFsCellCodeSnapshotForMultipleMonths(@RequestBody @NotBlank FSCellCodeSnapshotDto dto){
+		log.info("api call received for delete multiple fsCellCodeSnapshots");
+		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.deleteSnapshotsInBulk(dto));
+	}
+
 	@PostMapping("/fsReport/{oemId}/{oemFsYear}/v/{oemFsVersion}")
 	public ResponseEntity getFsCellSnapshot( @RequestParam(required = true, name = "month") Integer month,
 											 @RequestParam(required = true, name = "year") Integer year,
@@ -441,4 +444,5 @@ public class  OEMMappingApi {
 	public ResponseEntity fetchFsCellGroupCodesInBulk(@NotNull @RequestBody FSViewStatementDto viewStatementDto){
 		return TResponseEntityBuilder.okResponseEntity(fsPrintService.viewStatement(viewStatementDto));
 	}
+
 }

@@ -53,6 +53,7 @@ import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.audit.client.manager.AuditEventManager;
 import com.tekion.audit.client.manager.impl.AuditEventDTO;
 import com.tekion.beans.DynamicProperty;
+import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.TStringUtils;
@@ -84,8 +85,7 @@ import static com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode.addi
 import static com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode.additionInfoField_month;
 import static com.tekion.accounting.fs.common.AsyncContextDecorator.ASYNC_THREAD_POOL;
 import static com.tekion.accounting.fs.common.TConstants.ACCOUNTING_MODULE;
-import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
-import static com.tekion.core.utils.UserContextProvider.getCurrentTenantId;
+import static com.tekion.core.utils.UserContextProvider.*;
 import static java.util.stream.Collectors.groupingBy;
 
 @Component
@@ -119,6 +119,8 @@ public class FsComputeServiceImpl implements FsComputeService {
 	@Qualifier(ASYNC_THREAD_POOL)
 	@Autowired
 	private AsyncTaskExecutor executorService;
+
+	private static final Integer VERSION = 1;
 
 	private LoadingCache<CellCodeKey, List<AccountingOemFsCellCode>> accountingOemFsCellCodesCache;
 	private static final String DEFAULT_ROUND_OFF = "";
@@ -1341,6 +1343,15 @@ public class FsComputeServiceImpl implements FsComputeService {
 	public boolean deleteSnapshotByYearAndMonth(String siteId, String oemId, int oemFsVersion, int year, int month) {
 		FSEntry fsEntry = fsEntryRepo.findDefaultType(oemId, year, UserContextProvider.getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext());
 		oemFsCellCodeSnapshotRepo.deleteSnapshotByFsIdAndMonth(fsEntry.getId(), month, getCurrentDealerId());
+		return true;
+	}
+
+	@Override
+	public boolean deleteSnapshotsInBulk(FSCellCodeSnapshotDto dto) {
+		List<FSEntry> fsEntries = fsEntryRepo.findByOemYearVersionAndSite(dto.getOemId(), dto.getYear(), VERSION,
+				UserContextProvider.getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext());
+		oemFsCellCodeSnapshotRepo.hardDeleteSnapshotsInBulk(fsEntries.stream().map(TBaseMongoBean::getId).collect(Collectors.toList()),
+				dto.getSnapshotMonths(), getCurrentDealerId());
 		return true;
 	}
 

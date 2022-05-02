@@ -876,6 +876,13 @@ public class FsComputeServiceImplTest extends TestCase {
     }
 
     @Test
+    public void testDeleteSnapshotsInBulk(){
+        Mockito.when(fsEntryRepo.findByOemYearVersionAndSite(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntries());
+        Mockito.doNothing().when(oemFsCellCodeSnapshotRepo).hardDeleteSnapshotsInBulk(Mockito.anyList(), Mockito.anyList(), Mockito.anyString());
+        assertTrue(oemMappingService.deleteSnapshotsInBulk(getFsCellCodeSnapshotDto()));
+    }
+
+    @Test
     public void testDeleteBulkSnapshotByYearAndMonth() {
         Mockito.doNothing().when(oemFsCellCodeSnapshotRepo).deleteBulkSnapshotByYearAndMonth(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString());
         assertTrue(oemMappingService.deleteBulkSnapshotByYearAndMonth("-1-4", "GM", 2021, 1 , 2));
@@ -1117,6 +1124,17 @@ public class FsComputeServiceImplTest extends TestCase {
         glAccount1.setAccountTypeId("EXPENSE_ALLOCATION");
         glAccountList.add(glAccount1);
         return glAccountList;
+    }
+
+    private FSCellCodeSnapshotDto getFsCellCodeSnapshotDto() {
+        List<Integer> months = new ArrayList<>();
+        months.add(11);
+        months.add(12);
+        FSCellCodeSnapshotDto dto = new FSCellCodeSnapshotDto();
+        dto.setYear(2022);
+        dto.setOemId("GM");
+        dto.setSnapshotMonths(months);
+        return dto;
     }
 
     private List<OemFsMappingSiteIdChangesReqDto> getOemFsMappingSiteIdChangesReqDtoList() {

@@ -75,6 +75,8 @@ public interface FsComputeService {
 
 	boolean deleteSnapshotByYearAndMonth(String siteId,String oemId, int oemFsVersion, int year, int month);
 
+	boolean deleteSnapshotsInBulk(FSCellCodeSnapshotDto dto);
+
 	List<OEMFsCellCodeSnapshotResponseDto> getAllOEMFsCellCodeSnapshotSummary(String siteId, String oemId, int oemFsVersion, int year, int month,
 																			  int oemFsYear, boolean includeM13, boolean addM13BalInDecBalances);
 
