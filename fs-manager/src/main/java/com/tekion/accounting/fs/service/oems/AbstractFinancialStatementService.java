@@ -216,7 +216,7 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
                     oemFSMetadataCellsInfo.getCellMapping() : Lists.newArrayList();
 
             Map<String, String> metadataKeyValueMap = new HashMap<>();
-            getMetaDataFieldValueMap(metadataKeyValueMap, requestDto);
+            getMetaDataFieldValueMap(metadataKeyValueMap, requestDto, getBacCode(fsEntry.getOemId(), fsEntry.getSiteId()));
 
             for(CellAddressMapping cellAddressMapping : TCollectionUtils.nullSafeList(cellAddressMappings)){
                 CellAddressInfo cellAddressInfo = cellAddressMapping.getCellAddressInfo();
@@ -237,7 +237,7 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
     }
 
 
-    private void getMetaDataFieldValueMap(Map<String, String> metadataKeyValueMap, FinancialStatementRequestDto requestDto){
+    private void getMetaDataFieldValueMap(Map<String, String> metadataKeyValueMap, FinancialStatementRequestDto requestDto, String bacCode){
 
         Calendar c = TimeUtils.buildCalendar(requestDto.getTillEpoch());
         int fiscalStartMonth_0_11 = Objects.nonNull( accountingService.getAccountingSettings())? accountingService.getAccountingSettings().getFiscalYearStartMonth(): 0;
@@ -267,7 +267,7 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
         DseDealerAddress dealerAddress = Objects.nonNull(dealerMaster.getDealerAddress()) ? dealerMaster.getDealerAddress().get(0) : null;
 
         metadataKeyValueMap.put(OemFsMetadataFields.DEALER_NAME.getDisplayName(), dealerMaster.getDealerName());
-        metadataKeyValueMap.put(OemFsMetadataFields.DEALER_BAC_CODE.getDisplayName(), dealerMaster.getDealershipCode());
+        metadataKeyValueMap.put(OemFsMetadataFields.DEALER_BAC_CODE.getDisplayName(), bacCode);
         metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE1.getDisplayName(), dealerAddress.getStreetAddress1());
         metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE2.getDisplayName(), dealerAddress.getStreetAddress2());
         metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE3.getDisplayName(), dealerAddress.getCity());
@@ -316,7 +316,7 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
         int month = c.get(Calendar.MONTH);
         OemConfig oemConfig = oemMappingService.getOemConfig(fsEntry.getOemId());
         ProcessFinancialStatement processFinancialStatement = new ProcessFinancialStatement();
-        processFinancialStatement.setApplicationArea(getApplicationArea());
+        processFinancialStatement.setApplicationArea(getApplicationArea(fsEntry));
         processFinancialStatement.setDataArea(getDefaultDataArea());
         populateAccountDetails(processFinancialStatement.getDataArea(),fsResponse, year, month, oemConfig, fsEntry.getSiteId());
         return processFinancialStatement;
@@ -325,15 +325,7 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
     protected void populateAccountDetails(DataArea dataArea, FsCellCodeDetailsResponseDto fsResponse, int year, int month, OemConfig oemConfig, String siteId) {
         FinancialStatement mtdFs = new FinancialStatement();
         FinancialStatement ytdFs = new FinancialStatement();
-
-        OEM oem = OEM.fromOem(oemConfig.getOemId());
-        List<String> brands = getBrandFromMakes(Collections.singletonList(Objects.requireNonNull(oem).getMake()));
-        String brand = (brands.size() != 0 && !"Others".equals(brands.get(0))) ? brands.get(0) : oem.getBrand();
-        String dealerShipCode = integrationService.getBacCodeFromIntegration(oemConfig.getOemId(), siteId, brand);
-
-        if(Objects.isNull(dealerShipCode)){
-            dealerShipCode = dealerConfig.getDealerMaster().getOemDealerId();
-        }
+        String dealerShipCode = getBacCode(oemConfig.getOemId(), siteId);
 
         Header mtdHeader = new Header();
         fillHeader(mtdHeader, year, month+1, MTD, dealerShipCode);
@@ -393,6 +385,20 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
         }
 
         return detail;
+    }
+
+    private String getBacCode(String oemId, String siteId){
+
+        OEM oem = OEM.fromOem(oemId);
+        List<String> brands = getBrandFromMakes(Collections.singletonList(Objects.requireNonNull(oem).getMake()));
+        String brand = (brands.size() != 0 && !"Others".equals(brands.get(0))) ? brands.get(0) : oem.getBrand();
+
+        String dealerShipCode =  integrationService.getBacCodeFromIntegration(oemId, siteId, brand);
+        if(Objects.isNull(dealerShipCode)){
+            dealerShipCode = dealerConfig.getDealerMaster().getOemDealerId();
+            log.info("reading BAC code from dealerMaster {}", dealerShipCode);
+        }
+        return dealerShipCode;
     }
 
     protected void addDescription(Detail detail, AccountingOemFsCellCode actualCode){
@@ -470,16 +476,16 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
         return dataArea;
     }
 
-    ApplicationArea getApplicationArea() {
+    ApplicationArea getApplicationArea(FSEntry fsEntry) {
         ApplicationArea applicationArea = new ApplicationArea();
         Sender sender = new Sender();
-        sender.setDealerNumber(dealerConfig.getDealerMaster().getOemDealerId());
+        sender.setDealerNumber(getBacCode(fsEntry.getOemId(), fsEntry.getSiteId()));
         applicationArea.setBODId("");
         applicationArea.setCreationDateTime("");
         applicationArea.setSignature(new ApplicationArea.Signature());
         applicationArea.setSender(sender);
         Destination destination = new Destination();
-        destination.setDealerNumber(dealerConfig.getDealerMaster().getOemDealerId());
+        destination.setDealerNumber(getBacCode(fsEntry.getOemId(), fsEntry.getSiteId()));
         destination.setDestinationNameCode("GM");
         applicationArea.setDestination(destination);
         return applicationArea;
