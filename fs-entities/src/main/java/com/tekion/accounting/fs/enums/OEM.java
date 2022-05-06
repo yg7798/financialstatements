@@ -36,6 +36,7 @@ public enum OEM {
 	Subaru("subaru", "subaru", "subaru"),
 	Isuzu("isuzu", "isuzu", "isuzu"),
 	JLR("jaguarlandrover","jaguarlandrover", "jaguarlandrover"),
+	Ferrari("Ferrari","Ferrari", "Ferrari"),
 	@Deprecated
 	VW("Volkswagen","volkswagen", "Volkswagen");
 
