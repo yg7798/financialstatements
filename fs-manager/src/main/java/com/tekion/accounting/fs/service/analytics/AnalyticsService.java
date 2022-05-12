@@ -6,5 +6,5 @@ import java.util.List;
 import java.util.Set;
 
 public interface AnalyticsService {
-    List<OEMFsCellCodeSnapshotResponseDto> getFSCellCodeAverage(long fromTimestamp, long toTimestamp, Set<String> codes, String oemId);
+    List<OEMFsCellCodeSnapshotResponseDto> getFSCellCodeAverage(long fromTimestamp, long toTimestamp, Set<String> codes, String oemId, String siteId);
 }

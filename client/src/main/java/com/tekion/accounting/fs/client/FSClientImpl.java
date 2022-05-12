@@ -101,4 +101,9 @@ public class FSClientImpl implements FSClient{
 	public TResponse<Boolean> deleteFsCellCodeSnapshotForMultipleMonths(FSCellCodeSnapshotDto dto) {
 		return fsInternalClient.deleteFsCellCodeSnapshotForMultipleMonths(TRequestUtils.internalCallHeaderMap(), dto);
 	}
+
+	@Override
+	public TResponse<List<OEMFsCellCodeSnapshotResponseDto>> getFSCellCodeAverage(String oemId, String siteId, FSReportDto fsReportDto) {
+		return fsInternalClient.getFSCellCodeAverage(TRequestUtils.internalCallHeaderMap(), oemId, siteId, fsReportDto);
+	}
 }

@@ -3,7 +3,10 @@ package com.tekion.accounting.fs.client;
 
 import com.tekion.accounting.fs.client.dtos.*;
 import com.tekion.core.beans.TResponse;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Set;
 
@@ -32,5 +35,7 @@ public interface FSClient {
 	TResponse<Boolean> deleteSnapshotByYearAndMonth(String siteId,String oemId, int oemFsVersion, int year, int month);
 
 	TResponse<Boolean> deleteFsCellCodeSnapshotForMultipleMonths(FSCellCodeSnapshotDto dto);
+
+	TResponse<List<OEMFsCellCodeSnapshotResponseDto>> getFSCellCodeAverage(String oemId, String siteId, FSReportDto fsReportDto);
 }
 

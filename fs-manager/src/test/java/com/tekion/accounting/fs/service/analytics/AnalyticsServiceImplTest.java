@@ -42,7 +42,7 @@ public class AnalyticsServiceImplTest extends TestCase {
         codes.add("CD1");
         codes.add("CD2");
         when(cellCodeSnapshotRepo.getFsCellCodeByTimestamp(Mockito.anyLong(),Mockito.anyLong(),Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any())).thenReturn(getFsCellCodeResponse());
-        List<OEMFsCellCodeSnapshotResponseDto> responseDtos = analyticsService.getFSCellCodeAverage(1l,100l,codes,"oem123");
+        List<OEMFsCellCodeSnapshotResponseDto> responseDtos = analyticsService.getFSCellCodeAverage(1l,100l,codes,"oem123", null);
         Assert.assertEquals(2,responseDtos.size());
         Assert.assertEquals(150,responseDtos.stream().filter(p -> "CD1".equalsIgnoreCase(p.getCode())).findFirst().get().getValue().intValue());
         Assert.assertEquals(100,responseDtos.stream().filter(p -> "CD2".equalsIgnoreCase(p.getCode())).findFirst().get().getValue().intValue());

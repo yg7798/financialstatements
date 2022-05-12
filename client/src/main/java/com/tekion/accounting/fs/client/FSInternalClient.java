@@ -80,4 +80,9 @@ public interface FSInternalClient {
 	TResponse<Boolean> deleteFsCellCodeSnapshotForMultipleMonths(@HeaderMap Map<String, String> headerMap,
 																  FSCellCodeSnapshotDto dto);
 
+	@RequestLine("POST /financial-statements/u/analytics/fsAverageReport/{oemId}/siteId/{siteId}")
+	TResponse<List<OEMFsCellCodeSnapshotResponseDto>> getFSCellCodeAverage(@HeaderMap Map<String, String> internalCallHeaderMap,
+															  @Param("oemId") String oemId, @Param("siteId")  String siteId,
+															  @RequestBody FSReportDto fsReportDto);
+
 }
