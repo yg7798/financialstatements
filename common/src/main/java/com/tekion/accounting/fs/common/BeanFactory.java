@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.admin.beans.property.DealerProperty;
 import com.tekion.cachesupport.lib.cache.RedisCacheFactory;
@@ -31,7 +30,6 @@ import com.tekion.printerclient.PrinterClient;
 import com.tekion.printerclientv2.PrinterClientV2;
 import com.tekion.sdk.storage.s3.S3ObjectStorageService;
 import feign.codec.ErrorDecoder;
-import io.netty.util.concurrent.DefaultEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,12 +179,4 @@ public class BeanFactory {
 	public MediaClient getMediaClient(ClientBuilder builder, AbstractServiceClientFactory clientFactory, TokenGenerator generator, OkHttpClient okHttpClient, ObjectMapper mapper){
 		return MediaClient.createClient(builder, clientFactory, generator, okHttpClient, mapper);
 	}
-
-	@Bean
-	@Primary
-	public DealerConfig getDealerConfig(){
-		return new DealerConfig();
-	}
-
-
 }
