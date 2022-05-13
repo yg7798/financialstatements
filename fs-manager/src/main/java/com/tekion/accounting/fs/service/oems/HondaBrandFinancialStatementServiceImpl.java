@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.service.oems;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.integration.ProcessFinancialStatement;
@@ -10,7 +11,6 @@ import com.tekion.accounting.fs.integration.Header;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.extern.slf4j.Slf4j;

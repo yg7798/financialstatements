@@ -79,4 +79,10 @@ public class AccountingInfoApi {
 		globalService.executeTaskForAllDealers(service::migrateFsRoundOffOffset, ApiHelperUtils.getDefaultParallelism(parallelism));
 		return TResponseEntityBuilder.okResponseEntity("Success");
 	}
+
+	@PutMapping("/update/siteInfoOverrideFlag/{flag}")
+	public ResponseEntity updateSiteOverrideInfoFlag(@PathVariable boolean flag){
+		service.updateSiteOverrideInfoFlag(flag);
+		return TResponseEntityBuilder.okResponseEntity("success");
+	}
 }

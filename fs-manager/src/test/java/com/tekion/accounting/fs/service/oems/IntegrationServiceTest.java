@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.oems;
 
-import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import com.tekion.integration.masterdata.response.ProviderDealerMappingInfoResponse;
@@ -13,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.TimeZone;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IntegrationServiceTest extends TestCase {

@@ -26,6 +26,7 @@ public class AccountingInfoDto {
     private String pnaCode;
     private FSPreferences fsPreferences;
     private Map<String, String> oemToOffsetCellMap = new HashMap<>();
+    private Boolean overrideSiteInfo;
 
     public AccountingInfo toAccountingInfo(){
         AccountingInfo info = new AccountingInfo();
@@ -40,6 +41,7 @@ public class AccountingInfoDto {
         info.setPnaCode(pnaCode);
         info.setFsPreferences(fsPreferences);
         info.setOemToOffsetCellMap(oemToOffsetCellMap);
+        info.setOverrideSiteInfo(overrideSiteInfo);
 
         if(TCollectionUtils.isNotEmpty(oemPayloadInfos)){
             List<FsOemPayloadInfo> l = new ArrayList<>();

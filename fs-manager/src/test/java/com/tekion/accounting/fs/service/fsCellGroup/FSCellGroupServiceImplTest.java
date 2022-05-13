@@ -1,12 +1,9 @@
 package com.tekion.accounting.fs.service.fsCellGroup;
 
-import com.amazonaws.services.dynamodbv2.xspec.S;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
-import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.dto.cellGrouop.ValidateGroupCodeResponseDto;
-import com.tekion.accounting.fs.repos.FSCellCodeRepo;
 import com.tekion.accounting.fs.repos.OemFsCellGroupRepo;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.core.exceptions.TBaseRuntimeException;
@@ -15,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.exceptions.misusing.InvalidUseOfMatchersException;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.context.event.annotation.AfterTestMethod;
 

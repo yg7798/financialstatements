@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.admin.beans.property.DealerProperty;
 import com.tekion.cachesupport.lib.cache.RedisCacheFactory;

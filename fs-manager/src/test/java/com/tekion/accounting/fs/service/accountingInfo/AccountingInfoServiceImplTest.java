@@ -1,17 +1,19 @@
 package com.tekion.accounting.fs.service.accountingInfo;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.dto.accountingInfo.AccountingInfoDto;
 import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.accountingInfo.AccountingInfoRepo;
+import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -126,6 +128,23 @@ public class AccountingInfoServiceImplTest extends TestCase {
         accountingInfoService.migrateFsRoundOffOffset();
     }
 
+    @Test
+    public void testUpdateSiteOverrideInfo(){
+        AccountingInfo accountingInfo = getAccountingInfo();
+        Mockito.when(infoRepo.findByDealerIdNonDeleted(Mockito.anyString())).thenReturn(accountingInfo);
+        Mockito.when(infoRepo.save(accountingInfo)).thenReturn(accountingInfo);
+        Assert.assertNull(accountingInfo.getOverrideSiteInfo());
+        accountingInfoService.updateSiteOverrideInfoFlag(true);
+        Assert.assertEquals(true, accountingInfo.getOverrideSiteInfo());
+    }
+
+    @Test(
+            expected = TBaseRuntimeException.class
+    )
+    public void testUpdateSiteOverrideInfo_Error(){
+        Mockito.when(infoRepo.findByDealerIdNonDeleted(Mockito.anyString())).thenReturn(null);
+        accountingInfoService.updateSiteOverrideInfoFlag(true);
+    }
 
 
     private AccountingInfo getAccountingInfo() {

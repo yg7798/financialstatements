@@ -1,10 +1,10 @@
 package com.tekion.accounting.fs.service.common.excelGeneration.abstractExecutors;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.service.common.excelGeneration.apiGateway.IApiGatewayReportConfig;
 import com.tekion.accounting.fs.service.common.excelGeneration.dto.AccExcelRequestDto;
 import com.tekion.accounting.fs.service.common.excelGeneration.helper.ExcelReportGeneratorHelper;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.core.excelGeneration.helpers.models.template.AbstractExcelTemplateReportGenerator;
 import com.tekion.core.excelGeneration.models.model.CallbackAcknowledge;

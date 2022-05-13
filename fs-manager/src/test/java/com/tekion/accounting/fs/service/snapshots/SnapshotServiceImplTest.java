@@ -1,11 +1,8 @@
 package com.tekion.accounting.fs.service.snapshots;
 
-import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.FSEntry;
-import com.tekion.accounting.fs.beans.mappings.OemFsMappingSnapshot;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.enums.FSType;
-import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OEMFsCellCodeSnapshotRepo;
 import com.tekion.accounting.fs.repos.OemFsMappingSnapshotRepo;
@@ -14,9 +11,6 @@ import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.as.client.AccountingClient;
-import com.tekion.as.models.dto.MonthInfo;
-import com.tekion.core.beans.TResponse;
-import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
 import junit.framework.TestCase;
@@ -29,10 +23,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SnapshotServiceImplTest extends TestCase {

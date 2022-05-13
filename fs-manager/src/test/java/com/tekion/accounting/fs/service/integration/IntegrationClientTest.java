@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.service.integration;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.dto.integration.FSIntegrationRequest;
 import com.tekion.accounting.fs.dto.integration.FSSubmitResponse;
 import com.tekion.accounting.fs.service.oems.OEMInfo;

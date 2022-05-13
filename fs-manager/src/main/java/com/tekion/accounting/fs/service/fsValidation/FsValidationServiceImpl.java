@@ -1,11 +1,11 @@
 package com.tekion.accounting.fs.service.fsValidation;
 
 import com.poiji.bind.Poiji;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.fsValidation.FsValidationRule;
 import com.tekion.accounting.fs.common.exceptions.FSError;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.OemFSUtils;
 import com.tekion.accounting.fs.dto.cellcode.FsCellCodeDetailsResponseDto;
 import com.tekion.accounting.fs.dto.cellcode.FsCodeDetail;
@@ -28,8 +28,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 
 import static com.tekion.accounting.fs.beans.common.OemTemplate.OEM_ID;
 import static com.tekion.accounting.fs.common.TConstants.COUNTRY;

@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.common.utils;
 
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.date.utils.DateFilter;
 import com.tekion.accounting.fs.common.date.utils.MonthYear;
 import com.tekion.as.models.dto.MonthInfo;

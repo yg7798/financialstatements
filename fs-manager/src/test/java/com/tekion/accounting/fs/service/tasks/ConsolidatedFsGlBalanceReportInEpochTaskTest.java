@@ -1,9 +1,8 @@
 package com.tekion.accounting.fs.service.tasks;
 
-import com.google.common.collect.Sets;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.dpProvider.DpProvider;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.dto.context.FsReportContext;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
@@ -23,7 +22,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 

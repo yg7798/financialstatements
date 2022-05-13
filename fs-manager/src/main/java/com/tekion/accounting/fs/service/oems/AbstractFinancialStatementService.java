@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.service.oems;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.accountingInfo.FsOemPayloadInfo;
 import com.tekion.accounting.fs.beans.common.*;
@@ -7,7 +8,6 @@ import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.enums.Month;
 import com.tekion.accounting.fs.common.exceptions.FSError;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
@@ -28,6 +28,7 @@ import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.accounting.fs.service.external.nct.FillDetailContext;
 import com.tekion.accounting.fs.service.fsMetaData.OemFSMetadataMappingService;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
+import com.tekion.accounting.fs.service.utils.FSDealerMasterUtils;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.admin.beans.FindBrandRequest;
 import com.tekion.clients.preference.client.PreferenceClient;
@@ -87,6 +88,8 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
     protected SlackService slackService;
     @Autowired
     protected GlobalService globalService;
+    @Autowired
+    protected AccountingInfoService accountingInfoService;
 
     public static final String MTD = "MTD";
     public static final String YTD = "YTD";
@@ -263,16 +266,18 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
         metadataKeyValueMap.put(OemFsMetadataFields.TO_MONTH.getDisplayName(), toMonth);
         metadataKeyValueMap.put(OemFsMetadataFields.TO_YEAR.getDisplayName(),toYear);
 
-        DealerMaster dealerMaster = dealerConfig.getDealerMaster();
+        AccountingInfo accountingInfo = accountingInfoService.find(UserContextProvider.getCurrentDealerId());
+        DealerMaster dealerMaster = FSDealerMasterUtils.getDealerMasterInfo(accountingInfo.getOverrideSiteInfo(), dealerConfig.getDealerMaster());
         DseDealerAddress dealerAddress = Objects.nonNull(dealerMaster.getDealerAddress()) ? dealerMaster.getDealerAddress().get(0) : null;
 
         metadataKeyValueMap.put(OemFsMetadataFields.DEALER_NAME.getDisplayName(), dealerMaster.getDealerName());
         metadataKeyValueMap.put(OemFsMetadataFields.DEALER_BAC_CODE.getDisplayName(), bacCode);
-        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE1.getDisplayName(), dealerAddress.getStreetAddress1());
-        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE2.getDisplayName(), dealerAddress.getStreetAddress2());
-        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE3.getDisplayName(), dealerAddress.getCity());
-        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE4.getDisplayName(), dealerAddress.getState());
-        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE5.getDisplayName(), dealerAddress.getZipCode());
+        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE1.getDisplayName(), Objects.nonNull(dealerAddress) ? dealerAddress.getStreetAddress1() : EMPTY);
+        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE2.getDisplayName(), Objects.nonNull(dealerAddress) ? dealerAddress.getStreetAddress2() : EMPTY);
+        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE3.getDisplayName(), Objects.nonNull(dealerAddress) ? dealerAddress
+                .getCity() : EMPTY);
+        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE4.getDisplayName(), Objects.nonNull(dealerAddress) ? dealerAddress.getState(): EMPTY);
+        metadataKeyValueMap.put(OemFsMetadataFields.ADDRESS_LINE5.getDisplayName(), Objects.nonNull(dealerAddress) ? dealerAddress.getZipCode() : EMPTY);
     }
 
     protected List<SingleCellData> createCellDataList(List<AccountingOemFsCellCode> oemFsCellCodeList,

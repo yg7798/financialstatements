@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.service.worksheet;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.memo.FieldType;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheetTemplate;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.dto.memo.MemoWorksheetTemplateRequestDto;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetTemplateRepo;

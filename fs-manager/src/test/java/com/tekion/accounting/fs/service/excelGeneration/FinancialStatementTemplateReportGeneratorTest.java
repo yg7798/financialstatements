@@ -1,7 +1,7 @@
 package com.tekion.accounting.fs.service.excelGeneration;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.FSEntry;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.common.excelGeneration.dto.AccExcelRequestDto;
 import com.tekion.accounting.fs.service.common.excelGeneration.enums.ExcelReportType;

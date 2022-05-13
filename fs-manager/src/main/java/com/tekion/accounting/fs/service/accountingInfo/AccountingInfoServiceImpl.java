@@ -7,6 +7,7 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.accountingInfo.AccountingInfoRepo;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
+import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.AllArgsConstructor;
@@ -147,5 +148,15 @@ public class AccountingInfoServiceImpl implements AccountingInfoService {
 			info.setFsRoundOffOffset(null);
 			infoRepo.save(info);
 		}
+	}
+
+	@Override
+	public void updateSiteOverrideInfoFlag(boolean flag) {
+		AccountingInfo info = infoRepo.findByDealerIdNonDeleted(UserContextProvider.getCurrentDealerId());
+		if(Objects.isNull(info)){
+			throw new TBaseRuntimeException("Account info not available for this dealer {}", UserContextProvider.getCurrentDealerId());
+		}
+		info.setOverrideSiteInfo(flag);
+		infoRepo.save(info);
 	}
 }

@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.service.fsMetaData;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.OemFSMetadataCellsInfo;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.OemFsMetadataCellMappingRepo;
 import com.tekion.core.utils.UserContext;

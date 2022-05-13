@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.oems;
 
-import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.FinancialYearType;
 import com.tekion.accounting.fs.integration.Detail;

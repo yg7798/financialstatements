@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.service.worksheet;
 
 import com.google.common.collect.Lists;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.MemoValue;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
@@ -15,7 +16,6 @@ import com.tekion.accounting.fs.enums.OemCellDurationType;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetRepo;
 import com.tekion.accounting.fs.repos.worksheet.MemoWorksheetTemplateRepo;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.core.beans.TBaseMongoBean;

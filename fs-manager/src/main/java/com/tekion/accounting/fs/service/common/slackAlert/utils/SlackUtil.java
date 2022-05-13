@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.service.common.slackAlert.utils;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.date.utils.MonthInfoDto;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.clients.slack.beans.Field;
 import com.tekion.clients.slack.beans.SlackMessageRequest;

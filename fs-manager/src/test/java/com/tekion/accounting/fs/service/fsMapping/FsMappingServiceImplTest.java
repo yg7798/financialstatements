@@ -1,10 +1,10 @@
 package com.tekion.accounting.fs.service.fsMapping;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.beans.mappings.OemFsMappingDetail;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.dto.mappings.*;
 import com.tekion.accounting.fs.enums.FSType;
@@ -29,7 +29,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-import static com.tekion.core.utils.UserContextProvider.getCurrentDealerId;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 

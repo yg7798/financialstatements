@@ -1,10 +1,9 @@
 package com.tekion.accounting.fs.service.fsEntry;
 
 
-import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.fsEntry.FSEntryUpdateDto;
 import com.tekion.accounting.fs.dto.fsEntry.FsEntryCreateDto;
@@ -19,7 +18,6 @@ import com.tekion.dealersettings.client.IDealerSettingsClient;
 import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.as.client.AccountingClient;
 import com.tekion.as.models.beans.GLAccount;
-import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.core.beans.TResponse;
 import com.tekion.core.es.request.ESResponse;
 import com.tekion.core.utils.UserContext;

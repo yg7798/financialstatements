@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.service.common.template;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.enums.Template;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.core.serverconfig.service.ServerConfigService;
 import com.tekion.sdk.storage.s3.S3ObjectStorageService;
 import lombok.AllArgsConstructor;

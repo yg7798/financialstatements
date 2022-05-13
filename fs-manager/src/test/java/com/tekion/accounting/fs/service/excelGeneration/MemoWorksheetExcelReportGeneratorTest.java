@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.excelGeneration;
 
-import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.service.common.excelGeneration.columnConfigs.ExcelColumnConfigGeneratorService;
 import com.tekion.accounting.fs.service.common.excelGeneration.dto.AccExcelRequestDto;
 import com.tekion.accounting.fs.service.common.excelGeneration.dto.SheetInfoDto;

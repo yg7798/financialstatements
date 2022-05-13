@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.service.common.excelGeneration.abstractExecutors;
 
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.service.common.excelGeneration.apiGateway.IApiGatewayReportConfig;
 import com.tekion.accounting.fs.service.common.excelGeneration.columnConfigs.context.ColumnConfigComputeContext;
 import com.tekion.accounting.fs.common.TConstants;
@@ -10,7 +11,6 @@ import com.tekion.accounting.fs.service.common.excelGeneration.dto.AccExcelReque
 import com.tekion.accounting.fs.service.common.excelGeneration.dto.SheetInfoDto;
 import com.tekion.accounting.fs.service.common.excelGeneration.enums.ExcelReportSheet;
 import com.tekion.accounting.fs.service.common.excelGeneration.helper.ExcelReportGeneratorHelper;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.core.excelGeneration.helpers.models.v2.AbstractExcelReportGeneratorV2;
 import com.tekion.core.excelGeneration.models.CallbackResponse;

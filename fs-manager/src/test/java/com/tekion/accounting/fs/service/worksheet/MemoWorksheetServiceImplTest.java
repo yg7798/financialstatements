@@ -1,11 +1,11 @@
 package com.tekion.accounting.fs.service.worksheet;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.FieldType;
 import com.tekion.accounting.fs.beans.memo.MemoValue;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheet;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheetTemplate;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dto.memo.CopyMemoValuesDto;
 import com.tekion.accounting.fs.dto.memo.MemoBulkUpdateDto;

@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.service.worksheet;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.memo.HCDepartment;
 import com.tekion.accounting.fs.beans.memo.HCValue;
@@ -15,7 +16,6 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetTemplateRepo;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.core.exceptions.TBaseRuntimeException;

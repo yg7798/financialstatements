@@ -1,8 +1,8 @@
 package com.tekion.accounting.fs.common;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.dpProvider.DpProvider;
 import com.tekion.accounting.fs.common.dpProvider.DpUtils;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.core.validation.TValidator;
 import com.tekion.podclient.PodConfigService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.service.common.excelGeneration.abstractExecutors;
 
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.common.core.minimisedResource.MinimizedResourceMetaData;
 import com.tekion.accounting.fs.service.common.excelGeneration.apiGateway.IApiGatewayReportConfig;
@@ -10,7 +11,6 @@ import com.tekion.accounting.fs.service.common.excelGeneration.dto.AccExcelReque
 import com.tekion.accounting.fs.service.common.excelGeneration.enums.ExcelReportType;
 import com.tekion.accounting.fs.service.common.excelGeneration.helper.ExcelReportGeneratorHelperImpl;
 import com.tekion.accounting.fs.common.exceptions.FSError;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
 import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.core.excelGeneration.helpers.models.AbstractExcelReportGenerator;

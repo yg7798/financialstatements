@@ -2,11 +2,11 @@ package com.tekion.accounting.fs.dealerMigration.rowTransaformer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellGroup;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.MigrationMetaDataForFsEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
 import com.tekion.accounting.fs.dealerMigration.beans.AthenaOemMapping;
 import com.tekion.accounting.fs.dealerMigration.context.OemFsRelateCodesMigrationContext;

@@ -26,4 +26,6 @@ public interface AccountingInfoService {
 	AccountingInfo setPrimaryOem(OEM oem);
 
 	void migrateFsRoundOffOffset();
+
+	void updateSiteOverrideInfoFlag(boolean flag);
 }

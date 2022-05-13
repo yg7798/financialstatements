@@ -32,6 +32,7 @@ public class AccountingInfo extends TBaseMongoBean {
     private String salesZoneCode;
     private String pnaCode;
     private FSPreferences fsPreferences;
+    private Boolean overrideSiteInfo;
     /**
      * oemId, memo key
      * */
