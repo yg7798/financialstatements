@@ -1592,7 +1592,11 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 
 	@Override
-	public Map<Integer, Map<String, Set<String>>> getDependentGlAccounts(OEM oem, int year, int version, Set<String> cellCodes, Long tillEpoch) {
+	public Map<Integer, Map<String, Set<String>>> getDependentGlAccounts(OEM oem, int year, int version, Set<String> cellCodes, Long tillEpoch, String siteId) {
+
+		if(StringUtils.isEmpty(siteId)){
+			siteId = UserContextUtils.getSiteIdFromUserContext();
+		}
 
 		Calendar c = TimeUtils.buildCalendar(tillEpoch);
 		int tillMonth = c.get(Calendar.MONTH)+1;
@@ -1612,7 +1616,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 			addDependentCellCodes(code, code, cellCodeMap, groupCodes, cellCodeVsGroupCodes, dependentCellCodesMap);
 		}
 		Map<Integer, Map<String, Set<String>>> monthVsGCodeToAccounts =
-				getGlAccountsForFsCellGroupsFrMonths(oem.name(), year, tillMonth, version, groupCodes);
+				getGlAccountsForFsCellGroupsFrMonths(oem.name(), year, tillMonth, siteId, groupCodes);
 
 		for(int month=defaultMonth; month <= tillMonth; month++){
 			if(TCollectionUtils.isEmpty(monthVsGCodeToAccounts.get(month))){
@@ -1784,9 +1788,8 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 
 	private Map<Integer, Map<String, Set<String>>>
-	getGlAccountsForFsCellGroupsFrMonths(String oem, int year, int lastMonth, int version, Set<String> groupCodes) {
-
-		FSEntry fsEntry = fsEntryRepo.findDefaultType(oem, year, UserContextProvider.getCurrentDealerId(), UserContextUtils.getSiteIdFromUserContext());
+	getGlAccountsForFsCellGroupsFrMonths(String oem, int year, int lastMonth, String siteId, Set<String> groupCodes) {
+		FSEntry fsEntry = fsEntryRepo.findDefaultType(oem, year, UserContextProvider.getCurrentDealerId(), siteId);
 		List<OemFsMappingSnapshot> oemFsMappingSnapshots = oemFsMappingSnapshotRepo
 				.findAllSnapshotsUntilMonth(fsEntry.getId(), lastMonth, groupCodes, getCurrentDealerId());
 

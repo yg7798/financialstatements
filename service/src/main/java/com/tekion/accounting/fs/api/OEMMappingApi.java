@@ -73,8 +73,8 @@ public class  OEMMappingApi {
 	}
 
 	@GetMapping("/fsMappingInfo/{oemId}")
-	public ResponseEntity fsMappingInfo(@PathVariable @NotNull OEM oemId){
-		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntry(oemId.name()));
+	public ResponseEntity fsMappingInfo(@PathVariable  OEM oemId, @RequestParam(required = false, name = "siteId") String siteId){
+		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntry(oemId.name(), siteId));
 	}
 
 	@GetMapping("/fsMappingInfos")
@@ -426,9 +426,10 @@ public class  OEMMappingApi {
 	@PostMapping("/dependentGLAccounts/{oem}/{year}/v/{version}/till/{epoch}")
 	public ResponseEntity getMappingInfos(@PathVariable @NotNull OEM oem
 			,@PathVariable @NotNull Integer year,  @PathVariable @NotNull Integer version
-			,@RequestBody Set<String> cellCodes, @PathVariable @NotNull Long epoch){
+			,@RequestBody Set<String> cellCodes, @PathVariable @NotNull Long epoch
+			,@RequestParam(required = false)  String siteId){
 
-		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.getDependentGlAccounts(oem, year, version, cellCodes, epoch));
+		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.getDependentGlAccounts(oem, year, version, cellCodes, epoch, siteId));
 	}
 
 	/**

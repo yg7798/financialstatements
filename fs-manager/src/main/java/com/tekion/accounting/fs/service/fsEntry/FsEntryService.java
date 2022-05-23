@@ -1,6 +1,5 @@
 package com.tekion.accounting.fs.service.fsEntry;
 
-import com.amazonaws.services.dynamodbv2.xspec.L;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.dto.fsEntry.FSEntryUpdateDto;
 import com.tekion.accounting.fs.dto.fsEntry.FsEntryCreateDto;
@@ -18,7 +17,7 @@ public interface FsEntryService {
 
   List<FSEntry> getFSEntries();
 
-  FsMappingInfosResponseDto getFSEntry(String oemId);
+  FsMappingInfosResponseDto getFSEntry(String oemId, String siteId);
 
   FSEntry getFSEntryById(String id);
 

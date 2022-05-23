@@ -36,8 +36,8 @@ public class FSEntryApi {
 	}
 
 	@GetMapping("/oem/{oemId}")
-	public ResponseEntity getFSEntryByOemId(@PathVariable @NotNull OEM oemId){
-		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntry(oemId.name()));
+	public ResponseEntity getFSEntryByOemId(@PathVariable OEM oemId, @RequestParam(required = false)  String siteId){
+		return TResponseEntityBuilder.okResponseEntity(fsEntryService.getFSEntry(oemId.name(), siteId));
 	}
 
 	@GetMapping("/{fsId}")

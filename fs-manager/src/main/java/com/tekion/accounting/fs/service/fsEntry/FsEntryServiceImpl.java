@@ -110,8 +110,10 @@ public class FsEntryServiceImpl implements FsEntryService {
   }
 
   @Override
-  public FsMappingInfosResponseDto getFSEntry(String oemId) {
-    String siteId = UserContextUtils.getSiteIdFromUserContext();
+  public FsMappingInfosResponseDto getFSEntry(String oemId, String siteId) {
+    if(TStringUtils.isBlank(siteId)){
+      siteId = UserContextUtils.getSiteIdFromUserContext();
+    }
     List<FSEntry> fsEntriesFromDb;
     fsEntriesFromDb = fsEntryRepo.findByOemFsTypeDealerIdAndSiteId(oemId, FSType.OEM.name(), getCurrentDealerId(), siteId);
     return getFSResponseInfo(fsEntriesFromDb);

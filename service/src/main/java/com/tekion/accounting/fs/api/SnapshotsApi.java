@@ -33,4 +33,9 @@ public class SnapshotsApi {
 		return TResponseEntityBuilder.okResponseEntity("success");
 	}
 
+	@GetMapping("/mapping/{fsId}/{month_1_12}")
+	public ResponseEntity getFsMappingSnapshots(@PathVariable String fsId, @PathVariable Integer month_1_12){
+		return TResponseEntityBuilder.okResponseEntity(snapshotService.getMappingSnapshots(fsId, month_1_12));
+	}
+
 }

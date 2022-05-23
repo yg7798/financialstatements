@@ -101,7 +101,7 @@ public class FsEntryServiceImplTest extends TestCase {
     public void testGetFSEntry() {
         Mockito.when(fsEntryRepo.findByOemFsTypeDealerIdAndSiteId(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(getFSEntries());
         Mockito.when(accountingClient.getGLAccountList(Mockito.any())).thenReturn(getGlAccountESResponse());
-        assertEquals(getFsMappingInfosResponseDto(), fsEntryService.getFSEntry("Volvo"));
+        assertEquals(getFsMappingInfosResponseDto(), fsEntryService.getFSEntry("Volvo", null));
     }
 
     @Test

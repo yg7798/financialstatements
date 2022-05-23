@@ -1039,13 +1039,13 @@ public class FsComputeServiceImplTest extends TestCase {
 
     @Test( expected = TBaseRuntimeException.class)
     public void testGetDependentGlAccounts_exception() {
-        oemMappingService.getDependentGlAccounts(OEM.GM, 2021, 1, new HashSet<>(), 435454884L);
+        oemMappingService.getDependentGlAccounts(OEM.GM, 2021, 1, new HashSet<>(), 435454884L, null);
     }
 
     public void testGetDependentGlAccounts_success() {
         Long epoch = 935454884L;
         int year = TimeUtils.buildCalendar(epoch).get(Calendar.YEAR);
-        oemMappingService.getDependentGlAccounts(OEM.GM, year, 1, new HashSet<>(), epoch);
+        oemMappingService.getDependentGlAccounts(OEM.GM, year, 1, new HashSet<>(), epoch, null);
     }
 
     @Test

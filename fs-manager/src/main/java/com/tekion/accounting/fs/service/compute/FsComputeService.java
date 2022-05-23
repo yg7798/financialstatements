@@ -1,7 +1,6 @@
 package com.tekion.accounting.fs.service.compute;
 
 import com.tekion.accounting.fs.beans.common.*;
-import com.tekion.accounting.fs.beans.mappings.OemFsMapping;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodesCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FsGroupCodeDetailsResponseDto;
@@ -10,7 +9,6 @@ import com.tekion.accounting.fs.dto.mappings.*;
 import com.tekion.accounting.fs.dto.oemConfig.OemConfigRequestDto;
 import com.tekion.accounting.fs.dto.oemTemplate.OemTemplateReqDto;
 import com.tekion.accounting.fs.enums.OEM;
-import com.tekion.accounting.fs.service.compute.models.OemFsMappingSimilarToUI;
 import com.tekion.as.models.dto.MonthInfo;
 
 import java.util.List;
@@ -113,7 +111,7 @@ public interface FsComputeService {
 
 	List<AccountingOemFsCellGroup> deleteGroupCodes(String oemId, int year, List<String> groupCodes, int version, String country);
 
-	Map<Integer, Map<String, Set<String>>> getDependentGlAccounts(OEM oem, int year, int version, Set<String> cellCodes, Long epoch);
+	Map<Integer, Map<String, Set<String>>> getDependentGlAccounts(OEM oem, int year, int version, Set<String> cellCodes, Long epoch, String siteId);
 
 	FsCellCodeDetailsResponseDto computeFsDetails(String oemId, Integer oemFsYear, Integer oemFsVersion, long tillEpoch, boolean includeM13, boolean addM13BalInDecBalances);
 
