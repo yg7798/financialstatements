@@ -116,7 +116,13 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
         String brand = (brands.size() != 0 && !"Others".equals(brands.get(0))) ? brands.get(0) : oem.getBrand();
         FSSubmitResponse response = null;
         try {
-            response =  integrationClient.submitFS(fsIntegrationRequest, OEMInfo.builder().oem(oem.getOem()).brand(brand).build(), fsEntry.getSiteId());
+            if(useDownloadApiFromIntegration(requestDto)){
+                log.info("calling DownloadFinancialStatement API from integration");
+                response =  integrationClient.downloadFS(fsIntegrationRequest, OEMInfo.builder().oem(oem.getOem()).brand(brand).build(), fsEntry.getSiteId());
+            }else{
+                response =  integrationClient.submitFS(fsIntegrationRequest, OEMInfo.builder().oem(oem.getOem()).brand(brand).build(), fsEntry.getSiteId());
+            }
+
         }catch (Exception submissionException){
             log.error("error for submission {}: {}", oem.name(),  submissionException.getMessage());
             Map<String, String> idVsDealerNameForTenant = UserContextUtils.getDealerIdVsDealerNameForTenant(UserContextProvider.getCurrentTenantId(), globalService);
@@ -520,5 +526,13 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
     BigDecimal flipSignIfRequired(BigDecimal val, Detail detail) {
         // This is only required for ford OEM
         return val;
+    }
+
+    /**
+     * This is used to call separate API from integration if file type is XML for Ferrari OEM
+     *  see https://tekion.atlassian.net/browse/CDMS-45328
+     * */
+    boolean useDownloadApiFromIntegration(FinancialStatementRequestDto requestDto){
+        return false;
     }
 }

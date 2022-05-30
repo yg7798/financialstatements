@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.service.oems;
 
 import com.tekion.accounting.commons.dealer.DealerConfig;
+import com.tekion.accounting.fs.beans.common.OemConfig;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.FinancialYearType;
 import com.tekion.accounting.fs.integration.Detail;
@@ -53,6 +54,11 @@ public class FordServiceImplTest extends TestCase {
     @Test
     public void testFlipSignIfRequiredIfNonNegative() {
         assertEquals(getValue2(), fordService.flipSignIfRequired(getValue2(), getDetail()));
+    }
+
+    @Test
+    public void testIfUseDownloadFileAPi() {
+        assertFalse(fordService.useDownloadApiFromIntegration(new FinancialStatementRequestDto()));
     }
 
     private Detail getDetail() {

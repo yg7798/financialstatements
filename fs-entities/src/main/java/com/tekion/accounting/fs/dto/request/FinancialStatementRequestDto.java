@@ -24,4 +24,5 @@ public class FinancialStatementRequestDto {
 	private boolean includeM13=true;
 	private FinancialYearType financialYearType;
 	private boolean addM13BalInDecBalances;
+	private String fileType;
 }

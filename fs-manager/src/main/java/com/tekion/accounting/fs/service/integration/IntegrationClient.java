@@ -28,9 +28,9 @@ public class IntegrationClient {
 	private final AbstractServiceClientFactory factory;
 	private final ClientBuilder clientBuilder;
 
-	private static final String OEM = "oem";
-	private static final String BRAND = "brand";
-	private static final String SITE = "tek-siteid";
+	public static final String OEM = "oem";
+	public static final String BRAND = "brand";
+	public static final String SITE = "tek-siteid";
 
 	@PostConstruct
 	public void init(){
@@ -39,13 +39,19 @@ public class IntegrationClient {
 
 	public FSSubmitResponse submitFS(FSIntegrationRequest fsIntegrationRequest){
 		FSSubmitResponse response = integrationInternal.submitFS(getHeaders(),fsIntegrationRequest);
-		log.info("Response from integartion {} ",response);
+		log.info("submitFS response from integration {} ",response);
 		return response;
 	}
 
 	public FSSubmitResponse submitFS(FSIntegrationRequest fsIntegrationRequest, OEMInfo oemInfo, String siteId){
 		FSSubmitResponse response = integrationInternal.submitFS(getHeaders(oemInfo, siteId), fsIntegrationRequest);
-		log.info("Response from integration {} ",response);
+		log.info("submitFs Response from integration {} ",response);
+		return response;
+	}
+
+	public FSSubmitResponse downloadFS(FSIntegrationRequest fsIntegrationRequest, OEMInfo oemInfo, String siteId){
+		FSSubmitResponse response = integrationInternal.downloadFs(getHeaders(oemInfo, siteId), fsIntegrationRequest);
+		log.info("downloadFS Response from integration {} ",response);
 		return response;
 	}
 

@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.tekion.accounting.fs.service.integration.IntegrationClient.OEM;
+import static com.tekion.accounting.fs.service.integration.IntegrationClient.SITE;
+import static com.tekion.admin.beans.global.GlobalMakesEntity.Constants.BRAND;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -54,6 +57,13 @@ public class IntegrationClientTest extends TestCase {
             public FSSubmitResponse submitFS(Map<String, String> headerMap, FSIntegrationRequest fsRequest) {
                 return getFSSubmitResponse();
             }
+
+            @Override
+            public FSSubmitResponse downloadFs(Map<String, String> headerMap, FSIntegrationRequest fsRequest) {
+                return null;
+            }
+
+
         });
         integrationClient.init();
     }
@@ -76,7 +86,10 @@ public class IntegrationClientTest extends TestCase {
     @Test
     public void testGetHeadersWithId() {
         OEMInfo oemInfo = new OEMInfo("Acura", "abc");
-        Map<String, String> headers = getHeaders1();
+        Map<String, String> headers = getHeaders();
+        headers.put(OEM, oemInfo.getOem());
+        headers.put(BRAND, oemInfo.getBrand());
+        headers.put(SITE, "-1_5");
         assertEquals(headers, integrationClient.getHeaders(oemInfo, "-1_5"));
     }
 

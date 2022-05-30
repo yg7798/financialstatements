@@ -30,6 +30,7 @@ public class FSReportServiceImpl implements FinancialStatementService{
     private DefaultFSServiceImpl defaultFSService;
     private KiaFSServiceImpl KiaFSService;
     private FordServiceImpl fordService;
+    private FerrariServiceImpl ferrariService;
     private MazdaFSService mazdaService;
     private FSEntryRepo fsEntryRepo;
     private TValidator validator;
@@ -81,6 +82,8 @@ public class FSReportServiceImpl implements FinancialStatementService{
                 return fordService;
             case Mazda:
                 return mazdaService;
+            case Ferrari:
+                return ferrariService;
             default:
                 log.info("{} using defaultFSService", oem.name());
                 return defaultFSService;
