@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.service.accountingInfo;
 
+import com.tekion.accounting.fs.beans.accountingInfo.FSPreferences;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.dto.accountingInfo.AccountingInfoDto;
@@ -7,6 +8,7 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.accountingInfo.AccountingInfoRepo;
 import com.tekion.accounting.fs.common.utils.JsonUtil;
+import com.tekion.accounting.fs.service.utils.FSPreferencesUtils;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
@@ -157,6 +159,31 @@ public class AccountingInfoServiceImpl implements AccountingInfoService {
 			throw new TBaseRuntimeException("Account info not available for this dealer {}", UserContextProvider.getCurrentDealerId());
 		}
 		info.setOverrideSiteInfo(flag);
+		infoRepo.save(info);
+	}
+
+	@Override
+	public void enableRoundedTrialBal(String oem) {
+		AccountingInfo info = infoRepo.findByDealerIdNonDeleted(UserContextProvider.getCurrentDealerId());
+		FSPreferences fsPreferences = info.getFsPreferences();
+		if(info.getFsPreferences() == null){
+			fsPreferences = new FSPreferences();
+			info.setFsPreferences(fsPreferences);
+		}
+		FSPreferencesUtils.enableRoundedTrialBal(fsPreferences,  oem);
+		info.setModifiedTime(System.currentTimeMillis());
+		infoRepo.save(info);
+	}
+
+	@Override
+	public void disableRoundedTrialBal(String oem) {
+		AccountingInfo info = infoRepo.findByDealerIdNonDeleted(UserContextProvider.getCurrentDealerId());
+		FSPreferences fsPreferences = info.getFsPreferences();
+		if(info.getFsPreferences() == null){
+			return;
+		}
+		FSPreferencesUtils.disableRoundedTrialBal(fsPreferences,  oem);
+		info.setModifiedTime(System.currentTimeMillis());
 		infoRepo.save(info);
 	}
 }

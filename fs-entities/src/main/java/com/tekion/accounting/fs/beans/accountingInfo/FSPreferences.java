@@ -7,5 +7,6 @@ import java.util.Map;
 @Data
 public class FSPreferences {
 	private Boolean useSnapshotsForMonthlyCells;
+	private Map<String, Boolean> useRoundedTrialBal;
 	private Map<String, Boolean> roundOffGlAccountBalances;
 }

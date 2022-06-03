@@ -28,6 +28,7 @@ import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.accounting.fs.service.external.nct.FillDetailContext;
 import com.tekion.accounting.fs.service.fsMetaData.OemFSMetadataMappingService;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
+import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.accounting.fs.service.utils.FSDealerMasterUtils;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.admin.beans.FindBrandRequest;
@@ -90,6 +91,8 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
     protected GlobalService globalService;
     @Autowired
     protected AccountingInfoService accountingInfoService;
+    @Autowired
+    OemConfigService oemConfigService;
 
     public static final String MTD = "MTD";
     public static final String YTD = "YTD";
@@ -325,7 +328,7 @@ public abstract class AbstractFinancialStatementService implements FinancialStat
         Calendar c = TimeUtils.buildCalendar(requestDto.getTillEpoch());
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
-        OemConfig oemConfig = oemMappingService.getOemConfig(fsEntry.getOemId());
+        OemConfig oemConfig = oemConfigService.getOemConfig(fsEntry.getOemId());
         ProcessFinancialStatement processFinancialStatement = new ProcessFinancialStatement();
         processFinancialStatement.setApplicationArea(getApplicationArea(fsEntry));
         processFinancialStatement.setDataArea(getDefaultDataArea());

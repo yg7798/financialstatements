@@ -93,10 +93,6 @@ public interface FsComputeService {
 
 	OemCodeUpdateDto updateOemCode(OemCodeUpdateDto oemCodeUpdateDtos);
 
-	OemConfig getOemConfig(String oemId);
-
-	OemConfig saveOemConfig(OemConfigRequestDto requestDto);
-
 	void invalidateCache();
 
 	List<AccountingOemFsCellCode> deleteCellCodes(FsCellCodeDeleteDto dto);
@@ -128,5 +124,7 @@ public interface FsComputeService {
 	void migrateOemFsMappingSnapshotsFromOemToFSLevel(String dealerId);
 
 	void addFsTypeInOemFsCellCodeSnapshots(String dealerId);
+
+	boolean isUsingRoundedTrialBalance(String oemId);
 }
 

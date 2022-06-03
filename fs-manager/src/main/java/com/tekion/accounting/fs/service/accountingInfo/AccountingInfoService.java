@@ -28,4 +28,8 @@ public interface AccountingInfoService {
 	void migrateFsRoundOffOffset();
 
 	void updateSiteOverrideInfoFlag(boolean flag);
+
+	void enableRoundedTrialBal(String oem);
+
+	void disableRoundedTrialBal(String oem);
 }

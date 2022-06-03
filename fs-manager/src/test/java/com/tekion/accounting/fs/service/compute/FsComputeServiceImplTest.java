@@ -32,6 +32,7 @@ import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.accountingService.AccountingService;
 import com.tekion.accounting.fs.service.common.cache.CustomFieldConfig;
 import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
+import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.as.models.beans.*;
 import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.audit.client.manager.AuditEventManager;
@@ -121,6 +122,8 @@ public class FsComputeServiceImplTest extends TestCase {
     CustomFieldConfig customFieldConfig;
     @Mock
     AuditEventManager auditEventManager;
+    @Mock
+    OemConfigService oemConfigService;
 
     private final List<String> EMPTY_LIST = new ArrayList<>();
 
@@ -176,7 +179,7 @@ public class FsComputeServiceImplTest extends TestCase {
 
     @Test
     public void computeFsCellCodeDetails() {
-        Mockito.when(oemMappingService.getOemConfig("Acura")).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig("Acura")).thenReturn(getOemConfig());
         Mockito.when(accountingService.getActiveMonthInfo()).
                 thenReturn(getMonthInfo());
         Mockito.when(oemFsMappingSnapshotRepo.findAllSnapshotByYearAndMonth(anyString(), Mockito.anyInt(), anyString())).
@@ -194,7 +197,7 @@ public class FsComputeServiceImplTest extends TestCase {
 
     @Test
     public void computeFsCellCodeDetailsWithEpoch() {
-        Mockito.when(oemMappingService.getOemConfig("Acura")).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig("Acura")).thenReturn(getOemConfig());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), Mockito.anyString())).thenReturn(getFsEntry());
         Mockito.when(accountingService.getActiveMonthInfo()).
                 thenReturn(getMonthInfo());
@@ -225,7 +228,7 @@ public class FsComputeServiceImplTest extends TestCase {
                 thenReturn(getMonthInfo());
         Mockito.when(accountingService.getAccountingSettings()).
                 thenReturn(getAccountingSettings());
-        Mockito.when(oemMappingService.getOemConfig("Acura")).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig("Acura")).thenReturn(getOemConfig());
         Mockito.when(oemFsMappingSnapshotRepo.findAllSnapshotByYearAndMonth(anyString(), Mockito.anyInt(), anyString())).
                 thenReturn(getOemFsMappingSnapshotList());
         Mockito.when(accountingService.getFSTrialBalanceTillDayOfMonth(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyLong())).
@@ -891,7 +894,7 @@ public class FsComputeServiceImplTest extends TestCase {
         OemConfigRequestDto dto = new OemConfigRequestDto();
         dto.setOemId(OEM.GM);
         dto.setCountry("US");
-        oemMappingService.saveOemConfig(dto);
+        oemConfigService.saveOemConfig(dto);
         Mockito.verify(oemConfigRepo, Mockito.timeout(1))
                 .findByOemId(Mockito.anyString(), Mockito.anyString());
     }
@@ -902,7 +905,7 @@ public class FsComputeServiceImplTest extends TestCase {
         dto.setOemId(OEM.GM);
         dto.setCountry("US");
         Mockito.when(oemConfigRepo.findByOemId(anyString(), anyString())).thenReturn(null);
-        oemMappingService.saveOemConfig(dto);
+        oemConfigService.saveOemConfig(dto);
         Mockito.verify(oemConfigRepo, Mockito.timeout(1))
                 .findByOemId(Mockito.anyString(), Mockito.anyString());
         Mockito.verify(oemConfigRepo, Mockito.times(1))

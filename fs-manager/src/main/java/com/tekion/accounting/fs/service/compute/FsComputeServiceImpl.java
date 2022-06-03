@@ -29,7 +29,6 @@ import com.tekion.accounting.fs.dto.cellcode.*;
 import com.tekion.accounting.fs.dto.context.FsReportContext;
 import com.tekion.accounting.fs.dto.fsEntry.FsEntryCreateDto;
 import com.tekion.accounting.fs.dto.mappings.*;
-import com.tekion.accounting.fs.dto.oemConfig.OemConfigRequestDto;
 import com.tekion.accounting.fs.dto.oemTemplate.OemTemplateReqDto;
 import com.tekion.accounting.fs.dto.oemTemplate.TemplateDetail;
 import com.tekion.accounting.fs.enums.*;
@@ -42,6 +41,7 @@ import com.tekion.accounting.fs.service.common.cache.CustomFieldConfig;
 import com.tekion.accounting.fs.service.compute.models.CellCodeKey;
 import com.tekion.accounting.fs.service.compute.models.OemFsCellContext;
 import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
+import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.accounting.fs.service.tasks.ConsolidatedFsGlBalanceReportInEpochTask;
 import com.tekion.accounting.fs.service.utils.FinancialStatementUtils;
 import com.tekion.as.client.AccountingClient;
@@ -74,6 +74,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.*;
@@ -115,6 +116,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 	public final AccountingService accountingService;
 	public final CustomFieldConfig customFieldConfig;
 	private final AuditEventManager auditEventManager;
+	private final OemConfigService oemConfigService;
 
 
 	@Qualifier(ASYNC_THREAD_POOL)
@@ -277,7 +279,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 		}
 		log.info("includeM13: {}", includeM13);
 		AccountingInfo accountingInfo = aiService.find(UserContextProvider.getCurrentDealerId());
-		OemConfig oemConfig = getOemConfig(fsEntry.getOemId());
+		OemConfig oemConfig = oemConfigService.getOemConfig(fsEntry.getOemId());
 
 		FsReportContext context = FsReportContext.builder()
 				.fsId(fsEntry.getId())
@@ -386,8 +388,8 @@ public class FsComputeServiceImpl implements FsComputeService {
 				}
 				if(trialBalanceRowMap.containsKey(glAccountId)){
 					TrialBalanceRow data = trialBalanceRowMap.get(glAccountId);
-					mtdBalance = mtdBalance.add(getMtdBalance(data));
-					ytdBalance = ytdBalance.add(getYtdBalance(data));
+					mtdBalance = mtdBalance.add(getMtdBalance(data, false));
+					ytdBalance = ytdBalance.add(getYtdBalance(data, false));
 					mtdCount = mtdCount + data.getCount();
 					ytdCount = ytdCount + data.getYtdCount();
 					dependentGlAccounts.add(glAccountNumber);
@@ -544,7 +546,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 		Map<String, List<String>> groupCodeVsGlAccountsMap = getGlAccountsForFsCellGroups(fsrContext);
 		Map<String, MemoWorksheet> memoKeyToWorksheetMap = getMemoWorksheetMap(fsrContext);
 		Map<String, HCWorksheet> hcKeyToWorksheetmap = getHCWorksheetMap(fsrContext);
-		OemConfig oemConfig = getOemConfig(fsrContext.getOemId());
+		OemConfig oemConfig = oemConfigService.getOemConfig(fsrContext.getOemId());
 		Set<String> monthlyCellCodes = new HashSet<>();
 
 		OemFsCellContext oemFsCellContext = OemFsCellContext.builder()
@@ -730,7 +732,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 		Map<String, List<String>> groupCodeVsGlAccountsMap = getGlAccountsForFsCellGroups(fsrContext);
 		Map<String, MemoWorksheet> memoKeyToWorksheetMap = getMemoWorksheetMap(fsrContext);
 		Map<String, HCWorksheet> hcKeyToWorksheetmap = getHCWorksheetMap(fsrContext);
-		OemConfig oemConfig = getOemConfig(fsrContext.getOemId());
+		OemConfig oemConfig = oemConfigService.getOemConfig(fsrContext.getOemId());
 		List<AccountingOemFsCellCode> roundOffCells = new ArrayList<>();
 		Set<String> monthlyCodes = new HashSet<>();
 
@@ -1363,37 +1365,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 	}
 
 	@Override
-	public OemConfig getOemConfig(String oemId) {
-		return oemConfigRepo.findByOemId(oemId, dealerConfig.getDealerCountryCode());
-	}
-
-	@Override
-	public OemConfig saveOemConfig(OemConfigRequestDto requestDto) {
-		OemConfig oemConfigInDb = oemConfigRepo.findByOemId(requestDto.getOemId().name(), requestDto.getCountry());
-		if (Objects.nonNull(oemConfigInDb)) {
-			oemConfigInDb.setCountry(requestDto.getCountry());
-			oemConfigInDb.setXmlEnabled(requestDto.isXmlEnabled());
-			oemConfigInDb.setOemLogoURL(requestDto.getOemLogoURL());
-			oemConfigInDb.setSubmissionEnabled(requestDto.isSubmissionEnabled());
-			oemConfigInDb.setDefaultPrecision(requestDto.getDefaultPrecision());
-			oemConfigInDb.setSupportedFileFormats(requestDto.getSupportedFileFormats().stream().map(OemConfig.SupportedFileFormats::name).collect(Collectors.toList()));
-			oemConfigInDb.setUseDealerLogo(requestDto.isUseDealerLogo());
-			oemConfigInDb.setAdditionalInfo(requestDto.getAdditionalInfo());
-			oemConfigInDb.setDownloadFileFromIntegration(requestDto.isDownloadFileFromIntegration());
-			oemConfigInDb.setEnableRoundOff(requestDto.isEnableRoundOff());
-			oemConfigInDb.setEnableRoundOffOffset(requestDto.isEnableRoundOffOffset());
-			oemConfigInDb.setModifiedByUserId(UserContextProvider.getCurrentUserId());
-			oemConfigInDb.setModifiedTime(System.currentTimeMillis());
-			oemConfigInDb.setFsValidationEnabled(requestDto.isFsValidationEnabled());
-			return oemConfigRepo.save(oemConfigInDb);
-
-		} else {
-			OemConfig oemConfigToBeSaved = requestDto.createOemInfo();
-			return oemConfigRepo.save(oemConfigToBeSaved);
-		}
-	}
-
-	@Override
 	public List<OEMFsCellCodeSnapshotResponseDto> getAllOEMFsCellCodeSnapshotSummary(String siteId, String oemId, int oemFsVersion, int year, int month, int oemFsYear, boolean includeM13, boolean addM13BalInDecBalances) {
 		FSEntry fsEntry = fsEntryRepo.findDefaultType(oemId, year, UserContextProvider.getCurrentDealerId(), siteId);
 		List<OEMFsCellCodeSnapshotResponseDto> oemFsCellCodeSnapshotResponseDtoList = Lists.newArrayList();
@@ -1910,9 +1881,9 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 			if(OemCellValueType.BALANCE.name().equals(fsCellCode.getValueType())){
 				if(OemCellDurationType.MTD.name().equalsIgnoreCase(fsCellCode.getDurationType())){
-					glAccountValue = getMtdBalance(trialBalanceRow);
+					glAccountValue = getMtdBalance(trialBalanceRow, isUsingRoundedTrialBalance(oemFsCellContext));
 				}else{
-					glAccountValue = getYtdBalance(trialBalanceRow);
+					glAccountValue = getYtdBalance(trialBalanceRow, isUsingRoundedTrialBalance(oemFsCellContext));
 				}
 			}else{
 				if(OemCellDurationType.MTD.name().equalsIgnoreCase(fsCellCode.getDurationType())){
@@ -1932,6 +1903,34 @@ public class FsComputeServiceImpl implements FsComputeService {
 		fsCodeDetail.setValue(getValueWithPrecision(cellValue, oemFsCellContext));
 		fsCodeDetail.setGlAccountDetails(glAccountDetails);
 		return fsCodeDetail;
+	}
+
+
+	@Override
+	public boolean isUsingRoundedTrialBalance(String oemId) {
+		OemFsCellContext context  = new OemFsCellContext();
+		context.setOemConfig(oemConfigService.getOemConfig(oemId));
+		context.setAccountingInfo(aiService.find(UserContextProvider.getCurrentDealerId()));
+		return isUsingRoundedTrialBalance(context);
+	}
+
+	private boolean isUsingRoundedTrialBalance(OemFsCellContext context) {
+		String oemId = context.getOemConfig().getOemId();
+		if(Objects.nonNull(context.getAccountingInfo().getFsPreferences())
+				&& Objects.nonNull(context.getAccountingInfo().getFsPreferences().getUseRoundedTrialBal())){
+			Boolean useRoundedTrialBal = context.getAccountingInfo().getFsPreferences().getUseRoundedTrialBal().get(oemId);
+			if (Objects.nonNull(useRoundedTrialBal)){
+				return useRoundedTrialBal;
+			}
+		}
+
+		if(Objects.nonNull(context.getOemConfig().getFsPreferences())){
+			Map<String, Boolean> useRoundedTrialBalMap = context.getOemConfig().getFsPreferences().getUseRoundedTrialBal();
+			return Objects.nonNull(useRoundedTrialBalMap) &&
+					!Objects.isNull(useRoundedTrialBalMap.get(oemId)) && useRoundedTrialBalMap.get(oemId);
+		}
+
+		return false;
 	}
 
 	@Override
@@ -2071,17 +2070,28 @@ public class FsComputeServiceImpl implements FsComputeService {
 	}
 
 
-	private BigDecimal getYtdBalance(TrialBalanceRow trialBalanceRow) {
-		if(Objects.nonNull(trialBalanceRow)) {
-			return trialBalanceRow.getCurrentBalance();
+	private BigDecimal getYtdBalance(TrialBalanceRow tb, boolean useRoundedTrialBalance) {
+		if(Objects.nonNull(tb)) {
+			if(useRoundedTrialBalance){
+				BigDecimal roundedPrevMonthBal = tb.getRoundedPrevMonthBalance();
+				if(roundedPrevMonthBal == null || (BigDecimal.ZERO.compareTo(roundedPrevMonthBal) == 0)){
+					return tb.getCurrentBalance().setScale(0, RoundingMode.HALF_UP);
+				}
+				return tb.getRoundedPrevMonthBalance().add(tb.getDebit().subtract(tb.getCredit()).setScale(0, RoundingMode.HALF_UP));
+			}
+			return tb.getCurrentBalance();
 		}else {
 			return BigDecimal.ZERO;
 		}
 	}
 
-	private BigDecimal getMtdBalance(TrialBalanceRow trialBalanceRow) {
+	private BigDecimal getMtdBalance(TrialBalanceRow trialBalanceRow, boolean useRoundedTrialBalance) {
 		if(Objects.nonNull(trialBalanceRow)) {
-			return trialBalanceRow.getDebit().subtract(trialBalanceRow.getCredit());
+			BigDecimal mtdBal = trialBalanceRow.getDebit().subtract(trialBalanceRow.getCredit());
+			if(useRoundedTrialBalance){
+				mtdBal = mtdBal.setScale(0, RoundingMode.HALF_UP);
+			}
+			return mtdBal;
 		}else{
 			return BigDecimal.ZERO;
 		}

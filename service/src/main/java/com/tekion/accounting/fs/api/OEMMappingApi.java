@@ -446,4 +446,9 @@ public class  OEMMappingApi {
 		return TResponseEntityBuilder.okResponseEntity(fsPrintService.viewStatement(viewStatementDto));
 	}
 
+	@GetMapping("/isUsingRoundedTrialBalance/{oemId}")
+	public ResponseEntity isUsingRoundedTrialBalance(@PathVariable @NotNull OEM oemId){
+		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.isUsingRoundedTrialBalance(oemId.name()));
+	}
+
 }

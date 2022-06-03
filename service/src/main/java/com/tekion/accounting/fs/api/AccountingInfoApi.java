@@ -85,4 +85,16 @@ public class AccountingInfoApi {
 		service.updateSiteOverrideInfoFlag(flag);
 		return TResponseEntityBuilder.okResponseEntity("success");
 	}
+
+	@PutMapping("/enableRoundedTrialBal/{oemId}")
+	public ResponseEntity enableRoundedTrialBal(@PathVariable OEM oemId){
+		service.enableRoundedTrialBal(oemId.name());
+		return TResponseEntityBuilder.okResponseEntity("success");
+	}
+
+	@PutMapping("/disableRoundedTrialBal/{oemId}")
+	public ResponseEntity disableRoundedTrialBal(@PathVariable OEM oemId){
+		service.disableRoundedTrialBal(oemId.name());
+		return TResponseEntityBuilder.okResponseEntity("success");
+	}
 }

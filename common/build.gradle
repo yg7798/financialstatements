@@ -19,7 +19,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compileOnly 'org.projectlombok:lombok'
     compile('com.tekion.sdk:servicecommons:3.0.46-SNAPSHOT')
-    compile('com.tekion.accounting:accounting-client:1.0.54-SNAPSHOT')
+    compile('com.tekion.accounting:accounting-client:1.0.68-SNAPSHOT')
     compile('com.tekion.sdk:storagesupport:2.0.10-SNAPSHOT')
     compile('com.tekion.sdk:globalsettingsclient:0.0.42-SNAPSHOT')
     compile('com.tekion.sdk:preferenceclient:1.0.162-SNAPSHOT')
