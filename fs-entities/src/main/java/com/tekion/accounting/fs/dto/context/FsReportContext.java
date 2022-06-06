@@ -47,6 +47,7 @@ public class FsReportContext {
 	private AccountingInfo accountingInfo;
 	private String mmddyyyy;
 	private Set<String> glIdsRelatedToMonthlyPL;
+	private Boolean roundOff;
 
 	public FsReportDto toAccountingFSRContext(){
 		FsReportDto fsrContext = new FsReportDto();
@@ -57,6 +58,8 @@ public class FsReportContext {
 		fsrContext.setAddM13BalInDecBalances(addM13BalInDecBalances);
 		fsrContext.setIncludeM13(includeM13);
 		fsrContext.setGlIdsRelatedToMonthlyPL(glIdsRelatedToMonthlyPL);
+		fsrContext.setRoundOff(roundOff);
+
 		return fsrContext;
 	}
 

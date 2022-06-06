@@ -298,6 +298,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 				.tillEpoch(tillEpoch)
 				.includeM13(includeM13)
 				.addM13BalInDecBalances(addM13BalInDecBalances)
+				.roundOff(getRoundOffProperty(oemConfig))
 				.build();
 
 		fetchTrialBalanceRowForGlAccounts(context, fsEntry);
@@ -389,7 +390,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 				if(trialBalanceRowMap.containsKey(glAccountId)){
 					TrialBalanceRow data = trialBalanceRowMap.get(glAccountId);
 					mtdBalance = mtdBalance.add(getMtdBalance(data, false));
-					ytdBalance = ytdBalance.add(getYtdBalance(data, false));
+					ytdBalance = ytdBalance.add(getYtdBalance(data, false, false ));
 					mtdCount = mtdCount + data.getCount();
 					ytdCount = ytdCount + data.getYtdCount();
 					dependentGlAccounts.add(glAccountNumber);
@@ -1687,15 +1688,6 @@ public class FsComputeServiceImpl implements FsComputeService {
 					context.isAddM13BalInDecBalances()));
 		}
 
-		if(FinancialStatementUtils.isRoundOffGLBalances(context)){
-			for(TrialBalanceRow row: map.values()){
-				if(Objects.nonNull(row.getOpeningBalance())) row.setOpeningBalance(row.getOpeningBalance().setScale(0, BigDecimal.ROUND_HALF_UP));
-				if(Objects.nonNull(row.getCurrentBalance())) row.setCurrentBalance(row.getCurrentBalance().setScale(0, BigDecimal.ROUND_HALF_UP));
-				if(Objects.nonNull(row.getDebit())) row.setDebit(row.getDebit().setScale(0, BigDecimal.ROUND_HALF_UP));
-				if(Objects.nonNull(row.getCredit())) row.setCredit(row.getCredit().setScale(0, BigDecimal.ROUND_HALF_UP));
-			}
-		}
-
 		context.setTrialBalanceRowMap(map);
 
 		return map;
@@ -1881,9 +1873,9 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 			if(OemCellValueType.BALANCE.name().equals(fsCellCode.getValueType())){
 				if(OemCellDurationType.MTD.name().equalsIgnoreCase(fsCellCode.getDurationType())){
-					glAccountValue = getMtdBalance(trialBalanceRow, isUsingRoundedTrialBalance(oemFsCellContext));
+					glAccountValue = getMtdBalance(trialBalanceRow, oemFsCellContext.isRoundOff());
 				}else{
-					glAccountValue = getYtdBalance(trialBalanceRow, isUsingRoundedTrialBalance(oemFsCellContext));
+					glAccountValue = getYtdBalance(trialBalanceRow, oemFsCellContext.isRoundOff(), isUsingRoundedTrialBalance(oemFsCellContext));
 				}
 			}else{
 				if(OemCellDurationType.MTD.name().equalsIgnoreCase(fsCellCode.getDurationType())){
@@ -2070,7 +2062,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 	}
 
 
-	private BigDecimal getYtdBalance(TrialBalanceRow tb, boolean useRoundedTrialBalance) {
+	private BigDecimal getYtdBalance(TrialBalanceRow tb, boolean rounded, boolean useRoundedTrialBalance) {
 		if(Objects.nonNull(tb)) {
 			if(useRoundedTrialBalance){
 				BigDecimal roundedPrevMonthBal = tb.getRoundedPrevMonthBalance();
@@ -2079,19 +2071,26 @@ public class FsComputeServiceImpl implements FsComputeService {
 				}
 				return tb.getRoundedPrevMonthBalance().add(tb.getDebit().subtract(tb.getCredit()).setScale(0, RoundingMode.HALF_UP));
 			}
+
+			if(rounded){
+				return tb.getCurrentBalance().setScale(0, RoundingMode.HALF_UP);
+			}
+
 			return tb.getCurrentBalance();
+
 		}else {
 			return BigDecimal.ZERO;
 		}
 	}
 
-	private BigDecimal getMtdBalance(TrialBalanceRow trialBalanceRow, boolean useRoundedTrialBalance) {
+	private BigDecimal getMtdBalance(TrialBalanceRow trialBalanceRow, boolean rounded) {
 		if(Objects.nonNull(trialBalanceRow)) {
 			BigDecimal mtdBal = trialBalanceRow.getDebit().subtract(trialBalanceRow.getCredit());
-			if(useRoundedTrialBalance){
-				mtdBal = mtdBal.setScale(0, RoundingMode.HALF_UP);
+			if(rounded){
+				return mtdBal.setScale(0,RoundingMode.HALF_UP);
+			}else{
+				return mtdBal;
 			}
-			return mtdBal;
 		}else{
 			return BigDecimal.ZERO;
 		}
