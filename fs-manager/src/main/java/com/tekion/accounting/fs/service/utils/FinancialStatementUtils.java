@@ -80,5 +80,25 @@ public class FinancialStatementUtils {
 
 		return false;
 	}
+
+
+	public static boolean useNewRoundOffFlow(AccountingInfo accountingInfo, OemConfig oemConfig) {
+		String oemId = oemConfig.getOemId();
+
+		if (Objects.nonNull(accountingInfo) && Objects.nonNull(accountingInfo.getFsPreferences())
+				&& Objects.nonNull(accountingInfo.getFsPreferences().getUseNewFlowRoundoff())
+		&& Objects.nonNull(accountingInfo.getFsPreferences().getUseNewFlowRoundoff().get(oemId))) {
+			return accountingInfo.getFsPreferences().getUseNewFlowRoundoff().get(oemId);
+		}
+
+		if (Objects.nonNull(oemConfig) && Objects.nonNull(oemConfig.getFsPreferences())
+				&& Objects.nonNull(oemConfig.getFsPreferences().getUseNewFlowRoundoff())
+				&& Objects.nonNull(oemConfig.getFsPreferences().getUseNewFlowRoundoff().get(oemId))) {
+
+			return oemConfig.getFsPreferences().getUseNewFlowRoundoff().get(oemId);
+		}
+
+		return false;
+	}
 }
 

@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.dto.context;
 
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.OemConfig;
+import com.tekion.accounting.fs.integration.FinancialStatement;
 import com.tekion.as.models.beans.TrialBalanceRow;
 import com.tekion.as.models.beans.fs.FsReportDto;
 import com.tekion.as.models.dto.MonthInfo;
