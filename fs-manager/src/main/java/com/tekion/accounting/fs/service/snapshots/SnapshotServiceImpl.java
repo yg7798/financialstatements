@@ -1,16 +1,23 @@
 package com.tekion.accounting.fs.service.snapshots;
 
+import com.tekion.accounting.events.UpdateSnapshotsEvent;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.mappings.OemFsMappingSnapshot;
+import com.tekion.accounting.fs.enums.FSType;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.repos.OemFsMappingSnapshotRepoImpl;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.core.utils.UserContextProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static com.tekion.accounting.fs.common.AsyncContextDecorator.ASYNC_THREAD_POOL;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +30,9 @@ public class SnapshotServiceImpl implements SnapshotService {
 	private final FsComputeService fsComputeService;
 	private final FSEntryRepo fsEntryRepo;
 	private final OemFsMappingSnapshotRepoImpl mappingSnapshotRepo;
+	@Qualifier(ASYNC_THREAD_POOL)
+	@Autowired
+	private AsyncTaskExecutor executorService;
 
 	@Override
 	public void createSnapshotsForMappingsAndCellCodes(Integer year, Integer month_1_12) {
@@ -46,5 +56,15 @@ public class SnapshotServiceImpl implements SnapshotService {
 	@Override
 	public List<OemFsMappingSnapshot> getMappingSnapshots(String fsId, Integer month_1_12) {
 		return mappingSnapshotRepo.findAllSnapshotByYearAndMonth(fsId, month_1_12, UserContextProvider.getCurrentDealerId());
+	}
+
+	@Override
+	public void updateSnapshots(UpdateSnapshotsEvent event) {
+		log.info("Called update cell snapshots");
+		List<FSEntry> fsEntryList = fsEntryRepo.findAllFSByYearWithNullCheck(FSType.OEM, event.getFromYear(), UserContextProvider.getCurrentDealerId());
+		Runnable runAsync = () -> {
+			fsComputeService.updateAllSnapshots(fsEntryList, event);
+		};
+		executorService.execute(runAsync);
 	}
 }

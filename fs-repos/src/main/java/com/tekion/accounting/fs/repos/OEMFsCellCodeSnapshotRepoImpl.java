@@ -243,4 +243,20 @@ public class OEMFsCellCodeSnapshotRepoImpl extends BaseDealerLevelMongoRepositor
         BulkOperations bulkOperations= TMongoUtils.addTenantIdInMongoBean(getMongoTemplate(), OEMFsCellCodeSnapshot.class);
         return bulkOperations.execute().getModifiedCount();
     }
+
+    @Override
+    public void hardDeleteSnapshotByFsIdAndMonth(List<String> fsIds, Integer fromMonth, Integer fromYear, String currentDealerId) {
+        Criteria criteria = criteriaForNonDeleted();
+        criteria.and(FS_ID).in(fsIds);
+
+        Criteria criteriaDiffYear = criteriaForNonDeleted();
+        criteriaDiffYear.and(YEAR).gt(fromYear);
+
+        Criteria criteriaSameYear = criteriaForNonDeleted();
+        criteriaSameYear.and(MONTH).gte(fromMonth);
+        criteriaSameYear.and(YEAR).is(fromYear);
+
+        criteria.orOperator(criteriaDiffYear, criteriaSameYear);
+        this.getMongoTemplate().remove(Query.query(criteria), OEMFsCellCodeSnapshot.class);
+    }
 }

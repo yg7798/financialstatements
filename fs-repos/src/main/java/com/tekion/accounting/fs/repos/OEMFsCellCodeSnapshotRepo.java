@@ -39,4 +39,9 @@ public interface OEMFsCellCodeSnapshotRepo {
     List<OEMFsCellCodeSnapshot> getFsCellCodeByTimestamp(long fromTimestamp, long toTimestamp, Set<String> codes,
                                                          String oemId, String dealerId, String siteId);
     Integer addTenantId();
+
+    /*
+     this method hard deletes all snapshots created on or after given month and year for a dealer
+    */
+    void hardDeleteSnapshotByFsIdAndMonth(List<String> fsEntryList, Integer fromMonth, Integer fromYear, String currentDealerId);
 }

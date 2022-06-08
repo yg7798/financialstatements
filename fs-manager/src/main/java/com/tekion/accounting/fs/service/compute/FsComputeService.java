@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.service.compute;
 
+import com.tekion.accounting.events.UpdateSnapshotsEvent;
 import com.tekion.accounting.fs.beans.common.*;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodeCreateDto;
 import com.tekion.accounting.fs.dto.cellGrouop.FSCellGroupCodesCreateDto;
@@ -124,6 +125,8 @@ public interface FsComputeService {
 	void migrateOemFsMappingSnapshotsFromOemToFSLevel(String dealerId);
 
 	void addFsTypeInOemFsCellCodeSnapshots(String dealerId);
+
+	void updateAllSnapshots(List<FSEntry> fsEntryList, UpdateSnapshotsEvent event);
 
 	boolean isUsingRoundedTrialBalance(String oemId);
 }

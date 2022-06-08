@@ -1,5 +1,6 @@
 package com.tekion.accounting.fs.api;
 
+import com.tekion.accounting.events.UpdateSnapshotsEvent;
 import com.tekion.accounting.fs.service.snapshots.SnapshotService;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import lombok.RequiredArgsConstructor;

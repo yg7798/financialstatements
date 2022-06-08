@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.configurations.Launcher;
 
 import com.tekion.accounting.fs.configurations.ApiConfig;
 import com.tekion.accounting.fs.configurations.RestrictedApiConfig;
+import com.tekion.accounting.fs.service.Events.UpdateSnapshotsEventListener;
 import com.tekion.accounting.fs.service.eventing.configs.FSKafkaConsumerConfig;
 import com.tekion.accounting.fs.service.eventing.consumers.MonthCloseEventListener;
 import com.tekion.core.service.TekionServiceApplication;
@@ -118,5 +119,11 @@ public class Launcher extends SpringBootServletInitializer implements TekionServ
 	public MonthCloseEventListener monthCloseEventListener(){
 		log.info("MonthCloseEventListener started");
 		return new MonthCloseEventListener();
+	}
+
+	@Bean
+	public UpdateSnapshotsEventListener updateSnapshotsEventListener(){
+		log.info("UpdateSnapshotsEventListener started");
+		return new UpdateSnapshotsEventListener();
 	}
 }

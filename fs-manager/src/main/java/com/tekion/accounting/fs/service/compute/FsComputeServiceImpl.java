@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.tekion.accounting.commons.dealer.DealerConfig;
+import com.tekion.accounting.events.UpdateSnapshotsEvent;
 import com.tekion.accounting.fs.auditevents.AccountingOemFsCellGroupAuditEvent;
 import com.tekion.accounting.fs.auditevents.PclCodesAuditEventHelper;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
@@ -2411,6 +2412,43 @@ public class FsComputeServiceImpl implements FsComputeService {
 		List<FSEntry> fsEntries = fsEntryRepo.getFSEntries(dealerId);
 		for(FSEntry fsEntry : TCollectionUtils.nullSafeList(fsEntries)){
 			oemFsCellCodeSnapshotRepo.updateFsTypeInFsCellCodeSnapshots(fsEntry);
+		}
+	}
+
+	@Override
+	public void updateAllSnapshots(List<FSEntry> fsEntryList, UpdateSnapshotsEvent event) {
+		Integer fromYear = event.getFromYear();
+		Integer fromMonth = event.getFromMonth() + 1;
+		Boolean includeM13 = event.isIncludeM13();
+		Boolean addM13BalInDecBalances = event.isAddM13BalInDecBalances();
+
+		MonthInfo monthInfo = accountingService.getActiveMonthInfo();
+		Integer activeMonth = monthInfo.getMonth() + 1;
+		Integer activeYear = monthInfo.getYear();
+
+			oemFsCellCodeSnapshotRepo.hardDeleteSnapshotByFsIdAndMonth(fsEntryList.stream().map(FSEntry:: getId).collect(Collectors.toList()), fromMonth, fromYear, UserContextProvider.getCurrentDealerId());
+		fsEntryList.forEach(fsEntry -> {
+			try {
+				if (fromYear.equals(activeYear) && fsEntry.equals(activeYear)) {
+					createSnapshotForMonthRange(fsEntry, fsEntry.getYear(), fromYear, fromMonth, activeMonth, includeM13, addM13BalInDecBalances);
+				} else if (fsEntry.getYear().equals(activeYear)) {
+					createSnapshotForMonthRange(fsEntry, fsEntry.getYear(), fromYear, Calendar.JANUARY + 1, activeMonth, includeM13, addM13BalInDecBalances);
+				} else if (fsEntry.getYear().equals(fromYear)) {
+					createSnapshotForMonthRange(fsEntry, fsEntry.getYear(), fromYear, fromMonth, Calendar.DECEMBER + 1, includeM13, addM13BalInDecBalances);
+				} else {
+					createSnapshotForMonthRange(fsEntry, fsEntry.getYear(), fromYear, Calendar.JANUARY + 1, Calendar.DECEMBER + 1, includeM13, addM13BalInDecBalances);
+				}
+			}catch (Exception e){
+				log.error("Error while creating snapshot for fsId: {}", fsEntry.getId());
+			}
+		});
+	}
+
+	private void createSnapshotForMonthRange(FSEntry fsEntry, int oemFsYear, int year, int fromMonth_1_12, int toMonth_1_12, boolean includeM13, boolean addM13BalInDecBalances) {
+		while (fromMonth_1_12 <= toMonth_1_12) {
+			createFsCellCodeSnapshot(fsEntry, oemFsYear, fromMonth_1_12, includeM13, addM13BalInDecBalances);
+				log.info("Successfully created snapshot for Year {} & Month {}", year, fromMonth_1_12);
+			fromMonth_1_12++;
 		}
 	}
 

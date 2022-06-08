@@ -1,6 +1,5 @@
 package com.tekion.accounting.fs.repos;
 
-import com.amazonaws.services.dynamodbv2.xspec.S;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.enums.FSType;
 
@@ -75,4 +74,6 @@ public interface FSEntryRepo {
     List<FSEntry> findFsEntriesForDealerAndYears(FSType fsType, List<Integer> years, String dealerId);
 
     List<FSEntry> getFsEntriesByOemIdYearAndCountry(String oemId, Integer year, Integer version, String country);
+
+    List<FSEntry> findAllFSByYearWithNullCheck(FSType fsType, Integer fromYear, String currentDealerId);
 }
