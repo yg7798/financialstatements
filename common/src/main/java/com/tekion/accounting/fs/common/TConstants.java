@@ -85,6 +85,7 @@ public class TConstants {
 	public static final String COUNTRY_US = "US";
 	public static final String COUNTRY = "country";
 	public static final String INTERNAL_PAY_TYPE = "INTERNAL";
+	public static final String LOCALE = "locale";
 
 	public static final String SERVICE_NAME_ACCOUNTING = "ACCOUNTING";
 	public static final String SERVICE_NAME_FINANCIAL_STATEMENTS = "FINANCIAL-STATEMENTS";

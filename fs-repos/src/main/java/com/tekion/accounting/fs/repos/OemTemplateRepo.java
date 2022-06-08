@@ -10,11 +10,13 @@ public interface OemTemplateRepo {
 
     List<BulkWriteUpsert> updateBulk(List<OemTemplate> oemTemplates);
 
-    List<OemTemplate> findActiveTemplateByOemYearAndCountry(String oemId, Integer year, String country);
+    List<OemTemplate> findActiveTemplateByOemYearAndCountry(String oemId, Integer year, String country, String locale);
 
-    void updateTemplatesAsInactive(String oemId, Integer year, String country);
+    void updateTemplatesAsInactive(String oemId, Integer year, String country, String locale);
 
     void addCountryInOemTemplate();
 
     List<OemTemplate> findAllOemDetails();
+
+    void migrateLocale(String country, String locale);
 }

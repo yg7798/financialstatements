@@ -1,6 +1,7 @@
 package com.tekion.accounting.fs.dto.oemTemplate;
 
 import com.tekion.accounting.fs.enums.OEM;
+import com.tekion.tekionconstant.locale.TekLocale;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,8 @@ public class TemplateDetail {
     private Integer version;
     @NotBlank
     private String country;
+    @NotNull
+    TekLocale locale;
     private boolean active;
     private Object template;
 }

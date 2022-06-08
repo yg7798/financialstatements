@@ -2,10 +2,13 @@ package com.tekion.accounting.fs.beans.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tekion.core.beans.TBaseMongoBean;
+import com.tekion.tekionconstant.locale.TekLocale;
 import lombok.*;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotNull;
 
 @Document
 @Data
@@ -16,8 +19,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @CompoundIndexes({
 		@CompoundIndex(
-				name = "idx_country_1_oemId_1_year_1",
-				def = "{'country':1 ,'oemId':1, 'year':1}"
+				name = "idx_country_1_oemId_1_year_1_locale_1",
+				def = "{'country':1 ,'oemId':1, 'year':1, 'locale':1}"
 		)
 })
 public class OemTemplate extends TBaseMongoBean {
@@ -33,6 +36,8 @@ public class OemTemplate extends TBaseMongoBean {
 	private Object template;
 	private boolean active;
 	private Integer version;
+	@NotNull
+	String locale;
 
 	private String createdByUserId;
 	private String modifiedByUserId;

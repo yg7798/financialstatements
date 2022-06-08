@@ -9,6 +9,7 @@ import com.tekion.admin.beans.property.DealerProperty;
 import com.tekion.cachesupport.lib.cache.RedisCacheFactory;
 import com.tekion.client.globalsettings.GlobalSettingsClient;
 import com.tekion.clients.dealerproperty.DealerPropertyService;
+import com.tekion.clients.dealerproperty.DealerPropertyStore;
 import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.clients.preference.client.PreferenceClientFactory;
 import com.tekion.core.feign.ClientBuilder;
@@ -178,5 +179,10 @@ public class BeanFactory {
 	@Bean
 	public MediaClient getMediaClient(ClientBuilder builder, AbstractServiceClientFactory clientFactory, TokenGenerator generator, OkHttpClient okHttpClient, ObjectMapper mapper){
 		return MediaClient.createClient(builder, clientFactory, generator, okHttpClient, mapper);
+	}
+
+	@Bean
+	public DealerPropertyStore dealerPropertyStore(DealerPropertyService factory) {
+		return factory.getDefaultStore();
 	}
 }

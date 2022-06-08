@@ -44,6 +44,7 @@ import com.tekion.accounting.fs.service.compute.models.OemFsCellContext;
 import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
 import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.accounting.fs.service.tasks.ConsolidatedFsGlBalanceReportInEpochTask;
+import com.tekion.accounting.fs.service.utils.FSLocaleUtils;
 import com.tekion.accounting.fs.service.utils.FinancialStatementUtils;
 import com.tekion.as.client.AccountingClient;
 import com.tekion.as.models.beans.GLAccount;
@@ -55,6 +56,7 @@ import com.tekion.as.models.dto.MonthInfo;
 import com.tekion.audit.client.manager.AuditEventManager;
 import com.tekion.audit.client.manager.impl.AuditEventDTO;
 import com.tekion.beans.DynamicProperty;
+import com.tekion.clients.dealerproperty.DealerPropertyStore;
 import com.tekion.core.beans.TBaseMongoBean;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
@@ -117,6 +119,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 	public final AccountingService accountingService;
 	public final CustomFieldConfig customFieldConfig;
 	private final AuditEventManager auditEventManager;
+	private final DealerPropertyStore dealerPropertyStore;
 	private final OemConfigService oemConfigService;
 
 
@@ -1208,13 +1211,15 @@ public class FsComputeServiceImpl implements FsComputeService {
 					.modifiedByUserId(UserContextProvider.getCurrentUserId())
 					.active(templateDetail.isActive())
 					.version(templateDetail.getVersion())
+					.locale(templateDetail.getLocale().name())
 					.build();
 
 			oemTemplate.setCreatedTime(System.currentTimeMillis());
 			oemTemplate.setModifiedTime(System.currentTimeMillis());
 
 			if(templateDetail.isActive()){
-				oemTemplateRepo.updateTemplatesAsInactive(templateDetail.getOemId().name(), templateDetail.getYear(), templateDetail.getCountry());
+				oemTemplateRepo.updateTemplatesAsInactive(templateDetail.getOemId().name(), templateDetail.getYear(),
+						templateDetail.getCountry(), FSLocaleUtils.getLocale(dealerPropertyStore, dealerConfig));
 			}
 			oemTemplateList.add(oemTemplate);
 		}
@@ -1223,7 +1228,8 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 	@Override
 	public List<OemTemplate> getOemTemplate(String oemId, Integer year) {
-		return oemTemplateRepo.findActiveTemplateByOemYearAndCountry(oemId, year, dealerConfig.getDealerCountryCode());
+		return oemTemplateRepo.findActiveTemplateByOemYearAndCountry(oemId, year, dealerConfig.getDealerCountryCode(),
+		FSLocaleUtils.getLocale(dealerPropertyStore, dealerConfig));
 	}
 
 	@Override

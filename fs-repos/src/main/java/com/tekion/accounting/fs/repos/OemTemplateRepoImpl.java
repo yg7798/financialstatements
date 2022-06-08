@@ -34,12 +34,13 @@ public class OemTemplateRepoImpl extends BaseGlobalMongoRepository<OemTemplate> 
     }
 
     @Override
-    public List<OemTemplate> findActiveTemplateByOemYearAndCountry(String oemId, Integer year, String country) {
+    public List<OemTemplate> findActiveTemplateByOemYearAndCountry(String oemId, Integer year, String country, String locale) {
         Criteria criteria = criteriaForNonDeleted();
         criteria.and(TConstants.YEAR).is(year);
         criteria.and(OemTemplate.OEM_ID).is(oemId);
         criteria.and(OemTemplate.ACTIVE).is(true);
         criteria.and(COUNTRY).is(country);
+        criteria.and(LOCALE).is(locale);
         return this.getMongoTemplate().find(Query.query(criteria), OemTemplate.class);
     }
 
@@ -63,12 +64,13 @@ public class OemTemplateRepoImpl extends BaseGlobalMongoRepository<OemTemplate> 
     }
 
     @Override
-    public void updateTemplatesAsInactive(String oemId, Integer year, String country) {
+    public void updateTemplatesAsInactive(String oemId, Integer year, String country, String locale) {
         Criteria criteria = criteriaForNonDeleted();
         criteria.and(OemTemplate.OEM_ID).is(oemId);
         criteria.and(OemTemplate.YEAR).is(year);
         criteria.and(COUNTRY).is(country);
         criteria.and(OemTemplate.ACTIVE).is(true);
+        criteria.and(LOCALE).is(locale);
         Query q = new Query(criteria);
         Update update = new Update();
         update.set(OemTemplate.ACTIVE, false);
@@ -94,5 +96,14 @@ public class OemTemplateRepoImpl extends BaseGlobalMongoRepository<OemTemplate> 
         query.fields().include(COUNTRY).include(OemTemplate.OEM_ID).include(OemTemplate.YEAR).exclude("_id");
         query.with(new Sort(Sort.Direction.DESC, COUNTRY));
         return this.getMongoTemplate().find(query, OemTemplate.class);
+    }
+
+    @Override
+    public void migrateLocale(String country, String locale) {
+        Criteria criteria = Criteria.where(DELETED).is(false).and(COUNTRY).is(country);
+        Query query = new Query(criteria);
+        Update update = new Update();
+        update.set(LOCALE, locale);
+        getMongoTemplate().updateMulti(query, update, OemTemplate.class);
     }
 }

@@ -647,7 +647,8 @@ public class FsComputeServiceImplTest extends TestCase {
         detail.setYear(2020);
         OemTemplateReqDto dto = new OemTemplateReqDto();
         dto.setTemplateDetails(Arrays.asList(detail));
-        Mockito.doNothing().when(oemTemplateRepo).updateTemplatesAsInactive(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString());
+        Mockito.doNothing().when(oemTemplateRepo).updateTemplatesAsInactive(Mockito.anyString(), Mockito.anyInt(),
+                Mockito.anyString(), Mockito.anyString());
         Mockito.when(oemTemplateRepo.updateBulk(Mockito.anyList()))
                 .thenReturn(null);
         oemMappingService.saveTemplate(dto);
@@ -656,11 +657,11 @@ public class FsComputeServiceImplTest extends TestCase {
 
     @Test
     public void testGetOemTemplate() {
-        Mockito.when(oemTemplateRepo.findActiveTemplateByOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString()))
+        Mockito.when(oemTemplateRepo.findActiveTemplateByOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(null);
         oemMappingService.getOemTemplate("GM", 2021);
         Mockito.verify(oemTemplateRepo, Mockito.times(1))
-                .findActiveTemplateByOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString());
+                .findActiveTemplateByOemYearAndCountry(Mockito.anyString(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test

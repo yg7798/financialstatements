@@ -13,10 +13,12 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.accounting.fs.service.fsEntry.FsEntryService;
 import com.tekion.accounting.fs.service.fsMapping.FsMappingService;
+import com.tekion.accounting.fs.service.oems.OemTemplateService;
 import com.tekion.accounting.fs.service.printing.FSPrintService;
 import com.tekion.accounting.fs.service.printing.models.FSViewStatementDto;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import com.tekion.core.validation.TValidator;
+import com.tekion.tekionconstant.locale.TekLocale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,7 @@ public class  OEMMappingApi {
 	private final FsEntryService fsEntryService;
 	private final FSPrintService fsPrintService;
 	private final FsMappingService fsMappingService;
+	private final OemTemplateService oemTemplateService;
 
 	/********************* OEM Mapping Apis ***************************/
 
@@ -451,4 +454,9 @@ public class  OEMMappingApi {
 		return TResponseEntityBuilder.okResponseEntity(oemFSMappingService.isUsingRoundedTrialBalance(oemId.name()));
 	}
 
+	@PostMapping("/template/migrateLocale/{country}/{locale}")
+	public ResponseEntity populateLocale(@PathVariable @NotBlank String country, @PathVariable @NotNull TekLocale locale){
+		oemTemplateService.migrateLocale(country, locale.name());
+		return TResponseEntityBuilder.okResponseEntity("done");
+	}
 }
