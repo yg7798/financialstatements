@@ -34,4 +34,5 @@ dependencies {
     compile project(':common')
     compile('com.github.ozlerhakan:poiji:3.1.1')
     compile('com.tekion.sdk:exportlib:0.0.39-SNAPSHOT')
+    compile("com.tekion.sdk:multilingualsupport:0.0.2-SNAPSHOT")
 }

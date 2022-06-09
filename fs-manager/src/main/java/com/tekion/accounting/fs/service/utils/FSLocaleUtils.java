@@ -7,8 +7,8 @@ import com.tekion.core.utils.UserContextProvider;
 import com.tekion.multilingual.dto.TekMultiLingualBean;
 import com.tekion.tekionconstant.locale.TekLocale;
 import lombok.experimental.UtilityClass;
-
 import java.util.Objects;
+
 @UtilityClass
 public class FSLocaleUtils {
 

@@ -24,8 +24,10 @@ import java.util.Map;
         )
 })
 public class HCWorksheetTemplate extends TBaseMongoBean {
+
     @NotEmpty
     private String oemId;
+
     private int year;
     private int version;
     @NotBlank

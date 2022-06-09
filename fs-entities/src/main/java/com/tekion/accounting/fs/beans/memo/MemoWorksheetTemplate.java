@@ -2,6 +2,8 @@ package com.tekion.accounting.fs.beans.memo;
 
 import com.tekion.accounting.fs.enums.OemCellDurationType;
 import com.tekion.core.beans.TBaseMongoBean;
+import com.tekion.multilingual.commons.service.TekLanguage;
+import com.tekion.multilingual.dto.TekMultiLingualBean;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +26,10 @@ import java.util.Set;
                 def = "{'country':1, 'oemId':1, 'year':1, 'key':1 }", unique = true
         )
 })
-public class MemoWorksheetTemplate extends TBaseMongoBean {
+public class MemoWorksheetTemplate extends TBaseMongoBean implements TekLanguage {
+    public static String NAME = "name";
+    public static String LANGUAGES = "languages";
+
     private String oemId;
     private String key;
     private String name;
@@ -38,4 +43,10 @@ public class MemoWorksheetTemplate extends TBaseMongoBean {
     private String createdByUserId;
     private String modifiedByUserId;
     private FieldType fieldType;
+    private TekMultiLingualBean languages;
+
+    @Override
+    public TekMultiLingualBean getLanguages() {
+        return languages;
+    }
 }

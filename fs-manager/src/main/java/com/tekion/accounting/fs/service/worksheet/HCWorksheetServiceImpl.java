@@ -4,10 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.beans.common.FSEntry;
-import com.tekion.accounting.fs.beans.memo.HCDepartment;
-import com.tekion.accounting.fs.beans.memo.HCValue;
-import com.tekion.accounting.fs.beans.memo.HCWorksheet;
-import com.tekion.accounting.fs.beans.memo.HCWorksheetTemplate;
+import com.tekion.accounting.fs.beans.memo.*;
 import com.tekion.accounting.fs.common.exceptions.FSError;
 import com.tekion.accounting.fs.dto.memo.CopyHCWorksheetValuesDto;
 import com.tekion.accounting.fs.dto.memo.HCBulkUpdateDto;
@@ -18,6 +15,7 @@ import com.tekion.accounting.fs.repos.worksheet.HCWorksheetRepo;
 import com.tekion.accounting.fs.repos.worksheet.HCWorksheetTemplateRepo;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.common.utils.UserContextUtils;
+import com.tekion.accounting.fs.service.utils.FSLocaleUtils;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.UserContextProvider;
@@ -42,7 +40,9 @@ public class HCWorksheetServiceImpl implements HCWorksheetService{
 
 	@Override
 	public HCWorksheetTemplate getHCWorksheetTemplate(OEM oemId, int year, int version) {
-		return hcWorksheetTemplateRepo.findForOemByYearAndCountry(oemId.name(),year,version, dealerConfig.getDealerCountryCode());
+		HCWorksheetTemplate template = hcWorksheetTemplateRepo.findForOemByYearAndCountry(oemId.name(),year,version, dealerConfig.getDealerCountryCode());
+		translateValuesForName(template);
+		return template;
 	}
 
 	@Override
@@ -256,6 +256,11 @@ public class HCWorksheetServiceImpl implements HCWorksheetService{
 			hcWorksheets.add(hcWorksheet);
 		}
 		return hcWorksheets;
+	}
+
+	private void translateValuesForName(HCWorksheetTemplate hcWorksheetTemplate) {
+		hcWorksheetTemplate.getPositions().forEach(position -> position.setName(FSLocaleUtils.getTranslatedValue(position.getLanguages(), Position.NAME, position.getName())));
+		hcWorksheetTemplate.getDepartments().forEach(department -> department.setName(FSLocaleUtils.getTranslatedValue(department.getLanguages(), HCDepartment.NAME, department.getName())));
 	}
 }
 
