@@ -311,8 +311,10 @@ public class FsEntryServiceImpl implements FsEntryService {
     //TODO: Review
     ESResponse<GLAccount> glAccountESResponse = accountingClient.getGLAccountList(tekSearchRequest).getData();
     Set<String> glAccountIds = Sets.newLinkedHashSet();
-    if (glAccountESResponse != null) {
+    if (glAccountESResponse != null && Objects.nonNull(glAccountESResponse.getHits())) {
       glAccountESResponse.getHits().forEach(glAccount -> glAccountIds.add(glAccount.getId()));
+    }else{
+      log.warn("chart of accounts are empty");
     }
     return glAccountIds;
   }
