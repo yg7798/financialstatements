@@ -1783,8 +1783,8 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 		if(someMappingsAreEmpty){
 			List<OemFsMapping> oemFsMapping;
-			oemFsMapping = oemFsMappingRepo
-					.getMappingsByGroupCodes(getCurrentDealerId(), year, 1, oem, groupCodes, UserContextUtils.getSiteIdFromUserContext() );
+			oemFsMapping = oemFsMappingRepo.findMappingsByGroupCodeAndFsIds(groupCodes,
+					Collections.singletonList(fsEntry.getId()), UserContextProvider.getCurrentDealerId());
 
 			if(TCollectionUtils.isNotEmpty(oemFsMapping)){
 				oemFsMapping.forEach(mapping -> {
