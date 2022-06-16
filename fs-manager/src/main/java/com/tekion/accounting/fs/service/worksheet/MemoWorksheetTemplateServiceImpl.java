@@ -66,6 +66,18 @@ public class MemoWorksheetTemplateServiceImpl implements MemoWorksheetTemplateSe
 		return memoTemplatesToDelete;
 	}
 
+	@Override
+	public void deleteMWTemplatesByOemByCountryByYear(OEM oemId, Integer year, String countryCode) {
+		memoWorksheetTemplateRepo.deleteMWTemplatesByOemByCountryByYear(oemId, year, countryCode);
+	}
+
+	@Override
+	public void deleteMWTemplatesByOemByCountryByYearByKeys(OEM oemId, Integer year, Set<String> keys, String countryCode) {
+		if(TCollectionUtils.isEmpty(keys))
+			return;
+		memoWorksheetTemplateRepo.deleteMWTemplatesByOemByCountryByYearByKeys(oemId, year, keys, countryCode);
+	}
+
 	private void translateValuesForName(List<MemoWorksheetTemplate> templates) {
 		templates.forEach(template -> template.setName(FSLocaleUtils.getTranslatedValue(template.getLanguages(), MemoWorksheetTemplate.NAME, template.getName())));
 	}

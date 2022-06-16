@@ -45,4 +45,21 @@ public class MemoWorksheetResApi {
 													  @PathVariable @NotBlank String countryCode) {
 		return TResponseEntityBuilder.okResponseEntity(memoWorksheetTemplateService.deleteMemoWorksheetTemplatesByKeys(oemId, year, version, keys, countryCode));
 	}
+
+	@DeleteMapping("/templates/country/{countryCode}/{oemId}/{year}/all")
+	public ResponseEntity hardDeleteMemoWorksheetTemplates(@PathVariable @NotNull OEM oemId,
+													  @PathVariable @NotBlank Integer year,
+													  @PathVariable @NotBlank String countryCode) {
+		memoWorksheetTemplateService.deleteMWTemplatesByOemByCountryByYear(oemId, year, countryCode);
+		return TResponseEntityBuilder.okResponseEntity("done");
+	}
+
+	@DeleteMapping("/templates/country/{countryCode}/{oemId}/{year}")
+	public ResponseEntity hardDeleteMemoWorksheetTemplates(@PathVariable @NotNull OEM oemId,
+													   @PathVariable @NotBlank Integer year,
+													   @RequestBody Set<String> keys,
+													   @PathVariable @NotBlank String countryCode) {
+		memoWorksheetTemplateService.deleteMWTemplatesByOemByCountryByYearByKeys(oemId, year, keys, countryCode);
+		return TResponseEntityBuilder.okResponseEntity("done");
+	}
 }

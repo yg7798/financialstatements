@@ -7,6 +7,7 @@ import com.tekion.accounting.fs.enums.OemCellDurationType;
 import com.tekion.core.utils.TCollectionUtils;
 import com.tekion.core.utils.TStringUtils;
 import com.tekion.core.utils.UserContextProvider;
+import com.tekion.multilingual.dto.TekMultiLingualBean;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -34,6 +35,7 @@ public class MemoWorksheetTemplateRequestDto {
     private Map<String,String> additionalInfo;
     @NotNull
     private FieldType fieldType;
+    private TekMultiLingualBean languages;
 
     public MemoWorksheetTemplate toMemoWorksheetTemplate(){
         MemoWorksheetTemplate memoWorksheetTemplate = new MemoWorksheetTemplate();
@@ -52,6 +54,7 @@ public class MemoWorksheetTemplateRequestDto {
         memoWorksheetTemplate.setPageNumber(this.getPageNumber());
         memoWorksheetTemplate.setAdditionalInfo(TCollectionUtils.nullSafeMap(this.getAdditionalInfo()));
         memoWorksheetTemplate.setFieldType(this.getFieldType());
+        memoWorksheetTemplate.setLanguages(this.getLanguages());
         return memoWorksheetTemplate;
     }
 

@@ -7,6 +7,7 @@ import com.tekion.accounting.fs.common.TConstants;
 import com.tekion.accounting.fs.beans.common.OemTemplate;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheetTemplate;
 import com.tekion.accounting.fs.common.utils.TMongoUtils;
+import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.core.mongo.BaseGlobalMongoRepository;
 import com.tekion.core.serverconfig.beans.ModuleName;
 import com.tekion.core.utils.TCollectionUtils;
@@ -123,5 +124,26 @@ public class MemoWorkSheetTemplateRepoImpl extends BaseGlobalMongoRepository<Mem
             bulkOperations.updateOne(Query.query(criteria), update);
         });
         bulkOperations.execute();
+    }
+
+    @Override
+    public void deleteMWTemplatesByOemByCountryByYear(OEM oemId, Integer year, String countryCode) {
+        Criteria criteria = criteriaForNonDeleted();
+        Query query = new Query(criteria);
+        criteria.and(OemTemplate.OEM_ID).is(oemId);
+        criteria.and(TConstants.YEAR).is(year);
+        criteria.and(COUNTRY).is(countryCode);
+        this.getMongoTemplate().remove(query, MemoWorksheetTemplate.class);
+    }
+
+    @Override
+    public void deleteMWTemplatesByOemByCountryByYearByKeys(OEM oemId, Integer year, Set<String> keys, String countryCode) {
+        Criteria criteria = criteriaForNonDeleted();
+        Query query = new Query(criteria);
+        criteria.and(OemTemplate.OEM_ID).is(oemId);
+        criteria.and(TConstants.YEAR).is(year);
+        criteria.and(COUNTRY).is(countryCode);
+        criteria.and(KEY).in(keys);
+        this.getMongoTemplate().remove(query, MemoWorksheetTemplate.class);
     }
 }

@@ -2,6 +2,7 @@ package com.tekion.accounting.fs.repos.worksheet;
 
 import com.mongodb.bulk.BulkWriteUpsert;
 import com.tekion.accounting.fs.beans.memo.MemoWorksheetTemplate;
+import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.multilingual.dto.TekMultiLingualBean;
 
 import java.util.Collection;
@@ -22,4 +23,8 @@ public interface MemoWorksheetTemplateRepo {
     List<MemoWorksheetTemplate> findBySortByIdAndPageToken(String nextPageToken, int batchSize);
 
     void languagesBulkUpdate(Map<String, TekMultiLingualBean> keyToValueMap);
+
+    void deleteMWTemplatesByOemByCountryByYear(OEM oemId, Integer year, String countryCode);
+
+    void deleteMWTemplatesByOemByCountryByYearByKeys(OEM oemId, Integer year, Set<String> keys, String countryCode);
 }

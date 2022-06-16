@@ -1219,7 +1219,7 @@ public class FsComputeServiceImpl implements FsComputeService {
 
 			if(templateDetail.isActive()){
 				oemTemplateRepo.updateTemplatesAsInactive(templateDetail.getOemId().name(), templateDetail.getYear(),
-						templateDetail.getCountry(), FSLocaleUtils.getLocale(dealerPropertyStore, dealerConfig));
+						templateDetail.getCountry(), templateDetail.getLocale().name());
 			}
 			oemTemplateList.add(oemTemplate);
 		}

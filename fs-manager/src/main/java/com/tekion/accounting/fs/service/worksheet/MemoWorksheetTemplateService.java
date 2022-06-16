@@ -12,4 +12,8 @@ public interface MemoWorksheetTemplateService {
 	void save(MemoWorksheetTemplateRequestDto memoWorksheetRequest);
 	void saveBulk(List<MemoWorksheetTemplateRequestDto> memoWorksheetRequests);
 	List<MemoWorksheetTemplate> deleteMemoWorksheetTemplatesByKeys(OEM oemId, int year, int version, Set<String> keys, String country);
+
+	void deleteMWTemplatesByOemByCountryByYear(OEM oemId, Integer year, String countryCode);
+
+	void deleteMWTemplatesByOemByCountryByYearByKeys(OEM oemId, Integer year, Set<String> keys, String countryCode);
 }
