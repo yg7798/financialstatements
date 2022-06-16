@@ -20,8 +20,8 @@ import java.util.Set;
 @Slf4j
 public class MemoWorksheetResApi {
 
-	MemoWorksheetService memoWorksheetService;
-	MemoWorksheetTemplateService memoWorksheetTemplateService;
+	private final MemoWorksheetService memoWorksheetService;
+	private final MemoWorksheetTemplateService memoWorksheetTemplateService;
 
 	@DeleteMapping("/fsId/{fsId}")
 	public ResponseEntity deleteMemoWorksheet(@PathVariable @NotNull String fsId,
