@@ -5,7 +5,6 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.service.fsMetaData.OemFSMetadataCellMappingCreateDto;
 import com.tekion.accounting.fs.service.fsMetaData.OemFSMetadataMappingService;
 import com.tekion.accounting.fs.service.fsMetaData.OemFsMetadataCellMappingInfo;
-import com.tekion.accounting.fs.service.migration.FSMigrationService;
 import com.tekion.core.service.api.TResponseEntityBuilder;
 import com.tekion.core.validation.TValidator;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ public class OemFsMetadataCellMappingApi {
 
     private final OemFSMetadataMappingService metadataMappingService;
     private final TValidator validator;
-    private final FSMigrationService fsMigrationService;
 
     @GetMapping("/oem/{oemId}/{year}/v/{version}")
     public ResponseEntity getOemFsMetaDataInfo(@PathVariable OEM oemId, @PathVariable @NotNull Integer year, @PathVariable @NotBlank String version) {

@@ -5,6 +5,7 @@ import com.tekion.accounting.fs.beans.common.*;
 import com.tekion.accounting.fs.common.GlobalService;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.dto.cellcode.FsCellCodeDetailsResponseDto;
+import com.tekion.accounting.fs.dto.cellcode.FsCodeDetail;
 import com.tekion.accounting.fs.dto.integration.FSSubmitResponse;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.FinancialYearType;
@@ -20,7 +21,6 @@ import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.clients.preference.client.PreferenceClient;
 import com.tekion.clients.preference.client.TekionResponse;
-import com.tekion.core.excelGeneration.models.model.template.SingleCellData;
 import com.tekion.core.exceptions.TBaseRuntimeException;
 import com.tekion.core.utils.UserContext;
 import com.tekion.core.utils.UserContextProvider;
@@ -41,6 +41,8 @@ import java.util.TimeZone;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MazdaFSServiceTest extends TestCase {
@@ -81,9 +83,97 @@ public class MazdaFSServiceTest extends TestCase {
     }
 
     @Test(expected = TBaseRuntimeException.class)
-    public void testSetValueInDetail() {
+    public void testSetValueInDetailIfOemCellValueTypeNotSet() {
         mazdaFSService.setValueInDetail(getFillDetailContextValue());
-        Mockito.verify(mazdaFSService, Mockito.times(1)).setValueInDetail(getFillDetailContextValue());
+        verify(mazdaFSService, Mockito.times(1)).setValueInDetail(getFillDetailContextValue());
+    }
+
+    @Test
+    public void testSetValueInDetailIfOemCellValueTypeIsBalance() {
+        FillDetailContext fillDetailContext = getFillDetailContextValue();
+        AccountingOemFsCellCode accountingOemFsCellCode = fillDetailContext.getCellCode();
+        accountingOemFsCellCode.setValueType("BALANCE");
+        fillDetailContext.setCellCode(accountingOemFsCellCode);
+        mazdaFSService.setValueInDetail(fillDetailContext);
+    }
+
+    @Test
+    public void testSetValueInDetailIfOemCellValueTypeIsCount() {
+        FillDetailContext fillDetailContext = getFillDetailContextValue();
+        AccountingOemFsCellCode accountingOemFsCellCode = fillDetailContext.getCellCode();
+        accountingOemFsCellCode.setValueType("COUNT");
+        fillDetailContext.setCellCode(accountingOemFsCellCode);
+        mazdaFSService.setValueInDetail(fillDetailContext);
+    }
+
+    @Test
+    public void testSetValueInDetailIfOemCellValueTypeIsDate() {
+        FillDetailContext fillDetailContext = getFillDetailContextValue();
+        AccountingOemFsCellCode accountingOemFsCellCode = fillDetailContext.getCellCode();
+        accountingOemFsCellCode.setValueType("DATE");
+
+        FsCodeDetail fsCodeDetail = new FsCodeDetail();
+        fsCodeDetail.setStringValue("12345678910");
+        fsCodeDetail.setValue(new BigDecimal(4));
+
+        fillDetailContext.setCellCode(accountingOemFsCellCode);
+        fillDetailContext.setCellDetail(fsCodeDetail);
+
+        mazdaFSService.setValueInDetail(fillDetailContext);
+    }
+
+    @Test
+    public void testSetValueInDetailIfOemValueTypeIsUnit1() {
+        FillDetailContext fillDetailContext = getFillDetailContextValue();
+        AccountingOemFsCellCode accountingOemFsCellCode = fillDetailContext.getCellCode();
+        accountingOemFsCellCode.setOemValueType("unit1");
+        fillDetailContext.setCellCode(accountingOemFsCellCode);
+        mazdaFSService.setValueInDetail(fillDetailContext);
+    }
+
+    @Test
+    public void testSetValueInDetailIfOemValueTypeIsUnit2() {
+        FillDetailContext fillDetailContext = getFillDetailContextValue();
+        AccountingOemFsCellCode accountingOemFsCellCode = fillDetailContext.getCellCode();
+        accountingOemFsCellCode.setOemValueType("unit2");
+        fillDetailContext.setCellCode(accountingOemFsCellCode);
+        mazdaFSService.setValueInDetail(fillDetailContext);
+    }
+
+    @Test
+    public void testSetValueInDetailIfOemValueTypeIsBalance1() {
+        FillDetailContext fillDetailContext = getFillDetailContextValue();
+        AccountingOemFsCellCode accountingOemFsCellCode = fillDetailContext.getCellCode();
+        accountingOemFsCellCode.setOemValueType("balance1");
+        fillDetailContext.setCellCode(accountingOemFsCellCode);
+        mazdaFSService.setValueInDetail(fillDetailContext);
+    }
+
+    @Test
+    public void testSetValueInDetailIfOemValueTypeIsBalance2() {
+        FillDetailContext fillDetailContext = getFillDetailContextValue();
+        AccountingOemFsCellCode accountingOemFsCellCode = fillDetailContext.getCellCode();
+        accountingOemFsCellCode.setOemValueType("balance2");
+        fillDetailContext.setCellCode(accountingOemFsCellCode);
+        mazdaFSService.setValueInDetail(fillDetailContext);
+    }
+
+    @Test
+    public void testSetValueInDetailIfOemValueTypeIsValue() {
+        FillDetailContext fillDetailContext = getFillDetailContextValue();
+        AccountingOemFsCellCode accountingOemFsCellCode = fillDetailContext.getCellCode();
+        accountingOemFsCellCode.setOemValueType("Value");
+        fillDetailContext.setCellCode(accountingOemFsCellCode);
+        mazdaFSService.setValueInDetail(fillDetailContext);
+    }
+
+    @Test
+    public void testSetValueInDetailIfOemValueTypeIsDefault() {
+        FillDetailContext fillDetailContext = getFillDetailContextValue();
+        AccountingOemFsCellCode accountingOemFsCellCode = fillDetailContext.getCellCode();
+        accountingOemFsCellCode.setOemValueType("default");
+        fillDetailContext.setCellCode(accountingOemFsCellCode);
+        mazdaFSService.setValueInDetail(fillDetailContext);
     }
 
     @Test
@@ -115,18 +205,6 @@ public class MazdaFSServiceTest extends TestCase {
         Mockito.when(oemMappingService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
         Mockito.when(preferenceClient.findBrandForMake(Mockito.any())).thenReturn(getTekionResponseList());
         assertNotNull(mazdaFSService.getStatement(getFinancialStatementRequestDto()));
-    }
-
-    private List<AccountingOemFsCellCode> getAccountingOemFsCellGroupList() {
-        List<AccountingOemFsCellCode> list = new ArrayList<>();
-        AccountingOemFsCellCode accountingOemFsCellCode = new AccountingOemFsCellCode();
-        accountingOemFsCellCode.setOemId("Acura");
-        accountingOemFsCellCode.setCountry("US");
-        accountingOemFsCellCode.setGroupCode("123");
-        accountingOemFsCellCode.setVersion(1);
-        accountingOemFsCellCode.setYear(2022);
-        list.add(accountingOemFsCellCode);
-        return list;
     }
 
     private TekionResponse<List<BrandMappingResponse>> getTekionResponseList() {
@@ -187,6 +265,7 @@ public class MazdaFSServiceTest extends TestCase {
         accountingOemFsCellCode.setOemId("Acura");
         accountingOemFsCellCode.setDisplayName("_K1");
         accountingOemFsCellCode.setCountry("us");
+        accountingOemFsCellCode.setValueType("xyz");
         return accountingOemFsCellCode;
     }
 
@@ -215,17 +294,5 @@ public class MazdaFSServiceTest extends TestCase {
         fsEntry.setFsType("INTERNAL");
         return fsEntry;
     }
-
-    private List<SingleCellData> getSingleCellDataList() {
-        SingleCellData singleCellData1 = new SingleCellData();
-        singleCellData1.setAddress("abc");
-
-        SingleCellData singleCellData2 = new SingleCellData();
-        singleCellData2.setAddress("xyz");
-
-        List<SingleCellData> list = new ArrayList<>();
-        list.add(singleCellData1);
-        list.add(singleCellData2);
-        return list;
-    }
 }
+
