@@ -17,6 +17,7 @@ import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
+import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.admin.beans.FindBrandRequest;
 import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
@@ -66,6 +67,8 @@ public class DefaultFSServiceImplTest extends TestCase {
     IntegrationService integrationService;
     @Mock
     AccountingInfoService accountingInfoService;
+    @Mock
+    OemConfigService oemConfigService;
 
     @Before
     public void setUp() {
@@ -82,7 +85,7 @@ public class DefaultFSServiceImplTest extends TestCase {
     @Test
     public void testSubmit(){
         when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
-        when(oemMappingService.getOemConfig(anyString())).thenReturn(getOemConfig("GM"));
+        when(oemConfigService.getOemConfig(anyString())).thenReturn(getOemConfig("GM"));
         when(preferenceClient.findBrandForMake(any(FindBrandRequest.class))).thenReturn(getBrandMappingResponse());
         when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean()))
                 .thenReturn(getCellCodeDetails());
@@ -92,7 +95,7 @@ public class DefaultFSServiceImplTest extends TestCase {
     @Test(expected = TBaseRuntimeException.class)
     public void testException(){
         when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
-        when(oemMappingService.getOemConfig(anyString())).thenReturn(getOemConfig("GM"));
+        when(oemConfigService.getOemConfig(anyString())).thenReturn(getOemConfig("GM"));
         when(preferenceClient.findBrandForMake(any(FindBrandRequest.class))).thenReturn(getBrandMappingResponse());
         when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
         when(globalService.getAllDealerDetailsForTenant(anyString())).thenReturn(new ArrayList<>());

@@ -3,7 +3,7 @@ package com.tekion.accounting.fs.service.oems;
 import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.OemConfig;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.dto.cellcode.FsCellCodeDetailsResponseDto;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
@@ -12,6 +12,7 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
+import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.clients.preference.client.PreferenceClient;
@@ -59,6 +60,8 @@ public class KiaFSServiceImplTest extends TestCase {
     IntegrationService integrationService;
     @Mock
     AccountingInfoService infoService;
+    @Mock
+    OemConfigService oemConfigService;
 
 
     @Before
@@ -81,7 +84,7 @@ public class KiaFSServiceImplTest extends TestCase {
         Mockito.when(httpServletResponse.getWriter()).thenReturn(getPrintWriter());
         Mockito.when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
         Mockito.when(preferenceClient.findBrandForMake(Mockito.any())).thenReturn(getTekionResponseList());
-        Mockito.when(oemMappingService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
         Mockito.when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());
         Mockito.when(infoService.find(Mockito.anyString())).thenReturn(getAccountingInfo());

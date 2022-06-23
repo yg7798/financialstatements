@@ -10,6 +10,7 @@ import com.tekion.accounting.fs.enums.FinancialYearType;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
+import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.clients.preference.client.PreferenceClient;
@@ -50,6 +51,8 @@ public class ToyotaFinancialStatementServiceImplTest extends TestCase {
     IntegrationService integrationService;
     @Mock
     AccountingInfoService infoService;
+    @Mock
+    OemConfigService oemConfigService;
 
     @Before
     public void setUp() {
@@ -60,7 +63,7 @@ public class ToyotaFinancialStatementServiceImplTest extends TestCase {
     @Test
     public void testGenerateXML() {
         Mockito.when(preferenceClient.findBrandForMake(Mockito.any())).thenReturn(getTekionResponseList());
-        Mockito.when(oemMappingService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
         Mockito.when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
         Mockito.when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());

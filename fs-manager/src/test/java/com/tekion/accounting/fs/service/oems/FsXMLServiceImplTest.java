@@ -1,6 +1,6 @@
 package com.tekion.accounting.fs.service.oems;
 
-import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.dto.request.FinancialReportRequestBody;
 import com.tekion.core.utils.UserContext;

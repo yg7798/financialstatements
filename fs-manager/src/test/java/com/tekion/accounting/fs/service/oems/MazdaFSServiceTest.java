@@ -17,6 +17,7 @@ import com.tekion.accounting.fs.service.external.nct.FillDetailContext;
 import com.tekion.accounting.fs.service.fsMetaData.OemFSMetadataMappingService;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
 import com.tekion.accounting.fs.service.integration.IntegrationInternal;
+import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.clients.preference.client.PreferenceClient;
@@ -74,6 +75,8 @@ public class MazdaFSServiceTest extends TestCase {
     IntegrationInternal integrationInternal;
     @Mock
     OemFSMetadataMappingService fsMetadataMappingService;
+    @Mock
+    OemConfigService oemConfigService;
 
     @Before
     public void setUp() {
@@ -179,7 +182,7 @@ public class MazdaFSServiceTest extends TestCase {
     @Test
     public void testSubmit() {
         Mockito.when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
-        Mockito.when(oemMappingService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
         Mockito.when(preferenceClient.findBrandForMake(Mockito.any())).thenReturn(getTekionResponseList());
         Mockito.when(integrationClient.submitFS(Mockito.any(), Mockito.any(), Mockito.anyString())).thenReturn(getFSSubmitResponse());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());
@@ -202,7 +205,7 @@ public class MazdaFSServiceTest extends TestCase {
     public void testGetStatement() {
         Mockito.when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());
-        Mockito.when(oemMappingService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
         Mockito.when(preferenceClient.findBrandForMake(Mockito.any())).thenReturn(getTekionResponseList());
         assertNotNull(mazdaFSService.getStatement(getFinancialStatementRequestDto()));
     }

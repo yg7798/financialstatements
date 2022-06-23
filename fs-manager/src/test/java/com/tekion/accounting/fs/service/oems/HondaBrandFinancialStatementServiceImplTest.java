@@ -10,6 +10,7 @@ import com.tekion.accounting.fs.enums.FinancialYearType;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
+import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.clients.preference.client.PreferenceClient;
@@ -58,6 +59,8 @@ public class HondaBrandFinancialStatementServiceImplTest extends TestCase {
     AccountingInfoService infoService;
     @Mock
     HttpServletResponse httpServletResponse;
+    @Mock
+    OemConfigService oemConfigService;
 
     @Before
     public void setUp() {
@@ -83,7 +86,7 @@ public class HondaBrandFinancialStatementServiceImplTest extends TestCase {
         Mockito.when(httpServletResponse.getWriter()).thenReturn(getPrintWriter());
         Mockito.when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
         Mockito.when(preferenceClient.findBrandForMake(Mockito.any())).thenReturn(getTekionResponseList());
-        Mockito.when(oemMappingService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
         Mockito.when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());
         hondaBrandFinancialStatementService.downloadFile(getFinancialStatementRequestDto(), httpServletResponse);

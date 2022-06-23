@@ -4,7 +4,7 @@ import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.OemConfig;
-import com.tekion.accounting.fs.common.utils.DealerConfig;
+import com.tekion.accounting.commons.dealer.DealerConfig;
 import com.tekion.accounting.fs.common.utils.TimeUtils;
 import com.tekion.accounting.fs.dto.cellcode.FsCellCodeDetailsResponseDto;
 import com.tekion.accounting.fs.dto.cellcode.FsCodeDetail;
@@ -14,6 +14,7 @@ import com.tekion.accounting.fs.enums.OEM;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
+import com.tekion.accounting.fs.service.oemConfig.OemConfigService;
 import com.tekion.admin.beans.BrandMappingResponse;
 import com.tekion.dealersettings.dealermaster.beans.DealerMaster;
 import com.tekion.clients.preference.client.PreferenceClient;
@@ -64,6 +65,8 @@ public class GMFinancialStatementServiceImplTest extends TestCase {
     HttpServletResponse httpServletResponse;
     @Mock
     ServletOutputStream servletOutputStream;
+    @Mock
+    OemConfigService oemConfigService;
 
     @Before
     public void setUp() {
@@ -74,7 +77,7 @@ public class GMFinancialStatementServiceImplTest extends TestCase {
     @Test
     public void testGenerateXML() {
         Mockito.when(preferenceClient.findBrandForMake(Mockito.any())).thenReturn(getTekionResponseList());
-        Mockito.when(oemMappingService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
         Mockito.when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
         Mockito.when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());
@@ -88,7 +91,7 @@ public class GMFinancialStatementServiceImplTest extends TestCase {
         Mockito.when(httpServletResponse.getWriter()).thenReturn(getPrintWriter());
         Mockito.when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
         Mockito.when(preferenceClient.findBrandForMake(Mockito.any())).thenReturn(getTekionResponseList());
-        Mockito.when(oemMappingService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
         Mockito.when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry());
         Mockito.when(infoService.find(Mockito.anyString())).thenReturn(getAccountingInfo());
@@ -102,7 +105,7 @@ public class GMFinancialStatementServiceImplTest extends TestCase {
         Mockito.when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(Mockito.anyString(), Mockito.anyString())).thenReturn(getFsEntry1());
         Mockito.when(oemMappingService.computeFsCellCodeDetails(any(FSEntry.class), anyLong(), anyBoolean(), anyBoolean())).thenReturn(getCellCodeDetails());
         Mockito.when(preferenceClient.findBrandForMake(Mockito.any())).thenReturn(getTekionResponseList());
-        Mockito.when(oemMappingService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
+        Mockito.when(oemConfigService.getOemConfig(Mockito.anyString())).thenReturn(getOemConfig());
         Mockito.when(dealerConfig.getDealerMaster()).thenReturn(getDealerMaster());
         Mockito.when(infoService.find(Mockito.anyString())).thenReturn(getAccountingInfo());
         gmFinancialStatementService.downloadFile(getFinancialStatementRequestDto(), httpServletResponse);
