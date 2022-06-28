@@ -2,6 +2,8 @@ package com.tekion.accounting.fs.service.oems;
 
 import com.google.common.collect.Lists;
 import com.tekion.accounting.commons.dealer.DealerConfig;
+import com.tekion.accounting.fs.beans.accountingInfo.AccountingInfo;
+import com.tekion.accounting.fs.beans.accountingInfo.FsOemPayloadInfo;
 import com.tekion.accounting.fs.beans.common.AccountingOemFsCellCode;
 import com.tekion.accounting.fs.beans.common.FSEntry;
 import com.tekion.accounting.fs.beans.common.OemConfig;
@@ -13,7 +15,9 @@ import com.tekion.accounting.fs.dto.integration.FSIntegrationRequest;
 import com.tekion.accounting.fs.dto.mappings.OemSiteDetailsDto;
 import com.tekion.accounting.fs.dto.request.FinancialStatementRequestDto;
 import com.tekion.accounting.fs.enums.FinancialYearType;
+import com.tekion.accounting.fs.integration.Detail;
 import com.tekion.accounting.fs.repos.FSEntryRepo;
+import com.tekion.accounting.fs.repos.accountingInfo.AccountingInfoRepo;
 import com.tekion.accounting.fs.service.accountingInfo.AccountingInfoService;
 import com.tekion.accounting.fs.service.compute.FsComputeService;
 import com.tekion.accounting.fs.service.integration.IntegrationClient;
@@ -75,6 +79,7 @@ public class DefaultFSServiceImplTest extends TestCase {
         UserContextProvider.setContext(new UserContext("-1", "ca", "4"));
         when(fsEntryRepo.findByIdAndDealerIdWithNullCheck(anyString(), anyString())).thenReturn(getFsEntry());
         when(dealerConfig.getDealerTimeZone()).thenReturn(TimeZone.getTimeZone("America/Los_Angeles"));
+        when(accountingInfoService.find(anyString())).thenReturn(getAccountingInfo());
     }
 
     @Test(expected = TBaseRuntimeException.class)
@@ -107,6 +112,42 @@ public class DefaultFSServiceImplTest extends TestCase {
         dto.setSiteId("");
         when(globalService.getOemSiteDetails()).thenReturn(Collections.singletonList(dto));
         defaultFSService.submit(getFSRequestDto());
+    }
+
+    private AccountingInfo getAccountingInfo() {
+        AccountingInfo info = new AccountingInfo();
+
+        FsOemPayloadInfo payloadInfo1 = new FsOemPayloadInfo();
+        payloadInfo1.setOem("GM");
+        payloadInfo1.setDurationType("MTD");
+        payloadInfo1.setDetails(getDetails());
+
+        FsOemPayloadInfo payloadInfo2 = new FsOemPayloadInfo();
+        payloadInfo2.setOem("VW");
+        payloadInfo2.setDurationType("YTD");
+        payloadInfo2.setDetails(getDetails());
+
+        List<FsOemPayloadInfo> fsOemPayloadInfos = new ArrayList<>();
+        fsOemPayloadInfos.add(payloadInfo1);
+        fsOemPayloadInfos.add(payloadInfo2);
+
+        info.setOemPayloadInfos(fsOemPayloadInfos);
+        return info;
+    }
+
+    private List<Detail> getDetails() {
+        Detail detail = new Detail();
+        detail.setAccountId("123");
+        detail.setDescription("abc");
+
+        Detail detail1 = new Detail();
+        detail1.setAccountId("456");
+        detail1.setDescription("xyz");
+
+        List<Detail> details = new ArrayList<>();
+        details.add(detail);
+        details.add(detail1);
+        return details;
     }
 
     private FinancialStatementRequestDto getFinancialStatementRequestDto() {
